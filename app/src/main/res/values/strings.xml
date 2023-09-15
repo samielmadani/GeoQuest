@@ -3,4 +3,5 @@
     <string name="app_icon">GeoQuest Icon</string>
     <string name="player_name">Username</string>
     <string name="signup_text">Set a name to start hunting!</string>
+    <string name="signup_button">Begin!</string>
 </resources>
