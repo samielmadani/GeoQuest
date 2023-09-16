@@ -30,7 +30,9 @@ object SignUpDestination: NavigationDestination {
 }
 
 @Composable
-fun SignUpScreen() {
+fun SignUpScreen(
+    navigateToHomeScreen: () -> Unit,
+) {
     val textFieldValue = remember { mutableStateOf("") }
     Scaffold { contentPadding ->
         Column(
@@ -55,7 +57,7 @@ fun SignUpScreen() {
                 label = { Text(stringResource(id = R.string.player_name)) },
                 singleLine = true,
             )
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = navigateToHomeScreen) {
                 Text(
                     text = stringResource(id = R.string.signup_button)
                 )
@@ -68,6 +70,8 @@ fun SignUpScreen() {
 @Composable
 fun SignUpScreenPreview() {
     GeoQuestTheme {
-        SignUpScreen()
+        SignUpScreen(
+            navigateToHomeScreen = {}
+        )
     }
 }

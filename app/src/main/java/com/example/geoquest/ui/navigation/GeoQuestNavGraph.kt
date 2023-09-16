@@ -31,7 +31,9 @@ fun GeoQuestNavGraph(
                 modifier = modifier
             ) {
                 composable(route = SignUpDestination.route) {
-                    SignUpScreen()
+                    SignUpScreen(
+                        navigateToHomeScreen = { navController.navigate(HomeDestination.route) }
+                    )
                 }
                 composable(route = HomeDestination.route) {
                     HomeScreen()
