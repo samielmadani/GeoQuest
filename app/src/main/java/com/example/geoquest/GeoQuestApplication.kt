@@ -1,0 +1,17 @@
+package com.example.geoquest
+
+import android.app.Application
+import com.example.geoquest.model.AppContainer
+import com.example.geoquest.model.AppDataContainer
+
+class GeoQuestApplication: Application() {
+    /**
+     * AppContainer instance used by the rest of the classes to obtain dependencies
+     */
+    lateinit var container: AppContainer
+
+    override fun onCreate() {
+        super.onCreate()
+        container = AppDataContainer(this)
+    }
+}
