@@ -6,12 +6,17 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.geoquest.GeoQuestApplication
 import com.example.geoquest.ui.home.HomeViewModel
+import com.example.geoquest.ui.quest.CreateQuestViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
         // initializer for HomeViewModel
         initializer {
             HomeViewModel(geoQuestApplication().container.questRepository)
+        }
+        // initializer for CreateQuestViewModel
+        initializer {
+            CreateQuestViewModel(geoQuestApplication().container.questRepository)
         }
     }
 }

@@ -5,4 +5,9 @@
     <string name="signup_text">Set a name to start hunting!</string>
     <string name="signup_button">Begin!</string>
     <string name="back_icon">Back Icon</string>
+    <string name="create_quest_title">Create Quest</string>
+    <string name="quest_title">Title</string>
+    <string name="quest_description">Description</string>
+    <string name="quest_difficulty">Set Difficulty</string>
+    <string name="create_quest_button">Create Quest</string>
 </resources>

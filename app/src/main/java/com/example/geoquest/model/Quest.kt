@@ -14,5 +14,4 @@ data class Quest (
     val questTitle: String,
     val questDescription: String,
     val questDifficulty: Int,
-
 )
