@@ -13,6 +13,8 @@ import com.example.geoquest.ui.home.HomeDestination
 import com.example.geoquest.ui.home.HomeScreen
 import com.example.geoquest.ui.quest.CreateQuest
 import com.example.geoquest.ui.quest.CreateQuestDestination
+import com.example.geoquest.ui.quest.ViewQuest
+import com.example.geoquest.ui.quest.ViewQuestDestination
 import com.example.geoquest.ui.signup.SignUpDestination
 import com.example.geoquest.ui.signup.SignUpScreen
 
@@ -41,13 +43,17 @@ fun GeoQuestNavGraph(
                 }
                 composable(route = HomeDestination.route) {
                     HomeScreen(
-                        navigateToCreateQuest = { navController.navigate(CreateQuestDestination.route) }
+                        navigateToCreateQuest = { navController.navigate(CreateQuestDestination.route) },
+                        navigateToViewQuest = { navController.navigate(ViewQuestDestination.route) }
                     )
                 }
                 composable(route = CreateQuestDestination.route) {
                     CreateQuest(
                         coroutineScope = coroutineScope,
                         navigateBack = { navController.navigate(HomeDestination.route) })
+                }
+                composable(route = ViewQuestDestination.route) {
+                    ViewQuest()
                 }
             }
         }
