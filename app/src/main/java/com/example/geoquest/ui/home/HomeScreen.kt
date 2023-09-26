@@ -49,6 +49,7 @@ object HomeDestination: NavigationDestination {
 fun HomeScreen(
     navigateToCreateQuest: () -> Unit,
     navigateToViewQuest: () -> Unit,
+    navigateToSettings: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
@@ -59,7 +60,8 @@ fun HomeScreen(
         topBar = {
             GeoQuestTopBar(
                 title = stringResource(id = HomeDestination.titleRes),
-                canNavigateBack = false
+                canNavigateBack = false,
+                onSettingsClick = navigateToSettings,
             )
         },
         floatingActionButton = {
@@ -168,7 +170,8 @@ fun HomeScreenPreview() {
     GeoQuestTheme {
         HomeScreen(
             navigateToCreateQuest = {},
-            navigateToViewQuest = {}
+            navigateToViewQuest = {},
+            navigateToSettings = {}
         )
     }
 }
