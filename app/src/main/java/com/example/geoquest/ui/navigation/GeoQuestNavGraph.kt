@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navigation
 import com.example.geoquest.ui.home.HomeDestination
 import com.example.geoquest.ui.home.HomeScreen
 import com.example.geoquest.ui.quest.CreateQuest
@@ -56,7 +57,9 @@ fun GeoQuestNavGraph(
                         navigateBack = { navController.navigate(HomeDestination.route) })
                 }
                 composable(route = ViewQuestDestination.route) {
-                    ViewQuest()
+                    ViewQuest(
+                        navigateUp = { navController.navigateUp() }
+                    )
                 }
                 composable(route = SettingsDestination.route) {
                     SettingsScreen(navigateToHomeScreen = { navController.navigate(HomeDestination.route) })

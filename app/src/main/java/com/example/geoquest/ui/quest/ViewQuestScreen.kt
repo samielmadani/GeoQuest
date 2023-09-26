@@ -20,14 +20,17 @@ object ViewQuestDestination: NavigationDestination {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ViewQuest() {
+fun ViewQuest(
+    navigateUp: () -> Unit,
+) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             GeoQuestTopBar(
                 title = stringResource(id = ViewQuestDestination.titleRes),
-                canNavigateBack = true
+                canNavigateBack = true,
+                navigateUp = navigateUp
             )
         }
     ) {contentPadding ->
