@@ -1,5 +1,6 @@
 package com.example.geoquest.ui.home
 
+import android.Manifest
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,15 +12,20 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,13 +44,17 @@ import com.example.geoquest.model.Quest
 import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.navigation.NavigationDestination
 import com.example.geoquest.ui.theme.GeoQuestTheme
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionRequired
+import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.rememberPermissionState
 
 object HomeDestination: NavigationDestination {
     override val route = "home"
     override val titleRes = R.string.app_name
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
     navigateToCreateQuest: () -> Unit,
@@ -55,34 +65,76 @@ fun HomeScreen(
 ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val permissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
+
+    PermissionRequired(
+        permissionState = permissionState,
+        permissionNotGrantedContent = {
+            // Content to show when permission is not granted
+            PermissionsDenied(modifier = modifier, scrollBehavior = scrollBehavior, permissionState = permissionState)
+        },
+        permissionNotAvailableContent = {
+            // Content to show when permission is not available (e.g., policy restrictions)
+            PermissionsDenied(modifier = modifier, scrollBehavior = scrollBehavior, permissionState = permissionState)
+        }
+    ) {
+        // Content to show when permission is granted
+        Scaffold(
+            modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            topBar = {
+                GeoQuestTopBar(
+                    title = stringResource(id = HomeDestination.titleRes),
+                    canNavigateBack = false,
+                    onSettingsClick = navigateToSettings,
+                )
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = navigateToCreateQuest,
+                    shape = MaterialTheme.shapes.medium,
+                    modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large))
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "")
+                }
+            },
+        ) {contentPadding ->
+            HomeBody(
+                questList = homeUiState.questList,
+                navigateToViewQuest,
+                modifier = modifier
+                    .padding(contentPadding)
+                    .fillMaxSize()
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
+@Composable
+fun PermissionsDenied(modifier: Modifier, scrollBehavior: TopAppBarScrollBehavior, permissionState: PermissionState) {
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            GeoQuestTopBar(
-                title = stringResource(id = HomeDestination.titleRes),
-                canNavigateBack = false,
-                onSettingsClick = navigateToSettings,
+            CenterAlignedTopAppBar(
+                title = { Text(text = stringResource(id = HomeDestination.titleRes)) },
+                modifier = modifier,
+                scrollBehavior = scrollBehavior,
             )
         },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = navigateToCreateQuest,
-                shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large))
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "")
-            }
-        },
-    ) {contentPadding ->
-        HomeBody(
-            questList = homeUiState.questList,
-            navigateToViewQuest,
+    ) { contentPadding ->
+        Column(
             modifier = modifier
                 .padding(contentPadding)
-                .fillMaxSize()
-        )
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("Location permissions are required to use this app.")
+            Button(onClick = { permissionState.launchPermissionRequest() }) {
+                Text("Request Permission")
+            }
+        }
     }
 }
 
