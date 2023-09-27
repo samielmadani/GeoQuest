@@ -27,6 +27,11 @@ interface QuestRepository {
     suspend fun deleteQuest(quest: Quest)
 
     /**
+     * Delete all quests from the data source
+     */
+    suspend fun deleteAllQuests()
+
+    /**
      * Update quest in the data source
      */
     suspend fun updateQuest(quest: Quest)

@@ -28,4 +28,7 @@ interface QuestDao {
 
     @Delete
     suspend fun delete(quest: Quest)
+
+    @Query("DELETE FROM quest")
+    suspend fun deleteAll()
 }
