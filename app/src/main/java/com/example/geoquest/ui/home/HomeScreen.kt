@@ -54,7 +54,7 @@ object HomeDestination: NavigationDestination {
 @Composable
 fun HomeScreen(
     navigateToCreateQuest: () -> Unit,
-    navigateToViewQuest: () -> Unit,
+    navigateToViewQuest: (Int) -> Unit,
     navigateToSettings: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
@@ -137,7 +137,7 @@ fun PermissionsDenied(modifier: Modifier, scrollBehavior: TopAppBarScrollBehavio
 @Composable
 fun HomeBody(
     questList: List<Quest>,
-    navigateToViewQuest: () -> Unit,
+    navigateToViewQuest: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -162,7 +162,7 @@ fun HomeBody(
 @Composable
 fun QuestList(
     questList: List<Quest>,
-    navigateToViewQuest: () -> Unit,
+    navigateToViewQuest: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier) {
@@ -178,7 +178,7 @@ fun QuestList(
 @Composable
 fun QuestCard(
     quest: Quest,
-    navigateToViewQuest: () -> Unit
+    navigateToViewQuest: (Int) -> Unit
 ) {
     Card(
         shape = RoundedCornerShape(dimensionResource(id = R.dimen.padding_small)),
@@ -202,7 +202,7 @@ fun QuestCard(
                         .padding(dimensionResource(id = R.dimen.padding_small)),
                 )
                 Button(
-                    onClick = navigateToViewQuest,
+                    onClick = { navigateToViewQuest(quest.questId) },
                     shape = MaterialTheme.shapes.small
                 ) {
                     Text(text = stringResource(id = R.string.view_button))

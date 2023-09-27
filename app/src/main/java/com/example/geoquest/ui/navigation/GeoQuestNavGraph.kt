@@ -7,14 +7,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.geoquest.ui.home.HomeDestination
 import com.example.geoquest.ui.home.HomeScreen
 import com.example.geoquest.ui.quest.CreateQuest
 import com.example.geoquest.ui.quest.CreateQuestDestination
-import com.example.geoquest.ui.quest.ViewQuest
+import com.example.geoquest.ui.quest.ViewQuestScreen
 import com.example.geoquest.ui.quest.ViewQuestDestination
 import com.example.geoquest.ui.settings.SettingsDestination
 import com.example.geoquest.ui.settings.SettingsScreen
@@ -47,8 +49,9 @@ fun GeoQuestNavGraph(
                 composable(route = HomeDestination.route) {
                     HomeScreen(
                         navigateToCreateQuest = { navController.navigate(CreateQuestDestination.route) },
-                        navigateToViewQuest = { navController.navigate(ViewQuestDestination.route) },
+                        navigateToViewQuest = { navController.navigate("${ViewQuestDestination.route}/${it}") },
                         navigateToSettings = { navController.navigate(SettingsDestination.route) },
+
                     )
                 }
                 composable(route = CreateQuestDestination.route) {
@@ -56,9 +59,14 @@ fun GeoQuestNavGraph(
                         coroutineScope = coroutineScope,
                         navigateBack = { navController.navigate(HomeDestination.route) })
                 }
-                composable(route = ViewQuestDestination.route) {
-                    ViewQuest(
-                        navigateUp = { navController.navigateUp() }
+                composable(route = ViewQuestDestination.routeWithArgs,
+                    arguments = listOf(navArgument(ViewQuestDestination.questIdArgument) {
+                        type = NavType.IntType
+                    })
+                ) {
+                    ViewQuestScreen(
+
+                        navigateUp = { navController.navigateUp() },
                     )
                 }
                 composable(route = SettingsDestination.route) {

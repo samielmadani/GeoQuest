@@ -26,13 +26,15 @@ import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.navigation.NavigationDestination
 
 object ViewQuestDestination: NavigationDestination {
-    override val route = "viewQuest"
+    override val route = "viewQuestScreen"
     override val titleRes = R.string.view_quest
+    const val questIdArgument = "questId"
+    val routeWithArgs = "$route/{$questIdArgument}"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ViewQuest(
+fun ViewQuestScreen(
     navigateUp: () -> Unit,
     viewModel: ViewQuestViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {

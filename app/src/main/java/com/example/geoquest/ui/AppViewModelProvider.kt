@@ -22,7 +22,7 @@ object AppViewModelProvider {
             CreateQuestViewModel(geoQuestApplication().container.sharedPreferences, geoQuestApplication().container.questRepository)
         }
         initializer {
-            ViewQuestViewModel(geoQuestApplication().container.questRepository)
+            ViewQuestViewModel(this.createSavedStateHandle(), geoQuestApplication().container.questRepository)
         }
         initializer {
             SignUpViewModel(geoQuestApplication().container.sharedPreferences)

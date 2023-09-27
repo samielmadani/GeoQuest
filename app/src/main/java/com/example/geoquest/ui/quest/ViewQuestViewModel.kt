@@ -1,5 +1,7 @@
 package com.example.geoquest.ui.quest
 
+import android.util.Log
+import android.view.View
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,24 +13,28 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
+
 /**
  * ViewModel to retrieve and update a task from the [QuestRepository]'s data source
  */
 class ViewQuestViewModel(
-    //savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val questRepository: QuestRepository
 ): ViewModel() {
+
 
     /**     * Holds the current task ui state
      */
     var questUiState by mutableStateOf(QuestUiState())
         private set
 
-    //private val questId: Int = checkNotNull(savedStateHandle[ViewQuestDestination.route])
+
+    private val questId: Int = checkNotNull(savedStateHandle[ViewQuestDestination.questIdArgument])
+
 
     init {
         viewModelScope.launch {
-            questUiState = questRepository.getQuestStream(3)
+            questUiState = questRepository.getQuestStream(questId)
                 .filterNotNull()
                 .first()
                 .toQuestUiState(true)
