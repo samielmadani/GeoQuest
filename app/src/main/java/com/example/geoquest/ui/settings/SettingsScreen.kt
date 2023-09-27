@@ -80,12 +80,12 @@ fun SettingsScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Button(onClick = {}, colors = ButtonDefaults.buttonColors(Color.Red)) {
+                        Button(onClick = {viewModel.insertTestData()}, colors = ButtonDefaults.buttonColors(Color.Red)) {
                             Text(
                                 text = "Populate Database"
                             )
                         }
-                        Button(onClick = {}, colors = ButtonDefaults.buttonColors(Color.Red)) {
+                        Button(onClick = {viewModel.clearData()}, colors = ButtonDefaults.buttonColors(Color.Red)) {
                             Text(
                                 text = "Clear Database"
                             )

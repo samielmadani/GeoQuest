@@ -20,7 +20,7 @@ interface QuestDao {
     @Query("SELECT * from quest WHERE questId = :questId")
     fun getQuest(questId: Int): Flow<Quest>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(quest: Quest)
 
     @Update

@@ -6,11 +6,69 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import android.util.Log
+import androidx.lifecycle.viewModelScope
+import com.example.geoquest.model.Quest
+import com.example.geoquest.model.QuestRepository
+import kotlinx.coroutines.launch
+
+fun getTestData(): List<Quest> {
+    return listOf(
+        Quest(
+            questTitle = "Eiffel Tower Quest",
+            questDescription = "Discover the iconic Eiffel Tower in Paris.",
+            questDifficulty = 2,
+            latitude = 48.8584,
+            longitude = 2.2945
+        ),
+        Quest(
+            questTitle = "Great Wall of China Quest",
+            questDescription = "Explore the vastness of the Great Wall.",
+            questDifficulty = 3,
+            latitude = 40.4319,
+            longitude = 116.5704
+        ),
+        Quest(
+            questTitle = "Statue of Liberty Quest",
+            questDescription = "Visit the symbol of freedom in New York.",
+            questDifficulty = 2,
+            latitude = 40.6892,
+            longitude = -74.0445
+        ),
+        Quest(
+            questTitle = "Pyramids of Giza Quest",
+            questDescription = "Unravel the mysteries of ancient Egypt.",
+            questDifficulty = 3,
+            latitude = 29.9792,
+            longitude = 31.1342
+        ),
+        Quest(
+            questTitle = "Taj Mahal Quest",
+            questDescription = "Witness the beauty of the Taj Mahal in Agra.",
+            questDifficulty = 2,
+            latitude = 27.1751,
+            longitude = 78.0421
+        ),
+        Quest(
+            questTitle = "Machu Picchu Quest",
+            questDescription = "Trek to the historical site of Machu Picchu.",
+            questDifficulty = 4,
+            latitude = -13.1631,
+            longitude = -72.5450
+        ),
+        Quest(
+            questTitle = "Sydney Opera House Quest",
+            questDescription = "Experience the architectural marvel in Sydney.",
+            questDifficulty = 1,
+            latitude = -33.8568,
+            longitude = 151.2153
+        )
+    )
+}
 
 /**
  * ViewModel
  */
-class SettingsViewModel(private val sharedPreferences: SharedPreferences): ViewModel() {
+class SettingsViewModel(private val sharedPreferences: SharedPreferences, private val questRepository: QuestRepository): ViewModel() {
     private val editor = sharedPreferences.edit()
 
     /**
@@ -33,6 +91,20 @@ class SettingsViewModel(private val sharedPreferences: SharedPreferences): ViewM
     fun saveSettings(userName: String, developerOptions: Boolean) {
         saveUserName(userName)
         saveDeveloperOptions(developerOptions)
+    }
+    fun insertTestData() {
+        viewModelScope.launch {
+            val testData = getTestData()
+            for (quest in testData) {
+                questRepository.addQuest(quest)
+            }
+        }
+    }
+
+    fun clearData() {
+        viewModelScope.launch {
+            questRepository.deleteAllQuests()
+        }
     }
 
     private fun validateInput(userName: String = settingsState.userName): Boolean {
