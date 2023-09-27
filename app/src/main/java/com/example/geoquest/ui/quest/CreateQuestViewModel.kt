@@ -1,5 +1,6 @@
 package com.example.geoquest.ui.quest
 
+import android.content.SharedPreferences
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,7 +11,9 @@ import com.example.geoquest.model.QuestRepository
 /**
  * ViewModel to validate and insert quests in the Room database
  */
-class CreateQuestViewModel(private val questRepository: QuestRepository): ViewModel() {
+class CreateQuestViewModel(private val sharedPreferences: SharedPreferences, private val questRepository: QuestRepository): ViewModel() {
+    private val editor = sharedPreferences.edit()
+
     /**
      * Holds current quest ui state
      */
@@ -37,6 +40,14 @@ class CreateQuestViewModel(private val questRepository: QuestRepository): ViewMo
         if (validateInput()) {
             questRepository.addQuest(questUiState.questDetails.toQuest())
         }
+    }
+
+    fun isDeveloperOptionsSet(): Boolean {
+        return sharedPreferences.getBoolean("developerOptions", false)
+    }
+
+    fun getLocation(): Pair<String, String> {
+        return Pair(sharedPreferences.getString("latitude", "0.0") ?: "0.0", sharedPreferences.getString("longitude", "0.0") ?: "0.0")
     }
 
     private fun isValidText(text: String): Boolean {

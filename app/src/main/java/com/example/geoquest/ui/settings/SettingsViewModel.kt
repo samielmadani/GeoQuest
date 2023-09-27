@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.geoquest.model.Quest
 import com.example.geoquest.model.QuestRepository
+import com.example.geoquest.model.getCurrentLocation
 import kotlinx.coroutines.launch
 
 fun getTestData(): List<Quest> {
@@ -78,20 +79,34 @@ class SettingsViewModel(private val sharedPreferences: SharedPreferences, privat
         SettingsState(
             userName = getUserName() ?: "",
             developerOptions = getDeveloperOptions(),
+            latitude = getLocation().first,
+            longitude = getLocation().second,
             isEntryValid = validateInput(getUserName() ?: "")
         )
     )
         private set
 
-    fun updateSettingsState(userName: String, developerOptions: Boolean) {
+    fun updateSettingsState(
+        userName: String = settingsState.userName,
+        developerOptions: Boolean = settingsState.developerOptions,
+        latitude: String = settingsState.latitude,
+        longitude: String = settingsState.longitude
+    ) {
         settingsState =
-            SettingsState(userName = userName, developerOptions = developerOptions, isEntryValid = validateInput(userName))
+            SettingsState(
+                userName = userName,
+                developerOptions = developerOptions,
+                latitude = latitude,
+                longitude = longitude,
+                isEntryValid = validateInput(userName))
     }
 
-    fun saveSettings(userName: String, developerOptions: Boolean) {
-        saveUserName(userName)
-        saveDeveloperOptions(developerOptions)
+    fun saveSettings() {
+        saveUserName(settingsState.userName)
+        saveDeveloperOptions(settingsState.developerOptions)
+        saveLocation(settingsState.latitude, settingsState.longitude)
     }
+
     fun insertTestData() {
         viewModelScope.launch {
             val testData = getTestData()
@@ -128,6 +143,15 @@ class SettingsViewModel(private val sharedPreferences: SharedPreferences, privat
         return sharedPreferences.getBoolean("developerOptions", false)
     }
 
+    private fun saveLocation(latitude: String, longitude: String) {
+        editor.putString("latitude", latitude).apply()
+        editor.putString("longitude", longitude).apply()
+    }
+
+    private fun getLocation(): Pair<String, String> {
+        return Pair(sharedPreferences.getString("latitude", "0.0") ?: "0.0", sharedPreferences.getString("longitude", "0.0") ?: "0.0")
+    }
+
     private fun isValidText(text: String): Boolean {
         return text.matches(Regex("(?=.*[a-zA-Z])[a-zA-Z0-9 ]+"))
     }
@@ -136,5 +160,7 @@ class SettingsViewModel(private val sharedPreferences: SharedPreferences, privat
 data class SettingsState(
     val userName: String = "",
     val developerOptions: Boolean = false,
+    val latitude: String = "0.0",
+    val longitude: String = "0.0",
     val isEntryValid: Boolean = false
 )

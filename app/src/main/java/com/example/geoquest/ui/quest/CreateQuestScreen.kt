@@ -117,7 +117,11 @@ fun QuestInputForm(
 
 
     getCurrentLocation(context, {
-        onValueChange(questDetails.copy(latitude = it.latitude, longitude = it.longitude))
+        if (viewModel.isDeveloperOptionsSet()) {
+            onValueChange(questDetails.copy(latitude = viewModel.getLocation().first.toDouble(), longitude = viewModel.getLocation().second.toDouble()))
+        } else {
+            onValueChange(questDetails.copy(latitude = it.latitude, longitude = it.longitude))
+        }
     }, {
         Toast.makeText(context, "Error getting location", Toast.LENGTH_SHORT).show()
     })

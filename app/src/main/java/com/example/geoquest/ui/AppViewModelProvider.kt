@@ -16,7 +16,7 @@ object AppViewModelProvider {
             HomeViewModel(geoQuestApplication().container.questRepository)
         }
         initializer {
-            CreateQuestViewModel(geoQuestApplication().container.questRepository)
+            CreateQuestViewModel(geoQuestApplication().container.sharedPreferences, geoQuestApplication().container.questRepository)
         }
         initializer {
             SignUpViewModel(geoQuestApplication().container.sharedPreferences)
