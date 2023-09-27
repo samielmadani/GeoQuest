@@ -1,5 +1,6 @@
 package com.example.geoquest.ui.quest
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,12 +19,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.geoquest.GeoQuestTopBar
 import com.example.geoquest.R
+import com.example.geoquest.model.getCurrentLocation
+import com.example.geoquest.model.openMap
 import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.home.HomeDestination
 import com.example.geoquest.ui.navigation.NavigationDestination
@@ -64,7 +68,8 @@ fun CreateQuest(
             modifier = Modifier
                 .padding(contentPadding)
                 .verticalScroll(rememberScrollState())
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            viewModel = viewModel
         )
     }
 }
@@ -75,6 +80,7 @@ fun CreateQuestBody(
     onQuestValueChange: (QuestDetails) -> Unit,
     onCreateClick: () -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: CreateQuestViewModel
 ) {
     Column(
         modifier = modifier,
@@ -83,7 +89,8 @@ fun CreateQuestBody(
         QuestInputForm(
             questDetails = questUiState.questDetails,
             onValueChange = onQuestValueChange,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            viewModel = viewModel
         )
         Button(
             onClick = onCreateClick,
@@ -104,7 +111,17 @@ fun QuestInputForm(
     questDetails: QuestDetails,
     onValueChange: (QuestDetails) -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: CreateQuestViewModel
 ) {
+    val context = LocalContext.current
+
+
+    getCurrentLocation(context, {
+        onValueChange(questDetails.copy(latitude = it.latitude, longitude = it.longitude))
+    }, {
+        Toast.makeText(context, "Error getting location", Toast.LENGTH_SHORT).show()
+    })
+
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium))
@@ -120,6 +137,11 @@ fun QuestInputForm(
             onValueChange = { onValueChange(questDetails.copy(questDescription = it )) },
             label = { Text(stringResource(id = R.string.quest_description)) },
         )
+        Button(onClick = {
+            openMap(context, viewModel.questUiState.questDetails.latitude, viewModel.questUiState.questDetails.longitude, viewModel.questUiState.questDetails.questTitle)
+        }) {
+            Text("Open in Map")
+        }
     }
 }
 

@@ -14,4 +14,6 @@ data class Quest (
     val questTitle: String,
     val questDescription: String,
     val questDifficulty: Int,
+    val latitude: Double,
+    val longitude: Double
 )

@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.geoquest"
-        minSdk 33
+        minSdk 28
         targetSdk 34
         versionCode 1
         versionName "1.0"
@@ -67,6 +67,7 @@ dependencies {
 
     // Locations
     implementation "com.google.accompanist:accompanist-permissions:0.22.1-rc"
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
 
     // Navigation
     implementation "androidx.navigation:navigation-compose:2.7.2"

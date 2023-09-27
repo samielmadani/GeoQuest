@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase
  * Database class with a singleton Instance object
  */
 
-@Database(entities = [Quest::class], version = 1, exportSchema = false)
+@Database(entities = [Quest::class], version = 2, exportSchema = false)
 abstract class GeoQuestDatabase: RoomDatabase() {
     abstract fun questDao(): QuestDao
 

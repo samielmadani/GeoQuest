@@ -53,17 +53,9 @@ data class QuestDetails(
     val questId: Int = 0,
     val questTitle: String = "",
     val questDescription: String = "",
-    val questDifficulty: Int = 1
-)
-
-/**
- * Extension function to convert [QuestUiState] to [Quest]
- */
-fun QuestDetails.toQuest(): Quest = Quest(
-    questId = questId,
-    questTitle = questTitle,
-    questDescription = questDescription,
-    questDifficulty = questDifficulty
+    val questDifficulty: Int = 1,
+    val latitude: Double = 0.0,
+    val longitude: Double = 0.0
 )
 
 /**
@@ -75,11 +67,25 @@ fun Quest.toQuestUiState(isEntryValid: Boolean = false): QuestUiState = QuestUiS
 )
 
 /**
+ * Extension function to convert [QuestUiState] to [Quest]
+ */
+fun QuestDetails.toQuest(): Quest = Quest(
+    questId = questId,
+    questTitle = questTitle,
+    questDescription = questDescription,
+    questDifficulty = questDifficulty,
+    latitude = latitude,
+    longitude = longitude
+)
+
+/**
  * Extension function to convert [Quest] to [QuestDetails]
  */
 fun Quest.toQuestDetails(): QuestDetails = QuestDetails(
     questId = questId,
     questTitle = questTitle,
     questDescription = questDescription,
-    questDifficulty = questDifficulty
+    questDifficulty = questDifficulty,
+    latitude = latitude,
+    longitude = longitude
 )
