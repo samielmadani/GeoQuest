@@ -47,7 +47,8 @@ fun CreateQuest(
         topBar = {
             GeoQuestTopBar(
                 title = stringResource(id = HomeDestination.titleRes),
-                canNavigateBack = true
+                canNavigateBack = true,
+                navigateUp = navigateBack
             )
         }
     ) {contentPadding ->

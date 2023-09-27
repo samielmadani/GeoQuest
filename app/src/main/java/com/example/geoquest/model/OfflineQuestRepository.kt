@@ -15,4 +15,6 @@ class OfflineQuestRepository(private val questDao: QuestDao): QuestRepository {
     override suspend fun deleteQuest(quest: Quest) = questDao.delete(quest)
 
     override suspend fun updateQuest(quest: Quest) = questDao.update(quest)
+
+    override suspend fun deleteAllQuests() = questDao.deleteAll()
 }
