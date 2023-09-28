@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 /**
  * ViewModel to retrieve and update a task from the [QuestRepository]'s data source
  */
-class ViewQuestViewModel(
+class FindQuestViewModel(
     savedStateHandle: SavedStateHandle,
     private val questRepository: QuestRepository
 ): ViewModel() {
@@ -29,7 +29,7 @@ class ViewQuestViewModel(
         private set
 
 
-    var questId: Int = checkNotNull(savedStateHandle[ViewQuestDestination.questIdArgument])
+    private val questId: Int = checkNotNull(savedStateHandle[ViewQuestDestination.questIdArgument])
 
 
     init {

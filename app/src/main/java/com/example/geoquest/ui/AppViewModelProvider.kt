@@ -12,6 +12,8 @@ import com.example.geoquest.ui.quest.CreateQuestViewModel
 import com.example.geoquest.ui.quest.SettingsViewModel
 import com.example.geoquest.ui.quest.SignUpViewModel
 import com.example.geoquest.ui.quest.ViewQuestViewModel
+import com.example.geoquest.ui.quest.FindQuestViewModel
+
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
@@ -23,6 +25,9 @@ object AppViewModelProvider {
         }
         initializer {
             ViewQuestViewModel(this.createSavedStateHandle(), geoQuestApplication().container.questRepository)
+        }
+        initializer {
+            FindQuestViewModel(this.createSavedStateHandle(), geoQuestApplication().container.questRepository)
         }
         initializer {
             SignUpViewModel(geoQuestApplication().container.sharedPreferences)

@@ -11,11 +11,13 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import androidx.navigation.navigation
+import com.example.geoquest.model.Quest
 import com.example.geoquest.ui.home.HomeDestination
 import com.example.geoquest.ui.home.HomeScreen
 import com.example.geoquest.ui.quest.CreateQuest
 import com.example.geoquest.ui.quest.CreateQuestDestination
+import com.example.geoquest.ui.quest.FindQuestDestination
+import com.example.geoquest.ui.quest.FindQuestScreen
 import com.example.geoquest.ui.quest.ViewQuestScreen
 import com.example.geoquest.ui.quest.ViewQuestDestination
 import com.example.geoquest.ui.settings.SettingsDestination
@@ -65,7 +67,16 @@ fun GeoQuestNavGraph(
                     })
                 ) {
                     ViewQuestScreen(
-
+                        navigateUp = { navController.navigateUp() },
+                        navigateToFindQuest = { navController.navigate("${FindQuestDestination.route}/${it}") }
+                    )
+                }
+                composable(route = FindQuestDestination.routeWithArgs,
+                    arguments = listOf(navArgument(FindQuestDestination.questIdArgument) {
+                        type = NavType.IntType
+                    })
+                ) {
+                    FindQuestScreen(
                         navigateUp = { navController.navigateUp() },
                     )
                 }

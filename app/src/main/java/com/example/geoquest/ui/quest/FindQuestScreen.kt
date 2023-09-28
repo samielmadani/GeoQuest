@@ -1,11 +1,11 @@
 package com.example.geoquest.ui.quest
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -21,33 +21,31 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.geoquest.GeoQuestTopBar
 import com.example.geoquest.R
-import com.example.geoquest.model.Quest
 import com.example.geoquest.model.openMap
 import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.navigation.NavigationDestination
 
-object ViewQuestDestination: NavigationDestination {
-    override val route = "viewQuestScreen"
-    override val titleRes = R.string.view_quest
+object FindQuestDestination: NavigationDestination {
+    override val route = "findQuestScreen"
+    override val titleRes = R.string.find_quest
     const val questIdArgument = "questId"
     val routeWithArgs = "$route/{$questIdArgument}"
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ViewQuestScreen(
+fun FindQuestScreen(
     navigateUp: () -> Unit,
-    navigateToFindQuest: (Int) -> Unit,
-    viewModel: ViewQuestViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: FindQuestViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val context = LocalContext.current
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             GeoQuestTopBar(
-                title = stringResource(id = ViewQuestDestination.titleRes),
+                title = stringResource(id = FindQuestDestination.titleRes),
                 canNavigateBack = true,
                 navigateUp = navigateUp
             )
@@ -73,18 +71,6 @@ fun ViewQuestScreen(
                 ),
                 modifier = Modifier.padding(bottom = 16.dp)
             )
-            Button(onClick = {
-                openMap(context, viewModel.questUiState.questDetails.latitude, viewModel.questUiState.questDetails.longitude, viewModel.questUiState.questDetails.questTitle)
-            }) {
-                Text("Open in Map")
-            }
-
-            Button(
-                onClick = { navigateToFindQuest(viewModel.questId) },
-                shape = MaterialTheme.shapes.small
-            ) {
-                Text(text = stringResource(id = R.string.find_button))
-            }
         }
     }
 }
