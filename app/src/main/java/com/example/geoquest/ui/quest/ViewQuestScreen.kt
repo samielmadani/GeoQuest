@@ -25,6 +25,11 @@ import com.example.geoquest.model.Quest
 import com.example.geoquest.model.openMap
 import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.navigation.NavigationDestination
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.ui.graphics.Color
 
 object ViewQuestDestination: NavigationDestination {
     override val route = "viewQuestScreen"
@@ -73,6 +78,9 @@ fun ViewQuestScreen(
                 ),
                 modifier = Modifier.padding(bottom = 16.dp)
             )
+
+            DifficultyStars(viewModel.questUiState.questDetails.questDifficulty)
+
             Button(onClick = {
                 openMap(context, viewModel.questUiState.questDetails.latitude, viewModel.questUiState.questDetails.longitude, viewModel.questUiState.questDetails.questTitle)
             }) {
@@ -85,6 +93,29 @@ fun ViewQuestScreen(
             ) {
                 Text(text = stringResource(id = R.string.find_button))
             }
+
+        }
+    }
+}
+
+@Composable
+fun DifficultyStars(difficultyLevel: Int) {
+    Row(
+        modifier = Modifier.padding(vertical = 4.dp)
+    ) {
+        Text(
+            text = "Difficulty:",
+            fontSize = 16.sp,
+            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+            modifier = Modifier.padding(end = 4.dp)
+        )
+        repeat(difficultyLevel) {
+            Icon(
+                imageVector = Icons.Default.Star,
+                contentDescription = null,
+                tint = Color.Black,
+                modifier = Modifier.padding(end = 4.dp)
+            )
         }
     }
 }

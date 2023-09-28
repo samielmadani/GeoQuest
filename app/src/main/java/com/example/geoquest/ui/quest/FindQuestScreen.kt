@@ -45,7 +45,7 @@ fun FindQuestScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             GeoQuestTopBar(
-                title = stringResource(id = FindQuestDestination.titleRes),
+                title = viewModel.questUiState.questDetails.questTitle,
                 canNavigateBack = true,
                 navigateUp = navigateUp
             )
