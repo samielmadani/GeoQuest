@@ -14,6 +14,8 @@ import androidx.navigation.navArgument
 import com.example.geoquest.model.Quest
 import com.example.geoquest.ui.home.HomeDestination
 import com.example.geoquest.ui.home.HomeScreen
+import com.example.geoquest.ui.quest.CameraScreen
+import com.example.geoquest.ui.quest.CameraScreenDestination
 import com.example.geoquest.ui.quest.CreateQuest
 import com.example.geoquest.ui.quest.CreateQuestDestination
 import com.example.geoquest.ui.quest.FindQuestDestination
@@ -59,7 +61,9 @@ fun GeoQuestNavGraph(
                 composable(route = CreateQuestDestination.route) {
                     CreateQuest(
                         coroutineScope = coroutineScope,
-                        navigateBack = { navController.navigate(HomeDestination.route) })
+                        navigateBack = { navController.navigate(HomeDestination.route) },
+                        navigateToCamera = { navController.navigate(CameraScreenDestination.route) }
+                    )
                 }
                 composable(route = ViewQuestDestination.routeWithArgs,
                     arguments = listOf(navArgument(ViewQuestDestination.questIdArgument) {
@@ -82,6 +86,9 @@ fun GeoQuestNavGraph(
                 }
                 composable(route = SettingsDestination.route) {
                     SettingsScreen(navigateUp = { navController.navigate(HomeDestination.route) })
+                }
+                composable(route = CameraScreenDestination.route) {
+                    CameraScreen()
                 }
             }
         }

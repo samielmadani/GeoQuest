@@ -15,4 +15,9 @@
     <string name="no_quest">There are no quests currently available.</string>
     <string name="view_quest">View Quest</string>
     <string name="find_quest">Find Quest</string>
+    <string name="default_image">Default Quest Image</string>
+    <string name="take_photo">Capture Image</string>
+    <string name="camera_permission">PLease grant permission to use the camera functionality of this app.</string>
+    <string name="permission_button">Grant Permission</string>
+    <string name="camera">Camera</string>
 </resources>

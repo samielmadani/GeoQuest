@@ -1,5 +1,6 @@
 package com.example.geoquest.ui.quest
 
+import android.net.Uri
 import android.content.SharedPreferences
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,9 +21,15 @@ class CreateQuestViewModel(private val sharedPreferences: SharedPreferences, pri
     var questUiState by mutableStateOf(QuestUiState())
         private set
 
+    private var capturedImageUri by mutableStateOf<Uri?>(null)
+
     fun updateUiState(questDetails: QuestDetails) {
         questUiState =
             QuestUiState(questDetails = questDetails, isEntryValid = validateInput(questDetails))
+    }
+
+    fun setCapturedUri(uri: Uri) {
+        capturedImageUri = uri
     }
 
     private fun validateInput(uiState: QuestDetails = questUiState.questDetails): Boolean {
@@ -37,8 +44,11 @@ class CreateQuestViewModel(private val sharedPreferences: SharedPreferences, pri
      * Inserts a [Quest] in the Room database
      */
     suspend fun saveQuest() {
-        if (validateInput()) {
-            questRepository.addQuest(questUiState.questDetails.toQuest())
+        val questDetails = questUiState.questDetails
+        if (validateInput(questDetails) && capturedImageUri != null) {
+            val quest = questDetails.toQuest()
+            quest.questImageUri = capturedImageUri.toString()
+            questRepository.addQuest(quest)
         }
     }
 
@@ -65,6 +75,7 @@ data class QuestDetails(
     val questTitle: String = "",
     val questDescription: String = "",
     val questDifficulty: Int = 1,
+    val questImageUri: String? = null,
     val latitude: Double = 0.0,
     val longitude: Double = 0.0
 )
@@ -85,6 +96,7 @@ fun QuestDetails.toQuest(): Quest = Quest(
     questTitle = questTitle,
     questDescription = questDescription,
     questDifficulty = questDifficulty,
+    questImageUri = questImageUri,
     latitude = latitude,
     longitude = longitude
 )
@@ -97,6 +109,7 @@ fun Quest.toQuestDetails(): QuestDetails = QuestDetails(
     questTitle = questTitle,
     questDescription = questDescription,
     questDifficulty = questDifficulty,
+    questImageUri = questImageUri,
     latitude = latitude,
     longitude = longitude
 )

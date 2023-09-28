@@ -18,6 +18,7 @@ fun getTestData(): List<Quest> {
             questTitle = "Eiffel Tower Quest",
             questDescription = "Discover the iconic Eiffel Tower in Paris.",
             questDifficulty = 2,
+            questImageUri = null,
             latitude = 48.8584,
             longitude = 2.2945
         ),
@@ -25,6 +26,7 @@ fun getTestData(): List<Quest> {
             questTitle = "Great Wall of China Quest",
             questDescription = "Explore the vastness of the Great Wall.",
             questDifficulty = 3,
+            questImageUri = null,
             latitude = 40.4319,
             longitude = 116.5704
         ),
@@ -32,6 +34,7 @@ fun getTestData(): List<Quest> {
             questTitle = "Statue of Liberty Quest",
             questDescription = "Visit the symbol of freedom in New York.",
             questDifficulty = 2,
+            questImageUri = null,
             latitude = 40.6892,
             longitude = -74.0445
         ),
@@ -39,6 +42,7 @@ fun getTestData(): List<Quest> {
             questTitle = "Pyramids of Giza Quest",
             questDescription = "Unravel the mysteries of ancient Egypt.",
             questDifficulty = 3,
+            questImageUri = null,
             latitude = 29.9792,
             longitude = 31.1342
         ),
@@ -46,6 +50,7 @@ fun getTestData(): List<Quest> {
             questTitle = "Taj Mahal Quest",
             questDescription = "Witness the beauty of the Taj Mahal in Agra.",
             questDifficulty = 2,
+            questImageUri = null,
             latitude = 27.1751,
             longitude = 78.0421
         ),
@@ -53,6 +58,7 @@ fun getTestData(): List<Quest> {
             questTitle = "Machu Picchu Quest",
             questDescription = "Trek to the historical site of Machu Picchu.",
             questDifficulty = 4,
+            questImageUri = null,
             latitude = -13.1631,
             longitude = -72.5450
         ),
@@ -60,6 +66,7 @@ fun getTestData(): List<Quest> {
             questTitle = "Sydney Opera House Quest",
             questDescription = "Experience the architectural marvel in Sydney.",
             questDifficulty = 1,
+            questImageUri = null,
             latitude = -33.8568,
             longitude = 151.2153
         )

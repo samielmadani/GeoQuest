@@ -1,10 +1,12 @@
 package com.example.geoquest.ui.quest
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -18,9 +20,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -32,6 +36,9 @@ import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.home.HomeDestination
 import com.example.geoquest.ui.navigation.NavigationDestination
 import com.example.geoquest.ui.theme.GeoQuestTheme
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -40,13 +47,17 @@ object CreateQuestDestination: NavigationDestination {
     override val titleRes = R.string.create_quest_title
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun CreateQuest(
     coroutineScope: CoroutineScope,
     navigateBack: () -> Unit,
+    navigateToCamera: () -> Unit,
     viewModel: CreateQuestViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+
+    val cameraPermissionState: PermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
+
     Scaffold(
         topBar = {
             GeoQuestTopBar(
@@ -65,6 +76,9 @@ fun CreateQuest(
                         navigateBack()
                     }
             },
+            hasPermission = cameraPermissionState.hasPermission,
+            onRequestPermission = cameraPermissionState::launchPermissionRequest,
+            navigateToCamera = navigateToCamera,
             modifier = Modifier
                 .padding(contentPadding)
                 .verticalScroll(rememberScrollState())
@@ -79,13 +93,31 @@ fun CreateQuestBody(
     questUiState: QuestUiState,
     onQuestValueChange: (QuestDetails) -> Unit,
     onCreateClick: () -> Unit,
+    hasPermission: Boolean,
+    onRequestPermission: () -> Unit,
+    navigateToCamera: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CreateQuestViewModel
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large))
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large)),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.default_image),
+            contentDescription = stringResource(id = R.string.default_image),
+            modifier = Modifier.size(dimensionResource(id = R.dimen.image_size))
+        )
+        Button(onClick = {
+            if (hasPermission) {
+                navigateToCamera()
+            } else {
+                onRequestPermission()
+            }
+        }) {
+            Text(text = stringResource(id = R.string.take_photo))
+        }
         QuestInputForm(
             questDetails = questUiState.questDetails,
             onValueChange = onQuestValueChange,
@@ -128,7 +160,8 @@ fun QuestInputForm(
 
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium))
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium)),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         OutlinedTextField(
             value = questDetails.questTitle,
@@ -153,6 +186,10 @@ fun QuestInputForm(
 @Composable
 fun CreateScreenPreview() {
     GeoQuestTheme {
-        CreateQuest(rememberCoroutineScope(), navigateBack = {  })
+        CreateQuest(
+            rememberCoroutineScope(),
+            navigateBack = {},
+            navigateToCamera = {}
+        )
     }
 }
