@@ -111,7 +111,6 @@ fun CreateQuestBody(
     lastCapturedPhotoViewModel: LastCapturedPhotoViewModel
 ) {
     val lastCapturedPhoto:Bitmap? by lastCapturedPhotoViewModel.lastCapturedPhoto.observeAsState(null)
-    println(lastCapturedPhoto)
 
 
     Column(
