@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
@@ -23,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -66,13 +68,21 @@ fun FindQuestScreen(
             horizontalAlignment = Alignment.CenterHorizontally // Center-align content horizontally
         ) {
             // Description (40%)
-            Text(
-                text = "Reach the marker on the map and take a photo of the following object!",
-                style = TextStyle(
-                    fontSize = 16.sp
-                ),
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                contentAlignment = Alignment.Center // Center-align content within the Box
+            ) {
+                Text(
+                    text = "Reach the marker on the map and take a photo of the following object!",
+                    style = TextStyle(
+                        fontSize = 16.sp
+                    ),
+                    textAlign = TextAlign.Start, // Left-align text within the Box
+                    modifier = Modifier.padding(horizontal = 16.dp) // Add horizontal padding for left alignment
+                )
+            }
 
             // Image (40%)
             Image(
