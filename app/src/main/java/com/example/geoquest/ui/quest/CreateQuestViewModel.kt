@@ -45,7 +45,7 @@ class CreateQuestViewModel(private val sharedPreferences: SharedPreferences, pri
      */
     suspend fun saveQuest() {
         val questDetails = questUiState.questDetails
-        if (validateInput(questDetails) && capturedImageUri != null) {
+        if (validateInput(questDetails)) {
             val quest = questDetails.toQuest()
             quest.questImageUri = capturedImageUri.toString()
             questRepository.addQuest(quest)
