@@ -204,9 +204,12 @@ fun QuestCard(
         shape = RoundedCornerShape(dimensionResource(id = R.dimen.padding_small)),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(dimensionResource(id = R.dimen.padding_medium))
+            .padding(dimensionResource(id = R.dimen.padding_medium)),
     ) {
-        Row {
+        Row (
+            verticalAlignment = Alignment.CenterVertically
+        )
+        {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_launcher_foreground),
                     contentDescription = null,
@@ -221,8 +224,6 @@ fun QuestCard(
                 Text(
                     text = quest.questTitle,
                     style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier
-                        .padding(dimensionResource(id = R.dimen.padding_small)),
                 )
                 DifficultyStars(quest.questDifficulty)
                 Button(

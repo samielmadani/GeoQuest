@@ -84,7 +84,10 @@ fun GeoQuestNavGraph(
                     )
                 }
                 composable(route = SettingsDestination.route) {
-                    SettingsScreen(navigateUp = { navController.navigate(HomeDestination.route) })
+                    SettingsScreen(
+                        navigateUp = { navController.navigate(HomeDestination.route) },
+                        navigateToHomeScreen = { navController.navigate(HomeDestination.route) }
+                    )
                 }
                 composable(route = CameraScreenDestination.route) {
                     CameraScreen(

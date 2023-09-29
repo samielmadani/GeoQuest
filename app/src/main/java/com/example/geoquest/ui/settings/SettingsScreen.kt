@@ -47,6 +47,7 @@ object SettingsDestination: NavigationDestination {
 @Composable
 fun SettingsScreen(
     navigateUp: () -> Unit,
+    navigateToHomeScreen: () -> Unit,
     viewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -125,6 +126,7 @@ fun SettingsScreen(
 
                 Button(onClick = {
                     viewModel.saveSettings()
+                    navigateToHomeScreen()
                 }) {
                     Text(
                         text = "Save"
@@ -196,7 +198,8 @@ fun LatLongInput(
 fun SettingsPreview() {
     GeoQuestTheme {
         SettingsScreen(
-            navigateUp = {}
+            navigateUp = {},
+            navigateToHomeScreen = {}
         )
     }
 }

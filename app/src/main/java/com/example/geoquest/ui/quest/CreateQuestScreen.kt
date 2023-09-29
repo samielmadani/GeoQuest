@@ -227,7 +227,7 @@ fun DifficultySetter(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Difficulty:")
+        Text(text = "Select Difficulty:")
         Row(
             modifier = Modifier.padding(8.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
