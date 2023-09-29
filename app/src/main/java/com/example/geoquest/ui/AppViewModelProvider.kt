@@ -22,7 +22,10 @@ object AppViewModelProvider {
             HomeViewModel(geoQuestApplication().container.questRepository)
         }
         initializer {
-            CreateQuestViewModel(geoQuestApplication().container.sharedPreferences, geoQuestApplication().container.questRepository)
+            CreateQuestViewModel(
+                geoQuestApplication().container.sharedPreferences,
+                geoQuestApplication().container.questRepository
+            )
         }
         initializer {
             ViewQuestViewModel(this.createSavedStateHandle(), geoQuestApplication().container.questRepository)

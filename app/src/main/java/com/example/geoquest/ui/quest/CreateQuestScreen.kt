@@ -19,9 +19,12 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -33,7 +36,6 @@ import com.example.geoquest.R
 import com.example.geoquest.model.getCurrentLocation
 import com.example.geoquest.model.openMap
 import com.example.geoquest.ui.AppViewModelProvider
-import com.example.geoquest.ui.home.HomeDestination
 import com.example.geoquest.ui.navigation.NavigationDestination
 import com.example.geoquest.ui.theme.GeoQuestTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -97,18 +99,32 @@ fun CreateQuestBody(
     onRequestPermission: () -> Unit,
     navigateToCamera: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CreateQuestViewModel
+    viewModel: CreateQuestViewModel,
+    lastCapturedPhotoViewModel: LastCapturedPhotoViewModel = viewModel()
 ) {
+    val lastCapturedPhoto by lastCapturedPhotoViewModel.lastCapturedPhoto.collectAsState()
+    println(lastCapturedPhoto)
+
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.default_image),
-            contentDescription = stringResource(id = R.string.default_image),
-            modifier = Modifier.size(dimensionResource(id = R.dimen.image_size))
-        )
+        if (lastCapturedPhoto != null) {
+            lastCapturedPhoto?.asImageBitmap()?.let {
+                Image(
+                    bitmap = it,
+                    contentDescription = stringResource(id = R.string.default_image),
+                    modifier = Modifier.size(dimensionResource(id = R.dimen.image_size))
+                )
+            }
+        } else {
+            Image(
+                painter = painterResource(id = R.drawable.default_image),
+                contentDescription = stringResource(id = R.string.default_image),
+                modifier = Modifier.size(dimensionResource(id = R.dimen.image_size))
+            )
+        }
         Button(onClick = {
             if (hasPermission) {
                 navigateToCamera()

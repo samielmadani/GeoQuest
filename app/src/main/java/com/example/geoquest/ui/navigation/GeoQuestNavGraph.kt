@@ -11,7 +11,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.geoquest.model.Quest
 import com.example.geoquest.ui.home.HomeDestination
 import com.example.geoquest.ui.home.HomeScreen
 import com.example.geoquest.ui.quest.CameraScreen
@@ -20,8 +19,8 @@ import com.example.geoquest.ui.quest.CreateQuest
 import com.example.geoquest.ui.quest.CreateQuestDestination
 import com.example.geoquest.ui.quest.FindQuestDestination
 import com.example.geoquest.ui.quest.FindQuestScreen
-import com.example.geoquest.ui.quest.ViewQuestScreen
 import com.example.geoquest.ui.quest.ViewQuestDestination
+import com.example.geoquest.ui.quest.ViewQuestScreen
 import com.example.geoquest.ui.settings.SettingsDestination
 import com.example.geoquest.ui.settings.SettingsScreen
 import com.example.geoquest.ui.signup.SignUpDestination
@@ -88,7 +87,9 @@ fun GeoQuestNavGraph(
                     SettingsScreen(navigateUp = { navController.navigate(HomeDestination.route) })
                 }
                 composable(route = CameraScreenDestination.route) {
-                    CameraScreen()
+                    CameraScreen(
+                        navigateToCreateQuest = { navController.navigate(CreateQuestDestination.route) }
+                    )
                 }
             }
         }

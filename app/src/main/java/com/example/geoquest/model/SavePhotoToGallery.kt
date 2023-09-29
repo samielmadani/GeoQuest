@@ -27,14 +27,14 @@ class SavePhotoToGallery(private val context: Context) {
 
             val nowTimestamp: Long = System.currentTimeMillis()
             val imageContentValues: ContentValues = ContentValues().apply {
-                put(MediaStore.Images.Media.DISPLAY_NAME, "Your image name" + ".jpg")
+                put(MediaStore.Images.Media.DISPLAY_NAME, "image: $nowTimestamp.jpg")
                 put(MediaStore.Images.Media.MIME_TYPE, "image/jpg")
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     put(MediaStore.MediaColumns.DATE_TAKEN, nowTimestamp)
                     put(
                         MediaStore.MediaColumns.RELATIVE_PATH,
-                        Environment.DIRECTORY_DCIM + "/YourAppNameOrAnyOtherSubFolderName"
+                        Environment.DIRECTORY_DCIM + "/app/sampledata"
                     )
                     put(MediaStore.MediaColumns.IS_PENDING, 1)
                 }
@@ -43,8 +43,8 @@ class SavePhotoToGallery(private val context: Context) {
                     put(MediaStore.Images.Media.DATE_TAKEN, nowTimestamp)
                     put(MediaStore.Images.Media.DATE_ADDED, nowTimestamp)
                     put(MediaStore.Images.Media.DATE_MODIFIED, nowTimestamp)
-                    put(MediaStore.Images.Media.AUTHOR, "Your Name")
-                    put(MediaStore.Images.Media.DESCRIPTION, "Your description")
+                    put(MediaStore.Images.Media.AUTHOR, "GeoQuest")
+                    put(MediaStore.Images.Media.DESCRIPTION, "An image taken via the geoquest app.")
                 }
             }
 

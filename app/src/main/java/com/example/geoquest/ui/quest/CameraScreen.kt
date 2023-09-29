@@ -52,12 +52,21 @@ object CameraScreenDestination: NavigationDestination {
 }
 @Composable
 fun CameraScreen(
-    viewModel: CameraViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    navigateToCreateQuest: () -> Unit,
+    viewModel: CameraViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    lastCapturedPhotoViewModel: LastCapturedPhotoViewModel = viewModel()
 ) {
     val cameraState: CameraState by viewModel.state.collectAsState()
+    val lastCapturedPhoto = cameraState.capturedImage
+
+    lastCapturedPhotoViewModel.setLastCapturedPhoto(lastCapturedPhoto)
+    println("view model: $lastCapturedPhotoViewModel")
+    println("variable: $lastCapturedPhoto")
+
     CameraContent(
         onPhotoCaptured = viewModel::storePhotoInGallery,
-        lastCapturedPhoto = cameraState.capturedImage
+        lastCapturedPhoto = lastCapturedPhoto,
+        navigateToCreateQuest = navigateToCreateQuest
     )
 }
 
@@ -65,7 +74,8 @@ fun CameraScreen(
 @Composable
 fun CameraContent(
     onPhotoCaptured: (Bitmap) -> Unit,
-    lastCapturedPhoto: Bitmap? = null
+    lastCapturedPhoto: Bitmap? = null,
+    navigateToCreateQuest: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -78,7 +88,8 @@ fun CameraContent(
             ExtendedFloatingActionButton(
                 onClick = {
                     capturePhoto(context, cameraController, onPhotoCaptured)
-                }) {
+                }
+            ) {
                 Text(text = stringResource(id = R.string.take_photo))
             }
         }
@@ -171,6 +182,8 @@ fun Bitmap.rotateBitmap(rotationDegrees: Int): Bitmap {
 @Composable
 fun CameraScreenPreview() {
     GeoQuestTheme {
-        CameraScreen()
+        CameraScreen(
+            navigateToCreateQuest = {}
+        )
     }
 }
