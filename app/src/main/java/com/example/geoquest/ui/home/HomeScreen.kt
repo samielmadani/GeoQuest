@@ -48,6 +48,7 @@ import com.example.geoquest.R
 import com.example.geoquest.model.Quest
 import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.navigation.NavigationDestination
+import com.example.geoquest.ui.quest.DifficultyStars
 import com.example.geoquest.ui.theme.GeoQuestTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionRequired
@@ -223,6 +224,7 @@ fun QuestCard(
                     modifier = Modifier
                         .padding(dimensionResource(id = R.dimen.padding_small)),
                 )
+                DifficultyStars(quest.questDifficulty)
                 Button(
                     onClick = { navigateToViewQuest(quest.questId) },
                     shape = MaterialTheme.shapes.small
@@ -232,6 +234,13 @@ fun QuestCard(
             }
         }
     }
+}
+
+@Composable
+fun MapTarget(){
+    GoogleMap(
+        modifier = Modifier.fillMaxSize(),
+    )
 }
 
 @Preview(showBackground = true)
@@ -244,11 +253,4 @@ fun HomeScreenPreview() {
             navigateToSettings = {}
         )
     }
-}
-
-@Composable
-fun MapTarget(){
-    GoogleMap(
-        modifier = Modifier.fillMaxSize(),
-    )
 }
