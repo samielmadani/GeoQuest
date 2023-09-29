@@ -23,6 +23,15 @@ class CreateQuestViewModel(private val sharedPreferences: SharedPreferences, pri
 
     private var capturedImageUri by mutableStateOf<Uri?>(null)
 
+    var selectedDifficulty by mutableStateOf(1)
+        private set
+
+
+    fun onDifficultySelected(selectedDifficulty: Int) {
+        // Update the selected difficulty level in your ViewModel or wherever you need it
+        this.selectedDifficulty = selectedDifficulty
+    }
+
     fun updateUiState(questDetails: QuestDetails) {
         questUiState =
             QuestUiState(questDetails = questDetails, isEntryValid = validateInput(questDetails))
@@ -48,6 +57,7 @@ class CreateQuestViewModel(private val sharedPreferences: SharedPreferences, pri
         if (validateInput(questDetails)) {
             val quest = questDetails.toQuest()
             quest.questImageUri = capturedImageUri.toString()
+            quest.questDifficulty = selectedDifficulty
             questRepository.addQuest(quest)
         }
     }

@@ -13,7 +13,7 @@ data class Quest (
     val questId: Int = 0,
     val questTitle: String,
     val questDescription: String,
-    val questDifficulty: Int,
+    var questDifficulty: Int,
     var questImageUri: String?,
     val latitude: Double,
     val longitude: Double

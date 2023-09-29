@@ -2,8 +2,10 @@ package com.example.geoquest.ui.quest
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -11,6 +13,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,6 +36,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.geoquest.GeoQuestTopBar
 import com.example.geoquest.R
@@ -104,6 +111,7 @@ fun CreateQuestBody(
 ) {
     val lastCapturedPhoto by lastCapturedPhotoViewModel.lastCapturedPhoto.collectAsState()
     println(lastCapturedPhoto)
+
 
     Column(
         modifier = modifier,
@@ -188,8 +196,10 @@ fun QuestInputForm(
         OutlinedTextField(
             value = questDetails.questDescription,
             onValueChange = { onValueChange(questDetails.copy(questDescription = it )) },
-            label = { Text(stringResource(id = R.string.quest_description)) },
+            label = { Text(stringResource(id = R.string.quest_description)) }
         )
+        DifficultySetter(viewModel.selectedDifficulty, viewModel)
+
         Button(onClick = {
             openMap(context, viewModel.questUiState.questDetails.latitude, viewModel.questUiState.questDetails.longitude, viewModel.questUiState.questDetails.questTitle)
         }) {
@@ -208,4 +218,40 @@ fun CreateScreenPreview() {
             navigateToCamera = {}
         )
     }
+}
+
+@Composable
+fun DifficultySetter(
+    selectedDifficulty: Int,
+    viewModel: CreateQuestViewModel
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "Difficulty:")
+        Row(
+            modifier = Modifier.padding(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            for (i in 1..5) {
+                // Step 3: Add click listeners to stars
+                Star(selected = i <= selectedDifficulty, onClick = { viewModel.onDifficultySelected(i) })
+            }
+        }
+    }
+}
+
+@Composable
+fun Star(
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    Icon(
+        imageVector = if (selected) Icons.Default.Star else Icons.Default.Close,
+        contentDescription = "Star",
+        modifier = Modifier
+            .clickable(onClick = onClick)
+            .size(24.dp)
+    )
 }
