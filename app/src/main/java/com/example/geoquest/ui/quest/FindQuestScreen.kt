@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -33,6 +34,8 @@ import com.example.geoquest.R
 import com.example.geoquest.model.openMap
 import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.navigation.NavigationDestination
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.rememberCameraPositionState
 
 object FindQuestDestination: NavigationDestination {
     override val route = "findQuestScreen"
@@ -84,6 +87,12 @@ fun FindQuestScreen(
                 )
             }
 
+            Box(
+                modifier = Modifier.fillMaxHeight(0.5f) // Takes half of the screen height
+            ) {
+                MapTarget()
+            }
+
             // Image (40%)
             Image(
                 painter = painterResource(id = R.drawable.default_image),
@@ -104,5 +113,12 @@ fun FindQuestScreen(
             }
         }
     }
+}
+
+@Composable
+fun MapTarget(){
+    GoogleMap(
+        modifier = Modifier.fillMaxSize(),
+    )
 }
 

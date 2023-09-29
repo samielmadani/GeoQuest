@@ -40,33 +40,6 @@ class ViewQuestViewModel(
                 .toQuestUiState(true)
         }
     }
-    /**
-     * Update the task in the [TasksRepository]'s data source
-     */
-    suspend fun updateItem() {
-        if (validateInput(questUiState.questDetails)) {
-            questRepository.updateQuest(questUiState.questDetails.toQuest())
-        }
-    }
 
-    /**
-     * Updates the [taskUiState] with the value provided in the argument.
-     */
-    fun updateUiState(questDetails: QuestDetails) {
-        questUiState =
-            QuestUiState(questDetails = questDetails, isEntryValid = validateInput(questDetails))
-    }
-
-    private fun validateInput(uiState: QuestDetails = questUiState.questDetails): Boolean {
-        return with(uiState) {
-            questTitle.isNotBlank() && isValidText(questTitle) &&
-                    (isValidText(questDescription) || questDescription.isBlank()) &&
-                    questTitle.length <= 36 && questDescription.length <= 256
-        }
-    }
-
-    private fun isValidText(text: String): Boolean {
-        return text.matches(Regex("(?=.*[a-zA-Z])[a-zA-Z0-9 ]+"))
-    }
 
 }
