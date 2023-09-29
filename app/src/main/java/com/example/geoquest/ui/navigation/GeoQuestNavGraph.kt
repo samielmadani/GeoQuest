@@ -6,6 +6,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -19,6 +20,7 @@ import com.example.geoquest.ui.quest.CreateQuest
 import com.example.geoquest.ui.quest.CreateQuestDestination
 import com.example.geoquest.ui.quest.FindQuestDestination
 import com.example.geoquest.ui.quest.FindQuestScreen
+import com.example.geoquest.ui.quest.LastCapturedPhotoViewModel
 import com.example.geoquest.ui.quest.ViewQuestDestination
 import com.example.geoquest.ui.quest.ViewQuestScreen
 import com.example.geoquest.ui.settings.SettingsDestination
@@ -36,6 +38,8 @@ fun GeoQuestNavGraph(
     modifier: Modifier = Modifier,
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val lastCapturedPhotoViewModel: LastCapturedPhotoViewModel = viewModel()
+
     Scaffold {contentPadding ->
         Box(modifier = Modifier.padding(contentPadding))
         {
@@ -61,7 +65,8 @@ fun GeoQuestNavGraph(
                     CreateQuest(
                         coroutineScope = coroutineScope,
                         navigateBack = { navController.navigate(HomeDestination.route) },
-                        navigateToCamera = { navController.navigate(CameraScreenDestination.route) }
+                        navigateToCamera = { navController.navigate(CameraScreenDestination.route) },
+                        lastCapturedPhotoViewModel = lastCapturedPhotoViewModel
                     )
                 }
                 composable(route = ViewQuestDestination.routeWithArgs,
@@ -91,7 +96,8 @@ fun GeoQuestNavGraph(
                 }
                 composable(route = CameraScreenDestination.route) {
                     CameraScreen(
-                        navigateToCreateQuest = { navController.navigate(CreateQuestDestination.route) }
+                        navigateToCreateQuest = { navController.navigate(CreateQuestDestination.route) },
+                        lastCapturedPhotoViewModel = lastCapturedPhotoViewModel
                     )
                 }
             }

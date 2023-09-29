@@ -54,7 +54,7 @@ object CameraScreenDestination: NavigationDestination {
 fun CameraScreen(
     navigateToCreateQuest: () -> Unit,
     viewModel: CameraViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    lastCapturedPhotoViewModel: LastCapturedPhotoViewModel = viewModel()
+    lastCapturedPhotoViewModel: LastCapturedPhotoViewModel
 ) {
     val cameraState: CameraState by viewModel.state.collectAsState()
     val lastCapturedPhoto = cameraState.capturedImage
@@ -183,7 +183,8 @@ fun Bitmap.rotateBitmap(rotationDegrees: Int): Bitmap {
 fun CameraScreenPreview() {
     GeoQuestTheme {
         CameraScreen(
-            navigateToCreateQuest = {}
+            navigateToCreateQuest = {},
+            lastCapturedPhotoViewModel = viewModel()
         )
     }
 }

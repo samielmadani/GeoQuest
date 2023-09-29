@@ -60,6 +60,7 @@ fun CreateQuest(
     coroutineScope: CoroutineScope,
     navigateBack: () -> Unit,
     navigateToCamera: () -> Unit,
+    lastCapturedPhotoViewModel: LastCapturedPhotoViewModel,
     viewModel: CreateQuestViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
 
@@ -90,7 +91,8 @@ fun CreateQuest(
                 .padding(contentPadding)
                 .verticalScroll(rememberScrollState())
                 .fillMaxWidth(),
-            viewModel = viewModel
+            viewModel = viewModel,
+            lastCapturedPhotoViewModel = lastCapturedPhotoViewModel
         )
     }
 }
@@ -105,7 +107,7 @@ fun CreateQuestBody(
     navigateToCamera: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CreateQuestViewModel,
-    lastCapturedPhotoViewModel: LastCapturedPhotoViewModel = viewModel()
+    lastCapturedPhotoViewModel: LastCapturedPhotoViewModel
 ) {
     val lastCapturedPhoto by lastCapturedPhotoViewModel.lastCapturedPhoto.collectAsState()
     println(lastCapturedPhoto)
@@ -206,17 +208,6 @@ fun QuestInputForm(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun CreateScreenPreview() {
-    GeoQuestTheme {
-        CreateQuest(
-            rememberCoroutineScope(),
-            navigateBack = {},
-            navigateToCamera = {}
-        )
-    }
-}
 
 @Composable
 fun DifficultySetter(
@@ -239,7 +230,6 @@ fun DifficultySetter(
         }
     }
 }
-
 @Composable
 fun Star(
     selected: Boolean,
@@ -252,4 +242,17 @@ fun Star(
             .clickable(onClick = onClick)
             .size(24.dp)
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CreateScreenPreview() {
+    GeoQuestTheme {
+        CreateQuest(
+            rememberCoroutineScope(),
+            navigateBack = {},
+            navigateToCamera = {},
+            lastCapturedPhotoViewModel = viewModel()
+        )
+    }
 }
