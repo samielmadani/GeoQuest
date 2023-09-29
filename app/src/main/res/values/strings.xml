@@ -11,7 +11,7 @@
     <string name="quest_difficulty">Set Difficulty</string>
     <string name="create_quest_button">Create Quest</string>
     <string name="view_button">View</string>
-    <string name="find_button">Find</string>
+    <string name="begin_hunt">Begin Hunt</string>
     <string name="no_quest">There are no quests currently available.</string>
     <string name="view_quest">View Quest</string>
     <string name="find_quest">Find Quest</string>

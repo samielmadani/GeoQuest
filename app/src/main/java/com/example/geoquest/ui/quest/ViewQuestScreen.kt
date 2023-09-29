@@ -100,7 +100,7 @@ fun ViewQuestScreen(
                 onClick = { navigateToFindQuest(viewModel.questId) },
                 shape = MaterialTheme.shapes.small
             ) {
-                Text(text = stringResource(id = R.string.find_button))
+                Text(text = stringResource(id = R.string.begin_hunt))
             }
         }
     }

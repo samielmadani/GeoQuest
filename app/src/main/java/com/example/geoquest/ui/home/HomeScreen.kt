@@ -53,6 +53,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionRequired
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
+import com.google.maps.android.compose.GoogleMap
 
 object HomeDestination: NavigationDestination {
     override val route = "home"
@@ -105,13 +106,22 @@ fun HomeScreen(
                 }
             },
         ) {contentPadding ->
-            HomeBody(
-                questList = homeUiState.questList,
-                navigateToViewQuest,
-                modifier = modifier
-                    .padding(contentPadding)
-                    .fillMaxSize()
-            )
+            Column {
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight(0.4f)
+                        .padding(contentPadding)// Takes half of the screen height
+                ) {
+                    com.example.geoquest.ui.quest.MapTarget()
+                }
+                HomeBody(
+                    questList = homeUiState.questList,
+                    navigateToViewQuest,
+                    modifier = modifier
+                        .fillMaxSize()
+                )
+            }
+
         }
     }
 }
@@ -234,4 +244,11 @@ fun HomeScreenPreview() {
             navigateToSettings = {}
         )
     }
+}
+
+@Composable
+fun MapTarget(){
+    GoogleMap(
+        modifier = Modifier.fillMaxSize(),
+    )
 }

@@ -57,7 +57,7 @@ fun FindQuestScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             GeoQuestTopBar(
-                title = "Find the " + viewModel.questUiState.questDetails.questTitle,
+                title = "Hunting for " + viewModel.questUiState.questDetails.questTitle,
                 canNavigateBack = true,
                 navigateUp = navigateUp
             )
@@ -66,10 +66,14 @@ fun FindQuestScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(contentPadding)
-                .padding(16.dp), // Add padding to center-align content
+                .padding(contentPadding),
             horizontalAlignment = Alignment.CenterHorizontally // Center-align content horizontally
         ) {
+            Box(
+                modifier = Modifier.fillMaxHeight(0.4f) // Takes half of the screen height
+            ) {
+                MapTarget()
+            }
             // Description (40%)
             Box(
                 modifier = Modifier
@@ -82,16 +86,12 @@ fun FindQuestScreen(
                     style = TextStyle(
                         fontSize = 16.sp
                     ),
-                    textAlign = TextAlign.Start, // Left-align text within the Box
+                    textAlign = TextAlign.Center, // Left-align text within the Box
                     modifier = Modifier.padding(horizontal = 16.dp) // Add horizontal padding for left alignment
                 )
             }
 
-            Box(
-                modifier = Modifier.fillMaxHeight(0.5f) // Takes half of the screen height
-            ) {
-                MapTarget()
-            }
+
 
             // Image (40%)
             Image(
