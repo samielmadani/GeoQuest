@@ -61,7 +61,7 @@ fun CreateQuest(
     Scaffold(
         topBar = {
             GeoQuestTopBar(
-                title = stringResource(id = HomeDestination.titleRes),
+                title = stringResource(id = CreateQuestDestination.titleRes),
                 canNavigateBack = true,
                 navigateUp = navigateBack
             )

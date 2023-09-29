@@ -1,5 +1,6 @@
 package com.example.geoquest.ui.quest
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -26,10 +27,15 @@ import com.example.geoquest.model.openMap
 import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.navigation.NavigationDestination
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 
 object ViewQuestDestination: NavigationDestination {
     override val route = "viewQuestScreen"
@@ -57,12 +63,19 @@ fun ViewQuestScreen(
                 navigateUp = navigateUp
             )
         }
-    ) {contentPadding ->
+    ) { contentPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(contentPadding)
+                .padding(16.dp), // Add padding to center-align content
+            horizontalAlignment = Alignment.CenterHorizontally // Center-align content horizontally
         ) {
+            Image(
+                painter = painterResource(id = R.drawable.default_image),
+                contentDescription = stringResource(id = R.string.default_image),
+                modifier = Modifier.size(dimensionResource(id = R.dimen.image_size))
+            )
             Text(
                 text = viewModel.questUiState.questDetails.questTitle,
                 style = TextStyle(
@@ -81,11 +94,7 @@ fun ViewQuestScreen(
 
             DifficultyStars(viewModel.questUiState.questDetails.questDifficulty)
 
-            Button(onClick = {
-                openMap(context, viewModel.questUiState.questDetails.latitude, viewModel.questUiState.questDetails.longitude, viewModel.questUiState.questDetails.questTitle)
-            }) {
-                Text("Open in Map")
-            }
+            Spacer(modifier = Modifier.weight(1f)) // Pushes the "Find" button to the bottom
 
             Button(
                 onClick = { navigateToFindQuest(viewModel.questId) },
@@ -93,10 +102,10 @@ fun ViewQuestScreen(
             ) {
                 Text(text = stringResource(id = R.string.find_button))
             }
-
         }
     }
 }
+
 
 @Composable
 fun DifficultyStars(difficultyLevel: Int) {
