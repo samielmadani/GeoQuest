@@ -85,6 +85,11 @@ fun ViewQuestScreen(
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 ),
+
+            )
+            Text(
+                text = "By: " + viewModel.questUiState.questDetails.author,
+                style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 

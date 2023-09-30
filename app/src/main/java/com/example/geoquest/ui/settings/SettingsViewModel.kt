@@ -20,7 +20,8 @@ fun getTestData(): List<Quest> {
             questDifficulty = 2,
             questImageUri = null,
             latitude = 48.8584,
-            longitude = 2.2945
+            longitude = 2.2945,
+            author = "GeoQuest"
         ),
         Quest(
             questTitle = "Great Wall of China",
@@ -28,7 +29,8 @@ fun getTestData(): List<Quest> {
             questDifficulty = 3,
             questImageUri = null,
             latitude = 40.4319,
-            longitude = 116.5704
+            longitude = 116.5704,
+            author = "GeoQuest"
         ),
         Quest(
             questTitle = "Statue of Liberty",
@@ -36,7 +38,8 @@ fun getTestData(): List<Quest> {
             questDifficulty = 2,
             questImageUri = null,
             latitude = 40.6892,
-            longitude = -74.0445
+            longitude = -74.0445,
+            author = "GeoQuest"
         ),
         Quest(
             questTitle = "Pyramids of Giza",
@@ -44,7 +47,8 @@ fun getTestData(): List<Quest> {
             questDifficulty = 3,
             questImageUri = null,
             latitude = 29.9792,
-            longitude = 31.1342
+            longitude = 31.1342,
+            author = "GeoQuest"
         ),
         Quest(
             questTitle = "Taj Mahal",
@@ -52,7 +56,8 @@ fun getTestData(): List<Quest> {
             questDifficulty = 2,
             questImageUri = null,
             latitude = 27.1751,
-            longitude = 78.0421
+            longitude = 78.0421,
+            author = "GeoQuest"
         ),
         Quest(
             questTitle = "Machu Picchu",
@@ -60,7 +65,8 @@ fun getTestData(): List<Quest> {
             questDifficulty = 4,
             questImageUri = null,
             latitude = -13.1631,
-            longitude = -72.5450
+            longitude = -72.5450,
+            author = "GeoQuest"
         ),
         Quest(
             questTitle = "Sydney Opera House",
@@ -68,7 +74,8 @@ fun getTestData(): List<Quest> {
             questDifficulty = 1,
             questImageUri = null,
             latitude = -33.8568,
-            longitude = 151.2153
+            longitude = 151.2153,
+            author = "GeoQuest"
         )
     )
 }

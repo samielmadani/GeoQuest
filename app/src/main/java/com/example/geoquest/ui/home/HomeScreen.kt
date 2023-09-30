@@ -241,6 +241,10 @@ fun QuestCard(
                         text = quest.questTitle,
                         style = MaterialTheme.typography.headlineMedium,
                     )
+                    Text(
+                        text = "By: " + quest.author,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
                     DifficultyStars(quest.questDifficulty)
                     Button(
                         onClick = { navigateToViewQuest(quest.questId) },

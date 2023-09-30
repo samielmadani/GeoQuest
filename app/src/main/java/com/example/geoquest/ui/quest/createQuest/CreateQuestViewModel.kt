@@ -6,14 +6,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.geoquest.model.Quest
 import com.example.geoquest.model.QuestRepository
 
 /**
  * ViewModel to validate and insert quests in the Room database
  */
+
+
 class CreateQuestViewModel(private val sharedPreferences: SharedPreferences, private val questRepository: QuestRepository): ViewModel() {
-    private val editor = sharedPreferences.edit()
 
     /**
      * Holds current quest ui state
@@ -54,6 +56,7 @@ class CreateQuestViewModel(private val sharedPreferences: SharedPreferences, pri
      */
     suspend fun saveQuest() {
         val questDetails = questUiState.questDetails
+        questDetails.author = sharedPreferences.getString("userName", "GeoQuest").toString()
         if (validateInput(questDetails)) {
             val quest = questDetails.toQuest()
             quest.questImageUri = capturedImageUri.toString()
@@ -86,13 +89,14 @@ data class QuestUiState(
 )
 
 data class QuestDetails(
-    val questId: Int = 0,
-    val questTitle: String = "",
-    val questDescription: String = "",
-    val questDifficulty: Int = 1,
-    val questImageUri: String? = null,
-    val latitude: Double = 0.0,
-    val longitude: Double = 0.0
+    var questId: Int = 0,
+    var questTitle: String = "",
+    var questDescription: String = "",
+    var questDifficulty: Int = 1,
+    var questImageUri: String? = null,
+    var latitude: Double = 0.0,
+    var longitude: Double = 0.0,
+    var author: String = "GeoQuest"
 )
 
 /**
@@ -113,7 +117,8 @@ fun QuestDetails.toQuest(): Quest = Quest(
     questDifficulty = questDifficulty,
     questImageUri = questImageUri,
     latitude = latitude,
-    longitude = longitude
+    longitude = longitude,
+    author = author
 )
 
 /**
@@ -126,5 +131,6 @@ fun Quest.toQuestDetails(): QuestDetails = QuestDetails(
     questDifficulty = questDifficulty,
     questImageUri = questImageUri,
     latitude = latitude,
-    longitude = longitude
+    longitude = longitude,
+    author = author
 )
