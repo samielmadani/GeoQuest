@@ -14,6 +14,9 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.geoquest.ui.AppViewModelProvider
+import com.example.geoquest.ui.settings.SettingsViewModel
 
 private val DarkColorPalette = darkColorScheme(
     primary = Purple80,
@@ -39,17 +42,17 @@ private val LightColorPalette = lightColorScheme(
 
 @Composable
 fun GeoQuestTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    viewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory),
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            if (viewModel.getDarkModeEnabled()) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkColorPalette
+        viewModel.getDarkModeEnabled() -> DarkColorPalette
         else -> LightColorPalette
     }
     val view = LocalView.current
@@ -57,7 +60,7 @@ fun GeoQuestTheme(
         SideEffect {
             val window = (view.context as Activity).window
             window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = viewModel.getDarkModeEnabled()
         }
     }
 
