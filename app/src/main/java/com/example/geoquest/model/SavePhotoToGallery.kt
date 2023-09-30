@@ -14,7 +14,7 @@ import java.io.OutputStream
 
 class SavePhotoToGallery(private val context: Context) {
 
-    suspend fun savePhotoToGallery(capturePhotoBitmap: Bitmap): Result<Unit> =
+    suspend fun savePhotoToGallery(capturePhotoBitmap: Bitmap): Result<Uri> =
         withContext(Dispatchers.IO) {
             val resolver: ContentResolver = context.contentResolver
 
@@ -44,13 +44,13 @@ class SavePhotoToGallery(private val context: Context) {
                     put(MediaStore.Images.Media.DATE_ADDED, nowTimestamp)
                     put(MediaStore.Images.Media.DATE_MODIFIED, nowTimestamp)
                     put(MediaStore.Images.Media.AUTHOR, "GeoQuest")
-                    put(MediaStore.Images.Media.DESCRIPTION, "An image taken via the geoquest app.")
+                    put(MediaStore.Images.Media.DESCRIPTION, "An image taken via the GeoQuest app.")
                 }
             }
 
             val imageMediaStoreUri: Uri? = resolver.insert(imageCollection, imageContentValues)
 
-            val result: Result<Unit> = imageMediaStoreUri?.let { uri ->
+            val result: Result<Uri> = imageMediaStoreUri?.let { uri ->
                 kotlin.runCatching {
                     resolver.openOutputStream(uri).use { outputStream: OutputStream? ->
                         checkNotNull(outputStream) { "Couldn't create file for gallery, MediaStore output stream is null" }
@@ -63,7 +63,7 @@ class SavePhotoToGallery(private val context: Context) {
                         resolver.update(uri, imageContentValues, null, null)
                     }
 
-                    Result.success(Unit)
+                    Result.success(uri) // Return the URI after successful saving
                 }.getOrElse { exception: Throwable ->
                     exception.message?.let(::println)
                     resolver.delete(uri, null, null)
@@ -76,3 +76,4 @@ class SavePhotoToGallery(private val context: Context) {
             return@withContext result
         }
 }
+
