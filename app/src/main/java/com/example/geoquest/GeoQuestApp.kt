@@ -3,6 +3,7 @@ package com.example.geoquest
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -35,7 +36,8 @@ fun GeoQuestTopBar(
     scrollBehavior: TopAppBarScrollBehavior? = null,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit = {},
-    onSettingsClick: (() -> Unit)? = null
+    onSettingsClick: (() -> Unit)? = null,
+    onShareClick: (() -> Unit)? = null
 ) {
     CenterAlignedTopAppBar(
         title = { Text(text = title) },
@@ -56,6 +58,13 @@ fun GeoQuestTopBar(
                     Icon(
                         imageVector = Icons.Default.Settings, // Use the settings icon
                         contentDescription = "Settings"
+                    )
+                }
+            } else if (onShareClick != null) {
+                IconButton(onClick = onShareClick) {
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = "Share Quest"
                     )
                 }
             }

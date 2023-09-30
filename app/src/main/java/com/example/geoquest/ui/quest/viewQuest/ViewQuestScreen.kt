@@ -17,12 +17,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,7 +35,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.geoquest.GeoQuestTopBar
 import com.example.geoquest.R
 import com.example.geoquest.ui.AppViewModelProvider
+import com.example.geoquest.ui.home.shareQuest
 import com.example.geoquest.ui.navigation.NavigationDestination
+import com.example.geoquest.ui.quest.createQuest.toQuest
 
 object ViewQuestDestination: NavigationDestination {
     override val route = "viewQuestScreen"
@@ -52,6 +54,7 @@ fun ViewQuestScreen(
     viewModel: ViewQuestViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val context = LocalContext.current
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -59,7 +62,8 @@ fun ViewQuestScreen(
             GeoQuestTopBar(
                 title = stringResource(id = ViewQuestDestination.titleRes),
                 canNavigateBack = true,
-                navigateUp = navigateUp
+                navigateUp = navigateUp,
+                onShareClick = { shareQuest(viewModel.questUiState.questDetails.toQuest(), context) }
             )
         }
     ) { contentPadding ->
