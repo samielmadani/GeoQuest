@@ -91,7 +91,6 @@ class SettingsViewModel(
     var settingsState by mutableStateOf(
         SettingsState(
             userName = getUserName() ?: "",
-            darkModeEnabled = getDarkModeEnabled(),
             developerOptions = getDeveloperOptions(),
             latitude = getLocation().first,
             longitude = getLocation().second,
@@ -104,8 +103,7 @@ class SettingsViewModel(
         userName: String = settingsState.userName,
         developerOptions: Boolean = settingsState.developerOptions,
         latitude: String = settingsState.latitude,
-        longitude: String = settingsState.longitude,
-        darkModeEnabled: Boolean = settingsState.darkModeEnabled // New parameter for Dark Mode
+        longitude: String = settingsState.longitude
     ) {
         settingsState =
             SettingsState(
@@ -113,15 +111,11 @@ class SettingsViewModel(
                 developerOptions = developerOptions,
                 latitude = latitude,
                 longitude = longitude,
-                darkModeEnabled = darkModeEnabled, // Update Dark Mode state
-                isEntryValid = validateInput(userName)
-            )
+                isEntryValid = validateInput(userName))
     }
-
 
     fun saveSettings() {
         saveUserName(settingsState.userName)
-        saveDarkModeEnabled(settingsState.darkModeEnabled)
         saveDeveloperOptions(settingsState.developerOptions)
         saveLocation(settingsState.latitude, settingsState.longitude)
     }
@@ -168,15 +162,6 @@ class SettingsViewModel(
         return sharedPreferences.getBoolean("developerOptions", false)
     }
 
-    private fun saveDarkModeEnabled(isSet: Boolean) {
-        editor.putBoolean("darkModeEnabled", isSet).apply()
-    }
-
-    fun getDarkModeEnabled(): Boolean {
-        return sharedPreferences.getBoolean("darkModeEnabled", false)
-    }
-
-
     private fun saveLocation(latitude: String, longitude: String) {
         editor.putString("latitude", latitude).apply()
         editor.putString("longitude", longitude).apply()
@@ -196,6 +181,5 @@ data class SettingsState(
     val developerOptions: Boolean = false,
     val latitude: String = "0.0",
     val longitude: String = "0.0",
-    val isEntryValid: Boolean = false,
-    val darkModeEnabled: Boolean = false
+    val isEntryValid: Boolean = false
 )

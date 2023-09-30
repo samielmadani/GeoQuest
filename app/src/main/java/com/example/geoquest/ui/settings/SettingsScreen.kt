@@ -90,25 +90,6 @@ fun SettingsScreen(
                     singleLine = true,
                 )
 
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(text = "Dark Mode")
-                    Switch(
-                        checked = viewModel.settingsState.darkModeEnabled,
-                        onCheckedChange = {
-                            viewModel.updateSettingsState(darkModeEnabled = it)
-                            // You can also update the theme here based on the Dark Mode state
-                        }
-                    )
-                }
-
-
                 DeveloperOptionsToggle(
                     isChecked = viewModel.settingsState.developerOptions,
                     onCheckedChange = { viewModel.updateSettingsState(developerOptions = it) }
