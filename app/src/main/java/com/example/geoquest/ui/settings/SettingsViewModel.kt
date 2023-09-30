@@ -16,7 +16,7 @@ fun getTestData(): List<Quest> {
     return listOf(
         Quest(
             questTitle = "Eiffel Tower",
-            questDescription = "Discover the iconic Eiffel Tower in Paris.",
+            questDescription = "Explore the romantic city of Paris and embark on a quest to discover the iconic Eiffel Tower. It stands tall in the heart of the city, offering breathtaking views from its iron structure. To find it, head to the Champ de Mars park, where you'll see the tower's graceful silhouette against the Parisian skyline.",
             questDifficulty = 2,
             questImageUri = null,
             latitude = 48.8584,
@@ -24,7 +24,7 @@ fun getTestData(): List<Quest> {
         ),
         Quest(
             questTitle = "Great Wall of China",
-            questDescription = "Explore the vastness of the Great Wall.",
+            questDescription = "Embark on an adventure to explore the vastness of the Great Wall of China. This ancient marvel winds through rugged landscapes, and your quest begins at one of its most picturesque sections. Look for a location near Badaling, where you can see this awe-inspiring structure snaking along the mountains.",
             questDifficulty = 3,
             questImageUri = null,
             latitude = 40.4319,
@@ -32,7 +32,7 @@ fun getTestData(): List<Quest> {
         ),
         Quest(
             questTitle = "Statue of Liberty",
-            questDescription = "Visit the symbol of freedom in New York.",
+            questDescription = "Visit the symbol of freedom in New York City, the Statue of Liberty. To start your quest, head to Liberty Island in New York Harbor. Look for Lady Liberty holding her torch high, welcoming visitors to the United States. The statue's green hue is an iconic sight against the city skyline.",
             questDifficulty = 2,
             questImageUri = null,
             latitude = 40.6892,
@@ -40,7 +40,7 @@ fun getTestData(): List<Quest> {
         ),
         Quest(
             questTitle = "Pyramids of Giza",
-            questDescription = "Unravel the mysteries of ancient Egypt.",
+            questDescription = "Embark on a journey to unravel the mysteries of ancient Egypt at the Pyramids of Giza. These majestic structures rise from the desert sands near Cairo. Your quest begins at the Great Pyramid of Khufu, the largest of the three pyramids. Search for this iconic wonder amid the Egyptian desert.",
             questDifficulty = 3,
             questImageUri = null,
             latitude = 29.9792,
@@ -48,7 +48,7 @@ fun getTestData(): List<Quest> {
         ),
         Quest(
             questTitle = "Taj Mahal",
-            questDescription = "Witness the beauty of the Taj Mahal in Agra.",
+            questDescription = "Witness the unparalleled beauty of the Taj Mahal in Agra, India. Your quest takes you to the banks of the Yamuna River, where you'll find this exquisite white marble mausoleum. Look for its stunning architecture and pristine gardens, which make it one of the world's most renowned monuments of love.",
             questDifficulty = 2,
             questImageUri = null,
             latitude = 27.1751,
@@ -56,7 +56,7 @@ fun getTestData(): List<Quest> {
         ),
         Quest(
             questTitle = "Machu Picchu",
-            questDescription = "Trek to the historical site of Machu Picchu.",
+            questDescription = "Embark on a challenging trek to the historical site of Machu Picchu in Peru. Your quest will lead you to the mist-shrouded ancient city nestled high in the Andes Mountains. To start, journey to Aguas Calientes and then hike up the Inca Trail to uncover the secrets of this UNESCO World Heritage Site.",
             questDifficulty = 4,
             questImageUri = null,
             latitude = -13.1631,
@@ -64,7 +64,7 @@ fun getTestData(): List<Quest> {
         ),
         Quest(
             questTitle = "Sydney Opera House",
-            questDescription = "Experience the architectural marvel in Sydney.",
+            questDescription = "Experience the architectural marvel of the Sydney Opera House in Australia. Begin your quest in the vibrant city of Sydney, near Circular Quay. Look for the distinctive white shells that make up this world-renowned performing arts venue, a masterpiece of modern design along the Sydney Harbour.",
             questDifficulty = 1,
             questImageUri = null,
             latitude = -33.8568,

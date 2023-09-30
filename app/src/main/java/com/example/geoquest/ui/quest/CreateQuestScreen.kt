@@ -5,11 +5,14 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -23,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -187,17 +191,33 @@ fun QuestInputForm(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        OutlinedTextField(
-            value = questDetails.questTitle,
-            onValueChange = { onValueChange(questDetails.copy(questTitle = it )) },
-            label = { Text(stringResource(id = R.string.quest_title)) },
-            singleLine = true,
+        Box(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .widthIn(max = 280.dp)
+
+        ) {
+            OutlinedTextField(
+                value = questDetails.questTitle,
+                onValueChange = { onValueChange(questDetails.copy(questTitle = it)) },
+                label = { Text(stringResource(id = R.string.quest_title)) },
+                singleLine = true,
             )
-        OutlinedTextField(
-            value = questDetails.questDescription,
-            onValueChange = { onValueChange(questDetails.copy(questDescription = it )) },
-            label = { Text(stringResource(id = R.string.quest_description)) }
-        )
+        }
+        Box(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .widthIn(max = 280.dp)
+
+        ) {
+            OutlinedTextField(
+                value = questDetails.questDescription,
+                onValueChange = { onValueChange(questDetails.copy(questDescription = it )) },
+                label = { Text(stringResource(id = R.string.quest_description)) },
+                minLines = 3,
+                maxLines = 4
+            )
+        }
         DifficultySetter(viewModel.selectedDifficulty, viewModel)
 
         Button(onClick = {
@@ -206,6 +226,8 @@ fun QuestInputForm(
             Text("Open in Map")
         }
     }
+
+
 }
 
 
