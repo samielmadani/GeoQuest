@@ -15,8 +15,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -31,6 +37,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
@@ -201,19 +208,19 @@ fun QuestCard(
         shape = RoundedCornerShape(dimensionResource(id = R.dimen.padding_small)),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(dimensionResource(id = R.dimen.padding_medium)),
+            .padding(dimensionResource(id = R.dimen.padding_medium))
+            .shadow(8.dp, shape = RoundedCornerShape(dimensionResource(id = R.dimen.padding_small))),
     ) {
         Row (
             verticalAlignment = Alignment.CenterVertically
-        )
-        {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(80.dp),
-                    tint = Color.Green
-                )
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(80.dp),
+                tint = Color.Green
+            )
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.Center
@@ -228,11 +235,15 @@ fun QuestCard(
                     shape = MaterialTheme.shapes.small
                 ) {
                     Text(text = stringResource(id = R.string.view_button))
+                    Icon(
+                        imageVector = Icons.Filled.MoreVert,
+                        contentDescription = "Arrow" )
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun MapTarget(){
