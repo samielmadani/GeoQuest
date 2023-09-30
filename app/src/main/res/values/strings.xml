@@ -22,4 +22,5 @@
     <string name="camera">Camera</string>
     <string name="geo_found">GeoQuest Found</string>
     <string name="incorrect_geo">Wrong GeoQuest</string>
+    <string name="change_username">Change Username: </string>
 </resources>

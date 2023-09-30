@@ -1,15 +1,15 @@
-package com.example.geoquest.ui.quest
+package com.example.geoquest.ui.settings
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.geoquest.model.Quest
 import com.example.geoquest.model.QuestRepository
-import com.example.geoquest.model.getCurrentLocation
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 fun getTestData(): List<Quest> {
@@ -76,7 +76,13 @@ fun getTestData(): List<Quest> {
 /**
  * ViewModel
  */
-class SettingsViewModel(private val sharedPreferences: SharedPreferences, private val questRepository: QuestRepository): ViewModel() {
+class SettingsViewModel(
+    private val sharedPreferences: SharedPreferences,
+    private val questRepository: QuestRepository
+): ViewModel() {
+
+    var isLoading by mutableStateOf(false)
+
     private val editor = sharedPreferences.edit()
 
     /**
@@ -116,16 +122,22 @@ class SettingsViewModel(private val sharedPreferences: SharedPreferences, privat
 
     fun insertTestData() {
         viewModelScope.launch {
+            isLoading = true
             val testData = getTestData()
             for (quest in testData) {
                 questRepository.addQuest(quest)
             }
+            delay(10000)
+            isLoading = false
         }
     }
 
     fun clearData() {
         viewModelScope.launch {
+            isLoading = true
             questRepository.deleteAllQuests()
+            delay(10000)
+            isLoading = false
         }
     }
 
