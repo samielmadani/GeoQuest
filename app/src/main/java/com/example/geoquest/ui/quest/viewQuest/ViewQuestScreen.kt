@@ -1,6 +1,7 @@
 package com.example.geoquest.ui.quest.viewQuest
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -129,7 +131,7 @@ fun DifficultyStars(difficultyLevel: Int) {
             Icon(
                 imageVector = Icons.Default.Star,
                 contentDescription = null,
-                tint = Color.Black,
+                tint = if (isSystemInDarkTheme()) Color.Yellow else Color.DarkGray,
                 modifier = Modifier.padding(end = 4.dp)
             )
         }

@@ -1,6 +1,7 @@
 package com.example.geoquest.ui.settings
 
 import android.widget.Toast
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -108,7 +109,7 @@ fun SettingsScreen(
                                 Toast.makeText(context, " Test data inserted successfully", Toast.LENGTH_SHORT).show()
                                 navigateToHomeScreen()
                                       },
-                            colors = ButtonDefaults.buttonColors(Color.Red)
+                            colors = ButtonDefaults.buttonColors(if (isSystemInDarkTheme()) Color.White else Color.DarkGray)
                         ) {
                             Text(
                                 text = "Populate Database"
@@ -119,7 +120,7 @@ fun SettingsScreen(
                             Toast.makeText(context, "Database cleared successfully", Toast.LENGTH_SHORT).show()
                             navigateToHomeScreen()
                                          },
-                            colors = ButtonDefaults.buttonColors(Color.Red)
+                            colors = ButtonDefaults.buttonColors(if (isSystemInDarkTheme()) Color.White else Color.DarkGray)
                         ) {
                             Text(
                                 text = "Clear Database"
