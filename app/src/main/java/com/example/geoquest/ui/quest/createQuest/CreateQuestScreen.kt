@@ -16,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -198,6 +199,31 @@ fun QuestInputForm(
                 onValueChange = { onValueChange(questDetails.copy(questTitle = it)) },
                 label = { Text(stringResource(id = R.string.quest_title)) },
                 singleLine = true,
+                isError = !viewModel.isValidTitle(questDetails.questTitle) || questDetails.questTitle.length > 36,
+                supportingText = {
+                    if (questDetails.questTitle.length > 36) {
+                        Text(
+                            text = stringResource(id = R.string.character_limit, questDetails.questTitle.length, 36),
+                            modifier = Modifier.fillMaxWidth(),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    } else if (!viewModel.isValidTitle(questDetails.questTitle)) {
+                        Text(
+                            text = stringResource(id = R.string.validation_message),
+                            modifier = Modifier.fillMaxWidth(),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                },
+                trailingIcon = {
+                    if (questDetails.questTitle.length > 36 || !viewModel.isValidTitle(questDetails.questTitle)) {
+                        Icon(
+                            imageVector = Icons.Filled.Warning,
+                            contentDescription = stringResource(id = R.string.validation_error),
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
             )
         }
         Box(
@@ -211,7 +237,32 @@ fun QuestInputForm(
                 onValueChange = { onValueChange(questDetails.copy(questDescription = it )) },
                 label = { Text(stringResource(id = R.string.quest_description)) },
                 minLines = 3,
-                maxLines = 4
+                maxLines = 4,
+                isError = !viewModel.isValidDescription(questDetails.questDescription) || questDetails.questDescription.length > 1000,
+                supportingText = {
+                    if (questDetails.questDescription.length > 1000) {
+                        Text(
+                            text = stringResource(id = R.string.character_limit, questDetails.questDescription.length, 1000),
+                            modifier = Modifier.fillMaxWidth(),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    } else if (!viewModel.isValidDescription(questDetails.questDescription)) {
+                        Text(
+                            text = stringResource(id = R.string.validation_message),
+                            modifier = Modifier.fillMaxWidth(),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                },
+                trailingIcon = {
+                    if (questDetails.questDescription.length > 1000 || !viewModel.isValidDescription(questDetails.questDescription)) {
+                        Icon(
+                            imageVector = Icons.Filled.Warning,
+                            contentDescription = stringResource(id = R.string.validation_error),
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
             )
         }
         DifficultySetter(viewModel.selectedDifficulty, viewModel)

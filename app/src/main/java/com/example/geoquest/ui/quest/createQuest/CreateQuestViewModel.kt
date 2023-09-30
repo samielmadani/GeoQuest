@@ -43,9 +43,9 @@ class CreateQuestViewModel(private val sharedPreferences: SharedPreferences, pri
 
     private fun validateInput(uiState: QuestDetails = questUiState.questDetails): Boolean {
         return with(uiState) {
-            questTitle.isNotBlank() && isValidText(questTitle) &&
-                    (isValidText(questDescription) || questDescription.isBlank()) &&
-                    questTitle.length <= 36 && questDescription.length <= 256
+            questTitle.isNotBlank() && isValidTitle(questTitle) &&
+                    (isValidDescription(questDescription) || questDescription.isBlank()) &&
+                    questTitle.length <= 36 && questDescription.length <= 1000
         }
     }
 
@@ -70,9 +70,14 @@ class CreateQuestViewModel(private val sharedPreferences: SharedPreferences, pri
         return Pair(sharedPreferences.getString("latitude", "0.0") ?: "0.0", sharedPreferences.getString("longitude", "0.0") ?: "0.0")
     }
 
-    private fun isValidText(text: String): Boolean {
-        return text.matches(Regex("(?=.*[a-zA-Z])[a-zA-Z0-9 ]+"))
+    fun isValidTitle(text: String): Boolean {
+        return text.isEmpty() || text.matches(Regex("(?=.*[a-zA-Z])[a-zA-Z0-9 ]+"))
     }
+
+    fun isValidDescription(text: String): Boolean {
+        return text.isEmpty() || text.matches(Regex("^(?=.*[a-zA-Z])[a-zA-Z0-9 '.!']+\$"))
+    }
+
 }
 
 data class QuestUiState(

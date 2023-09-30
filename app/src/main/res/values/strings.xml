@@ -23,4 +23,10 @@
     <string name="geo_found">GeoQuest Found</string>
     <string name="incorrect_geo">Wrong GeoQuest</string>
     <string name="change_username">Change Username: </string>
+    <string name="character_limit">Limit: %1s/%2d</string>
+    <string name="validation_error">Error</string>
+    <string name="validation_message">
+        Only letters and numbers are allowed. If using a number, then a letter must be included.
+    </string>
+
 </resources>
