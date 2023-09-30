@@ -235,9 +235,6 @@ fun QuestCard(
                     shape = MaterialTheme.shapes.small
                 ) {
                     Text(text = stringResource(id = R.string.view_button))
-                    Icon(
-                        imageVector = Icons.Filled.MoreVert,
-                        contentDescription = "Arrow" )
                 }
             }
         }
