@@ -15,14 +15,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -52,7 +46,7 @@ import com.example.geoquest.R
 import com.example.geoquest.model.Quest
 import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.navigation.NavigationDestination
-import com.example.geoquest.ui.quest.DifficultyStars
+import com.example.geoquest.ui.quest.viewQuest.DifficultyStars
 import com.example.geoquest.ui.theme.GeoQuestTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionRequired
@@ -117,7 +111,7 @@ fun HomeScreen(
                         .fillMaxHeight(0.4f)
                         .padding(contentPadding)// Takes half of the screen height
                 ) {
-                    com.example.geoquest.ui.quest.MapTarget()
+                    com.example.geoquest.ui.quest.findQuest.MapTarget()
                 }
                 HomeBody(
                     questList = homeUiState.questList,

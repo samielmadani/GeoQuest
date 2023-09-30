@@ -1,4 +1,4 @@
-package com.example.geoquest.ui.quest
+package com.example.geoquest.ui.quest.createQuest
 
 import android.net.Uri
 import android.content.SharedPreferences

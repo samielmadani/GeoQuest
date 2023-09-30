@@ -1,4 +1,4 @@
-package com.example.geoquest.ui.quest
+package com.example.geoquest.ui.quest.findQuest
 
 import android.Manifest
 import android.graphics.Bitmap
@@ -40,6 +40,7 @@ import com.example.geoquest.GeoQuestTopBar
 import com.example.geoquest.R
 import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.navigation.NavigationDestination
+import com.example.geoquest.ui.quest.createQuest.LastCapturedPhotoViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState

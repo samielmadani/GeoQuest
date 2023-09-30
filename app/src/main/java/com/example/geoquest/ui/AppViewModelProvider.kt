@@ -1,6 +1,6 @@
 package com.example.geoquest.ui
 
-import com.example.geoquest.ui.quest.CameraViewModel
+import com.example.geoquest.ui.quest.createQuest.CameraViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
@@ -9,13 +9,13 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.geoquest.GeoQuestApplication
 import com.example.geoquest.model.SavePhotoToGallery
 import com.example.geoquest.ui.home.HomeViewModel
-import com.example.geoquest.ui.quest.CreateQuestViewModel
+import com.example.geoquest.ui.quest.createQuest.CreateQuestViewModel
 import com.example.geoquest.ui.quest.SettingsViewModel
 import com.example.geoquest.ui.quest.SignUpViewModel
-import com.example.geoquest.ui.quest.ViewQuestViewModel
-import com.example.geoquest.ui.quest.FindQuestViewModel
-import com.example.geoquest.ui.quest.SuccessViewModel
-import com.example.geoquest.ui.quest.FailedViewModel
+import com.example.geoquest.ui.quest.viewQuest.ViewQuestViewModel
+import com.example.geoquest.ui.quest.findQuest.FindQuestViewModel
+import com.example.geoquest.ui.quest.findQuest.SuccessViewModel
+import com.example.geoquest.ui.quest.findQuest.FailedViewModel
 
 
 
