@@ -10,7 +10,7 @@ import com.example.geoquest.GeoQuestApplication
 import com.example.geoquest.model.SavePhotoToGallery
 import com.example.geoquest.ui.home.HomeViewModel
 import com.example.geoquest.ui.quest.createQuest.CreateQuestViewModel
-import com.example.geoquest.ui.quest.SettingsViewModel
+import com.example.geoquest.ui.settings.SettingsViewModel
 import com.example.geoquest.ui.quest.SignUpViewModel
 import com.example.geoquest.ui.quest.viewQuest.ViewQuestViewModel
 import com.example.geoquest.ui.quest.findQuest.FindQuestViewModel
