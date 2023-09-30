@@ -22,7 +22,7 @@ import com.example.geoquest.ui.quest.findQuest.FailedViewModel
 object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
-            HomeViewModel(geoQuestApplication().container.questRepository)
+            HomeViewModel(geoQuestApplication().container.sharedPreferences, geoQuestApplication().container.questRepository)
         }
         initializer {
             CreateQuestViewModel(

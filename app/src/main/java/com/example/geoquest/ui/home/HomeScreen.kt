@@ -3,6 +3,7 @@ package com.example.geoquest.ui.home
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,7 +59,15 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionRequired
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.rememberMarkerState
 
 object HomeDestination: NavigationDestination {
     override val route = "home"
@@ -119,7 +128,7 @@ fun HomeScreen(
                         .fillMaxHeight(0.4f)
                         .padding(contentPadding)// Takes half of the screen height
                 ) {
-                    com.example.geoquest.ui.quest.findQuest.MapTarget()
+                    MapTarget(homeUiState.questList, viewModel)
                 }
                 HomeBody(
                     questList = homeUiState.questList,
@@ -270,10 +279,47 @@ fun QuestCard(
 
 
 @Composable
-fun MapTarget(){
+fun MapTarget(questList: List<Quest>, viewModel: HomeViewModel){
+    // Extract the position from the state
+    val positions = mutableListOf<LatLng>()
+    for (quest in questList) {
+        val lat_long = LatLng(quest.latitude, quest.longitude)
+        positions.add(lat_long)
+    }
+
+    val cameraPositionState: CameraPositionState
+    if (positions.size == 0) {
+        Log.d("Average", "User location used")
+        cameraPositionState = rememberCameraPositionState {
+            position = CameraPosition.fromLatLngZoom(viewModel.getLocation(), 10f)
+        }
+    } else {
+        cameraPositionState = rememberCameraPositionState {
+            val averageLat = positions.map { it.latitude }.average()
+            val averageLng = positions.map { it.longitude }.average()
+            Log.d("Average", "$averageLat $averageLng")
+
+            position = CameraPosition.fromLatLngZoom(LatLng(averageLat, averageLng), 1f)
+        }
+    }
+
+
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
-    )
+        cameraPositionState = cameraPositionState,
+        properties = MapProperties(isMyLocationEnabled = true)
+    ) {
+        for (quest in questList) {
+            val lat_long = LatLng(quest.latitude, quest.longitude)
+            Marker(
+                state = rememberMarkerState(position = lat_long),
+                title = quest.questTitle,
+                snippet = quest.questDescription,
+                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
+            )
+
+        }
+    }
 }
 
 fun shareQuest(quest: Quest, context: Context) {
