@@ -46,6 +46,7 @@ import com.example.geoquest.R
 import com.example.geoquest.model.Quest
 import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.navigation.NavigationDestination
+import com.example.geoquest.ui.quest.findQuest.BackPressHandler
 import com.example.geoquest.ui.quest.viewQuest.DifficultyStars
 import com.example.geoquest.ui.theme.GeoQuestTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -71,6 +72,8 @@ fun HomeScreen(
     val homeUiState by viewModel.homeUiState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val permissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
+
+    BackPressHandler(onBackPressed = {})
 
     PermissionRequired(
         permissionState = permissionState,
