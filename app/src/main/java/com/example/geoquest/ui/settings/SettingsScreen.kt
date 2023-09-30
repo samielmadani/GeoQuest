@@ -77,8 +77,9 @@ fun SettingsScreen(
                     text = stringResource(id = R.string.change_username),
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp)
+                        fontSize = dimensionResource(id = R.dimen.text_size).value.sp
                     )
+                )
                 OutlinedTextField(
                     value = viewModel.settingsState.userName,
                     onValueChange = {

@@ -26,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -83,12 +84,20 @@ fun ViewQuestScreen(
 
 
             DifficultyStars(viewModel.questUiState.questDetails.questDifficulty)
-
+            Spacer(modifier = Modifier.weight(0.1f))
+            Text(
+                text = stringResource(id = R.string.quest_description),
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = dimensionResource(id = R.dimen.padding_large).value.sp,
+                )
+            )
             Text(
                 text = viewModel.questUiState.questDetails.questDescription,
                 style = TextStyle(
                     fontSize = 16.sp
                 ),
+                textAlign = TextAlign.Justify,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
@@ -113,7 +122,7 @@ fun DifficultyStars(difficultyLevel: Int) {
         Text(
             text = "Difficulty:",
             fontSize = 16.sp,
-            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+            fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(end = 4.dp)
         )
         repeat(difficultyLevel) {
