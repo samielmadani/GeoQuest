@@ -277,7 +277,8 @@ fun shareQuest(quest: Quest, context: Context) {
     sendIntent.action = Intent.ACTION_SEND
     sendIntent.putExtra(
         Intent.EXTRA_TEXT,
-        "Task: ${quest.questTitle}\nDescription: ${quest.questDescription}\nDue Date: ${quest.questDifficulty}"
+        "Quest Title: ${quest.questTitle}\nQuest Description: ${quest.questDescription}" +
+                "\nQuest Difficulty: ${quest.questDifficulty}"
     )
     sendIntent.type = "text/plain"
 
