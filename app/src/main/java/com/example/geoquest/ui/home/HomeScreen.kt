@@ -1,6 +1,8 @@
 package com.example.geoquest.ui.home
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +17,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -201,6 +206,7 @@ fun QuestCard(
     quest: Quest,
     navigateToViewQuest: (Int) -> Unit
 ) {
+    val context = LocalContext.current
     Card(
         shape = RoundedCornerShape(dimensionResource(id = R.dimen.padding_small)),
         modifier = Modifier
@@ -208,30 +214,50 @@ fun QuestCard(
             .padding(dimensionResource(id = R.dimen.padding_medium))
             .shadow(8.dp, shape = RoundedCornerShape(dimensionResource(id = R.dimen.padding_small))),
     ) {
-        Row (
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(80.dp),
-                tint = Color.Green
-            )
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.Center
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = quest.questTitle,
-                    style = MaterialTheme.typography.headlineMedium,
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(80.dp)
+                        .padding(end = 16.dp),
+                    tint = Color.Green
                 )
-                DifficultyStars(quest.questDifficulty)
-                Button(
-                    onClick = { navigateToViewQuest(quest.questId) },
-                    shape = MaterialTheme.shapes.small
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
                 ) {
-                    Text(text = stringResource(id = R.string.view_button))
+                    Text(
+                        text = quest.questTitle,
+                        style = MaterialTheme.typography.headlineMedium,
+                    )
+                    DifficultyStars(quest.questDifficulty)
+                    Button(
+                        onClick = { navigateToViewQuest(quest.questId) },
+                        shape = MaterialTheme.shapes.small,
+                    ) {
+                        Text(text = stringResource(id = R.string.view_button))
+                    }
+                }
+                Button(
+                    onClick = { shareQuest(quest, context) },
+                    shape = MaterialTheme.shapes.small,
+                    colors = ButtonDefaults.buttonColors(Color.Transparent),
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = "Share Quest"
+                    )
                 }
             }
         }
@@ -245,6 +271,20 @@ fun MapTarget(){
         modifier = Modifier.fillMaxSize(),
     )
 }
+
+fun shareQuest(quest: Quest, context: Context) {
+    val sendIntent = Intent()
+    sendIntent.action = Intent.ACTION_SEND
+    sendIntent.putExtra(
+        Intent.EXTRA_TEXT,
+        "Task: ${quest.questTitle}\nDescription: ${quest.questDescription}\nDue Date: ${quest.questDifficulty}"
+    )
+    sendIntent.type = "text/plain"
+
+    val chooserIntent = Intent.createChooser(sendIntent, "Share Quest")
+    context.startActivity(chooserIntent)
+}
+
 
 @Preview(showBackground = true)
 @Composable
