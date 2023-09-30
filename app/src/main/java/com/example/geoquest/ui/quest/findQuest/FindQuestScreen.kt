@@ -38,13 +38,23 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.geoquest.GeoQuestTopBar
 import com.example.geoquest.R
+import com.example.geoquest.model.Quest
 import com.example.geoquest.ui.AppViewModelProvider
+import com.example.geoquest.ui.home.HomeViewModel
 import com.example.geoquest.ui.navigation.NavigationDestination
 import com.example.geoquest.ui.quest.createQuest.LastCapturedPhotoViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.rememberMarkerState
 
 object FindQuestDestination: NavigationDestination {
     override val route = "findQuestScreen"
@@ -59,6 +69,7 @@ object FindQuestDestination: NavigationDestination {
 fun FindQuestScreen(
     navigateUp: () -> Unit,
     viewModel: FindQuestViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    viewModel2: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navigateToCamera: () -> Unit,
     lastCapturedPhotoViewModel: LastCapturedPhotoViewModel,
     navigateToSuccessScreen: () -> Unit,
@@ -90,11 +101,16 @@ fun FindQuestScreen(
                 .padding(contentPadding),
             horizontalAlignment = Alignment.CenterHorizontally // Center-align content horizontally
         ) {
+
             Box(
                 modifier = Modifier.fillMaxHeight(0.4f) // Takes half of the screen height
             ) {
-                MapTarget()
+                MapTarget(
+                    viewModel = viewModel,
+                    viewModel2 = viewModel2
+                )
             }
+
             // Description (40%)
             Box(
                 modifier = Modifier
@@ -207,10 +223,43 @@ fun FindQuestScreen(
 }
 
 
+
 @Composable
-fun MapTarget(){
+fun MapTarget(
+    viewModel: FindQuestViewModel,
+    viewModel2: HomeViewModel
+){
+    // Extract the position from the state
+    val positions = mutableListOf<LatLng>()
+        val lat_long = LatLng(viewModel.questUiState.questDetails.latitude, viewModel.questUiState.questDetails.longitude)
+        positions.add(lat_long)
+
+
+    val cameraPositionState: CameraPositionState
+    if (positions.size == 0) {
+        cameraPositionState = rememberCameraPositionState {
+            position = CameraPosition.fromLatLngZoom(viewModel2.getLocation(), 10f)
+        }
+    } else {
+        cameraPositionState = rememberCameraPositionState {
+            position = CameraPosition.fromLatLngZoom(LatLng(viewModel.questUiState.questDetails.latitude, viewModel.questUiState.questDetails.longitude), 1f)
+        }
+    }
+
+
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
-    )
-}
+        cameraPositionState = cameraPositionState,
+        properties = MapProperties(isMyLocationEnabled = true)
+    ) {
+            val lat_long = LatLng(viewModel.questUiState.questDetails.latitude, viewModel.questUiState.questDetails.longitude)
+            Marker(
+                state = rememberMarkerState(position = lat_long),
+                title = viewModel.questUiState.questDetails.questTitle,
+                snippet = viewModel.questUiState.questDetails.questDescription,
+                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
+            )
 
+
+    }
+}
