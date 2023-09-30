@@ -258,7 +258,7 @@ fun Star(
     onClick: () -> Unit
 ) {
     Icon(
-        imageVector = if (selected) Icons.Default.Star else Icons.Default.Close,
+        painter = painterResource(id = if (selected) R.drawable.baseline_star_24 else R.drawable.baseline_star_border_24),
         contentDescription = "Star",
         modifier = Modifier
             .clickable(onClick = onClick)
