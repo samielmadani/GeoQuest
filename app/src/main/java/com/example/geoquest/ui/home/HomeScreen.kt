@@ -3,7 +3,6 @@ package com.example.geoquest.ui.home
 import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -289,7 +288,6 @@ fun MapTarget(questList: List<Quest>, viewModel: HomeViewModel){
 
     val cameraPositionState: CameraPositionState
     if (positions.size == 0) {
-        Log.d("Average", "User location used")
         cameraPositionState = rememberCameraPositionState {
             position = CameraPosition.fromLatLngZoom(viewModel.getLocation(), 10f)
         }
@@ -297,7 +295,6 @@ fun MapTarget(questList: List<Quest>, viewModel: HomeViewModel){
         cameraPositionState = rememberCameraPositionState {
             val averageLat = positions.map { it.latitude }.average()
             val averageLng = positions.map { it.longitude }.average()
-            Log.d("Average", "$averageLat $averageLng")
 
             position = CameraPosition.fromLatLngZoom(LatLng(averageLat, averageLng), 1f)
         }
