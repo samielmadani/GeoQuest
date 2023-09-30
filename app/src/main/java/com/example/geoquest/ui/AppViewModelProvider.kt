@@ -14,6 +14,9 @@ import com.example.geoquest.ui.quest.SettingsViewModel
 import com.example.geoquest.ui.quest.SignUpViewModel
 import com.example.geoquest.ui.quest.ViewQuestViewModel
 import com.example.geoquest.ui.quest.FindQuestViewModel
+import com.example.geoquest.ui.quest.SuccessViewModel
+import com.example.geoquest.ui.quest.FailedViewModel
+
 
 
 object AppViewModelProvider {
@@ -41,6 +44,12 @@ object AppViewModelProvider {
         }
         initializer {
             CameraViewModel(SavePhotoToGallery(geoQuestApplication()))
+        }
+        initializer {
+            SuccessViewModel(this.createSavedStateHandle(), geoQuestApplication().container.questRepository)
+        }
+        initializer {
+            FailedViewModel(this.createSavedStateHandle(), geoQuestApplication().container.questRepository)
         }
     }
 }

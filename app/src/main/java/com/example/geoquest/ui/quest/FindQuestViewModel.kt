@@ -12,6 +12,7 @@ import com.example.geoquest.model.QuestRepository
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 
 /**
@@ -39,6 +40,10 @@ class FindQuestViewModel(
                 .first()
                 .toQuestUiState(true)
         }
+    }
+
+    fun randomBoolean(): Boolean {
+        return Random.nextBoolean()
     }
 
 }

@@ -3,26 +3,20 @@ package com.example.geoquest.ui.quest
 import android.Manifest
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -32,29 +26,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.geoquest.GeoQuestTopBar
 import com.example.geoquest.R
-import com.example.geoquest.model.openMap
 import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.navigation.NavigationDestination
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.rememberCameraPositionState
 
 object FindQuestDestination: NavigationDestination {
     override val route = "findQuestScreen"
@@ -70,7 +59,9 @@ fun FindQuestScreen(
     navigateUp: () -> Unit,
     viewModel: FindQuestViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navigateToCamera: () -> Unit,
-    lastCapturedPhotoViewModel: LastCapturedPhotoViewModel
+    lastCapturedPhotoViewModel: LastCapturedPhotoViewModel,
+    navigateToSuccessScreen: () -> Unit,
+    navigateToFailedScreen: () -> Unit
 
 ) {
     val lastCapturedPhoto: Bitmap? by lastCapturedPhotoViewModel.lastCapturedPhoto.observeAsState(null)
@@ -164,7 +155,12 @@ fun FindQuestScreen(
 
             if (lastCapturedPhoto != null) {
                 Button(
-                    onClick = {  }, 
+                    onClick = {
+                        if (viewModel.randomBoolean()) { // Replace this with ML Kit comparison
+                            navigateToSuccessScreen()
+                        } else {
+                            navigateToFailedScreen()
+                        }},
                     shape = MaterialTheme.shapes.small,
                 ) {
                     Text(text = "Compare to GeoQuest")

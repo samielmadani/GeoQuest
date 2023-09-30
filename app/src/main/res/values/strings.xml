@@ -20,4 +20,6 @@
     <string name="camera_permission">PLease grant permission to use the camera functionality of this app.</string>
     <string name="permission_button">Grant Permission</string>
     <string name="camera">Camera</string>
+    <string name="geo_found">GeoQuest Found</string>
+    <string name="incorrect_geo">Wrong GeoQuest</string>
 </resources>

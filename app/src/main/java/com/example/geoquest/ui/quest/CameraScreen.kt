@@ -108,7 +108,7 @@ fun CameraContent(
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.ArrowForward,
-                            contentDescription = "Check",
+                            contentDescription = "Arrow",
                             tint = Color.Black
                         )
                     }

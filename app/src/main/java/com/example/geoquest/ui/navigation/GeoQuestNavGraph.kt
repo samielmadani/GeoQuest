@@ -18,9 +18,13 @@ import com.example.geoquest.ui.quest.CameraScreen
 import com.example.geoquest.ui.quest.CameraScreenDestination
 import com.example.geoquest.ui.quest.CreateQuest
 import com.example.geoquest.ui.quest.CreateQuestDestination
+import com.example.geoquest.ui.quest.FailedScreen
+import com.example.geoquest.ui.quest.FailedScreenDestination
 import com.example.geoquest.ui.quest.FindQuestDestination
 import com.example.geoquest.ui.quest.FindQuestScreen
 import com.example.geoquest.ui.quest.LastCapturedPhotoViewModel
+import com.example.geoquest.ui.quest.SuccessScreen
+import com.example.geoquest.ui.quest.SuccessScreenDestination
 import com.example.geoquest.ui.quest.ViewQuestDestination
 import com.example.geoquest.ui.quest.ViewQuestScreen
 import com.example.geoquest.ui.settings.SettingsDestination
@@ -87,8 +91,10 @@ fun GeoQuestNavGraph(
                     FindQuestScreen(
                         navigateUp = { navController.navigateUp() },
                         navigateToCamera = { navController.navigate(CameraScreenDestination.route) },
-                        lastCapturedPhotoViewModel = lastCapturedPhotoViewModel
-                        )
+                        lastCapturedPhotoViewModel = lastCapturedPhotoViewModel,
+                        navigateToSuccessScreen = { navController.navigate(SuccessScreenDestination.route) },
+                        navigateToFailedScreen = { navController.navigate(FailedScreenDestination.route) },
+                    )
                 }
                 composable(route = SettingsDestination.route) {
                     SettingsScreen(
@@ -101,6 +107,16 @@ fun GeoQuestNavGraph(
                         navigateToCreateQuest = { navController.navigate(CreateQuestDestination.route) },
                         navigateUp = { navController.navigateUp() },
                         lastCapturedPhotoViewModel = lastCapturedPhotoViewModel
+                    )
+                }
+                composable(route = SuccessScreenDestination.route) {
+                    SuccessScreen(
+                        navigateToHomeScreen = { navController.navigate(HomeDestination.route) }
+                    )
+                }
+                composable(route = FailedScreenDestination.route) {
+                    FailedScreen(
+                        navigateUp = { navController.navigateUp() },
                     )
                 }
             }
