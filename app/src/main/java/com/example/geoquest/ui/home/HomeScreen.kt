@@ -119,7 +119,7 @@ fun HomeScreen(
                         .fillMaxHeight(0.4f)
                         .padding(contentPadding)// Takes half of the screen height
                 ) {
-                    com.example.geoquest.ui.quest.findQuest.MapTarget()
+                    MapTarget()
                 }
                 HomeBody(
                     questList = homeUiState.questList,

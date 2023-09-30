@@ -5,6 +5,7 @@ import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
@@ -59,7 +60,7 @@ fun SuccessScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(contentPadding)
-                .background(Color.White),
+                .background(if (isSystemInDarkTheme()) Color.Black else Color.White),
             contentAlignment = Alignment.Center
         ) {
             Column(
@@ -78,7 +79,7 @@ fun SuccessScreen(
 
                 Text(
                     text = "You found it!",
-                    color = Color.Black,
+                    color = if (isSystemInDarkTheme()) Color.White else Color.Black,
                     fontSize = 16.sp
                 )
                 Spacer(modifier = Modifier.height(16.dp))
