@@ -1,23 +1,39 @@
 package com.example.geoquest.ui.quest
 
+import android.Manifest
+import android.graphics.Bitmap
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
@@ -34,6 +50,9 @@ import com.example.geoquest.R
 import com.example.geoquest.model.openMap
 import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.navigation.NavigationDestination
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.rememberPermissionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
 
@@ -45,13 +64,23 @@ object FindQuestDestination: NavigationDestination {
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun FindQuestScreen(
     navigateUp: () -> Unit,
-    viewModel: FindQuestViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: FindQuestViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    navigateToCamera: () -> Unit,
+    lastCapturedPhotoViewModel: LastCapturedPhotoViewModel
+
 ) {
+    val lastCapturedPhoto: Bitmap? by lastCapturedPhotoViewModel.lastCapturedPhoto.observeAsState(null)
+
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    val cameraPermissionState: PermissionState = rememberPermissionState(Manifest.permission.CAMERA)
+    val hasPermission = cameraPermissionState.hasPermission
+    val onRequestPermission = cameraPermissionState::launchPermissionRequest
+
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -82,7 +111,7 @@ fun FindQuestScreen(
                 contentAlignment = Alignment.Center // Center-align content within the Box
             ) {
                 Text(
-                    text = "Reach the marker on the map and take a photo of the following object!",
+                    text = "Reach the marker on the map to find the quest, and take a photo of the GeoQuest when you find it!",
                     style = TextStyle(
                         fontSize = 16.sp
                     ),
@@ -91,29 +120,95 @@ fun FindQuestScreen(
                 )
             }
 
+            Row {
+                Column (
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ){
+                    Text(text = "GoeQuest:")
+
+                    Image(
+                        painter = painterResource(id = R.drawable.default_image),
+                        contentDescription = stringResource(id = R.string.default_image),
+                        modifier = Modifier.size(dimensionResource(id = R.dimen.image_size))
+                    )
+
+                }
+
+                Column (
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ){
+                    Text(text = "Your Image:")
+
+                    if (lastCapturedPhoto != null) {
+                        lastCapturedPhoto?.asImageBitmap()?.let {
+                            Image(
+                                bitmap = it,
+                                contentDescription = stringResource(id = R.string.default_image),
+                                modifier = Modifier.size(dimensionResource(id = R.dimen.image_size))
+                            )
+                        }
+                    } else {
+                        Image(
+                            painter = painterResource(id = R.drawable.default_image),
+                            contentDescription = stringResource(id = R.string.default_image),
+                            modifier = Modifier.size(dimensionResource(id = R.dimen.image_size))
+                        )
+                    }
+                }
+
+            }
 
 
-            // Image (40%)
-            Image(
-                painter = painterResource(id = R.drawable.default_image),
-                contentDescription = stringResource(id = R.string.default_image),
-                modifier = Modifier
-                    .size(dimensionResource(id = R.dimen.image_size))
-                    .padding(vertical = 8.dp)
-            )
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(1f)) // Spacer to push button to the bottom
 
-            // Placeholder Button
+            if (lastCapturedPhoto != null) {
+                Button(
+                    onClick = {  }, 
+                    shape = MaterialTheme.shapes.small,
+                ) {
+                    Text(text = "Compare to GeoQuest")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_compare_arrows_24), // Replace with your icon resource
+                        contentDescription = null, // Provide a content description if needed
+                        modifier = Modifier
+                            .size(24.dp) // Adjust the size as needed
+                    )
+                }
+            }
+            
+
             Button(
-                onClick = { /* Placeholder action */ },
-                shape = MaterialTheme.shapes.small
+                onClick = {
+                    if (hasPermission) {
+                        navigateToCamera()
+                    } else {
+                        onRequestPermission()
+                    }
+                          },
+                shape = MaterialTheme.shapes.small,
+                modifier = Modifier
+                    .padding(vertical = 16.dp) // Add horizontal padding for left alignment
             ) {
-                Text(text = "Placeholder Button")
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = "I Found It!")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_camera_alt_24), // Replace with your icon resource
+                        contentDescription = null, // Provide a content description if needed
+                        modifier = Modifier
+                            .size(24.dp) // Adjust the size as needed
+                    )
+                }
             }
         }
     }
 }
+
 
 @Composable
 fun MapTarget(){

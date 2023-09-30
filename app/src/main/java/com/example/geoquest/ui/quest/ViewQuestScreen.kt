@@ -81,6 +81,10 @@ fun ViewQuestScreen(
                 ),
                 modifier = Modifier.padding(bottom = 16.dp)
             )
+
+
+            DifficultyStars(viewModel.questUiState.questDetails.questDifficulty)
+
             Text(
                 text = viewModel.questUiState.questDetails.questDescription,
                 style = TextStyle(
@@ -88,8 +92,6 @@ fun ViewQuestScreen(
                 ),
                 modifier = Modifier.padding(bottom = 16.dp)
             )
-
-            DifficultyStars(viewModel.questUiState.questDetails.questDifficulty)
 
             Spacer(modifier = Modifier.weight(1f)) // Pushes the "Find" button to the bottom
 

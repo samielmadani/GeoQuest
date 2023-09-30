@@ -86,7 +86,9 @@ fun GeoQuestNavGraph(
                 ) {
                     FindQuestScreen(
                         navigateUp = { navController.navigateUp() },
-                    )
+                        navigateToCamera = { navController.navigate(CameraScreenDestination.route) },
+                        lastCapturedPhotoViewModel = lastCapturedPhotoViewModel
+                        )
                 }
                 composable(route = SettingsDestination.route) {
                     SettingsScreen(

@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 fun getTestData(): List<Quest> {
     return listOf(
         Quest(
-            questTitle = "Eiffel Tower Quest",
+            questTitle = "Eiffel Tower",
             questDescription = "Discover the iconic Eiffel Tower in Paris.",
             questDifficulty = 2,
             questImageUri = null,
@@ -23,7 +23,7 @@ fun getTestData(): List<Quest> {
             longitude = 2.2945
         ),
         Quest(
-            questTitle = "Great Wall of China Quest",
+            questTitle = "Great Wall of China",
             questDescription = "Explore the vastness of the Great Wall.",
             questDifficulty = 3,
             questImageUri = null,
@@ -31,7 +31,7 @@ fun getTestData(): List<Quest> {
             longitude = 116.5704
         ),
         Quest(
-            questTitle = "Statue of Liberty Quest",
+            questTitle = "Statue of Liberty",
             questDescription = "Visit the symbol of freedom in New York.",
             questDifficulty = 2,
             questImageUri = null,
@@ -39,7 +39,7 @@ fun getTestData(): List<Quest> {
             longitude = -74.0445
         ),
         Quest(
-            questTitle = "Pyramids of Giza Quest",
+            questTitle = "Pyramids of Giza",
             questDescription = "Unravel the mysteries of ancient Egypt.",
             questDifficulty = 3,
             questImageUri = null,
@@ -47,7 +47,7 @@ fun getTestData(): List<Quest> {
             longitude = 31.1342
         ),
         Quest(
-            questTitle = "Taj Mahal Quest",
+            questTitle = "Taj Mahal",
             questDescription = "Witness the beauty of the Taj Mahal in Agra.",
             questDifficulty = 2,
             questImageUri = null,
@@ -55,7 +55,7 @@ fun getTestData(): List<Quest> {
             longitude = 78.0421
         ),
         Quest(
-            questTitle = "Machu Picchu Quest",
+            questTitle = "Machu Picchu",
             questDescription = "Trek to the historical site of Machu Picchu.",
             questDifficulty = 4,
             questImageUri = null,
@@ -63,7 +63,7 @@ fun getTestData(): List<Quest> {
             longitude = -72.5450
         ),
         Quest(
-            questTitle = "Sydney Opera House Quest",
+            questTitle = "Sydney Opera House",
             questDescription = "Experience the architectural marvel in Sydney.",
             questDifficulty = 1,
             questImageUri = null,
