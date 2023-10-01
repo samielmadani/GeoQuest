@@ -43,7 +43,8 @@ object SuccessScreenDestination: NavigationDestination {
 @Composable
 fun SuccessScreen(
     navigateToHomeScreen: () -> Unit,
-    viewModel: SuccessViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: SuccessViewModel = viewModel(factory = AppViewModelProvider.Factory),
+
 ) {
 
     BackPressHandler(onBackPressed = {})
@@ -53,6 +54,8 @@ fun SuccessScreen(
             GeoQuestTopBar(
                 title = stringResource(id = SuccessScreenDestination.titleRes),
                 canNavigateBack = false,
+                navigateToHomeScreen = navigateToHomeScreen
+
             )
         }
     ) { contentPadding ->

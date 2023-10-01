@@ -80,6 +80,7 @@ fun FindQuestScreen(
     navigateToSuccessScreen: () -> Unit,
     navigateToFailedScreen: () -> Unit,
     createViewModel: CreateQuestViewModel,
+    navigateToHomeScreen: () -> Unit,
 
 
     ) {
@@ -99,7 +100,8 @@ fun FindQuestScreen(
             GeoQuestTopBar(
                 title = "Hunting for " + quest.questTitle,
                 canNavigateBack = true,
-                navigateUp = navigateUp
+                navigateUp = navigateUp,
+                navigateToHomeScreen = navigateToHomeScreen
             )
         }
     ) { contentPadding ->

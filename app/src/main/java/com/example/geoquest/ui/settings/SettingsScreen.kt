@@ -64,7 +64,9 @@ fun SettingsScreen(
             GeoQuestTopBar(
                 title = stringResource(id = HomeDestination.titleRes),
                 canNavigateBack = true,
-                navigateUp = navigateUp
+                navigateUp = navigateUp,
+                navigateToHomeScreen = navigateToHomeScreen
+
             )
         }
     ) { contentPadding ->

@@ -60,8 +60,10 @@ fun CreateQuest(
     coroutineScope: CoroutineScope,
     navigateBack: () -> Unit,
     navigateToCamera: () -> Unit,
-    viewModel: CreateQuestViewModel
-) {
+    viewModel: CreateQuestViewModel,
+    navigateToHomeScreen: () -> Unit,
+
+    ) {
     val cameraPermissionState: PermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
 
     Scaffold(
@@ -69,7 +71,8 @@ fun CreateQuest(
             GeoQuestTopBar(
                 title = stringResource(id = CreateQuestDestination.titleRes),
                 canNavigateBack = true,
-                navigateUp = navigateBack
+                navigateUp = navigateBack,
+                navigateToHomeScreen = navigateToHomeScreen,
             )
         }
     ) {contentPadding ->
@@ -310,7 +313,8 @@ fun CreateScreenPreview() {
             rememberCoroutineScope(),
             navigateBack = {},
             navigateToCamera = {},
-            viewModel = viewModel(factory = AppViewModelProvider.Factory)
+            viewModel = viewModel(factory = AppViewModelProvider.Factory),
+            navigateToHomeScreen = {},
         )
     }
 }

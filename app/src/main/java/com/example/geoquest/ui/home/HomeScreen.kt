@@ -92,7 +92,8 @@ fun HomeScreen(
     navigateToSettings: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    createViewModel: CreateQuestViewModel
+    createViewModel: CreateQuestViewModel,
+    navigateToHomeScreen: () -> Unit,
     ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -122,6 +123,7 @@ fun HomeScreen(
                     title = stringResource(id = HomeDestination.titleRes),
                     canNavigateBack = false,
                     onSettingsClick = navigateToSettings,
+                    navigateToHomeScreen = navigateToHomeScreen,
                 )
             },
             floatingActionButton = {

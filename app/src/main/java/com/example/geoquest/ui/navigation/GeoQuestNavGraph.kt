@@ -3,6 +3,7 @@ package com.example.geoquest.ui.navigation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -12,6 +13,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.geoquest.GeoQuestTopBar
+import com.example.geoquest.Nav
 import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.home.HomeDestination
 import com.example.geoquest.ui.home.HomeScreen
@@ -38,6 +41,7 @@ import com.example.geoquest.ui.signup.SignUpScreen
  * Provides the Navigation graph for the application
  */
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GeoQuestNavGraph(
     navController: NavHostController,
@@ -53,7 +57,7 @@ fun GeoQuestNavGraph(
             NavHost(
                 navController = navController,
                 startDestination = SignUpDestination.route,
-                modifier = modifier
+                modifier = modifier,
             ) {
                 composable(route = SignUpDestination.route) {
                     SignUpScreen(
@@ -66,6 +70,7 @@ fun GeoQuestNavGraph(
                         navigateToViewQuest = { navController.navigate("${ViewQuestDestination.route}/${it}") },
                         navigateToSettings = { navController.navigate(SettingsDestination.route) },
                         createViewModel = createQuestViewModel,
+                        navigateToHomeScreen = { navController.navigate(HomeDestination.route) }
 
                     )
                 }
@@ -75,6 +80,7 @@ fun GeoQuestNavGraph(
                         navigateBack = { navController.navigate(HomeDestination.route) },
                         navigateToCamera = { navController.navigate(CameraScreenDestination.route) },
                         viewModel = createQuestViewModel,
+                        navigateToHomeScreen = { navController.navigate(HomeDestination.route) }
                     )
                 }
                 composable(route = ViewQuestDestination.routeWithArgs,
@@ -84,7 +90,10 @@ fun GeoQuestNavGraph(
                 ) {
                     ViewQuestScreen(
                         navigateUp = { navController.navigateUp() },
-                        navigateToFindQuest = { navController.navigate("${FindQuestDestination.route}/${it}") }
+                        navigateToFindQuest = { navController.navigate("${FindQuestDestination.route}/${it}") },
+                        navigateToHomeScreen = { navController.navigate(HomeDestination.route) }
+
+
                     )
                 }
                 composable(route = FindQuestDestination.routeWithArgs,
@@ -99,7 +108,9 @@ fun GeoQuestNavGraph(
                         navigateToSuccessScreen = { navController.navigate(SuccessScreenDestination.route) },
                         navigateToFailedScreen = { navController.navigate(FailedScreenDestination.route) },
                         createViewModel = createQuestViewModel,
-                        )
+                        navigateToHomeScreen = { navController.navigate(HomeDestination.route) }
+
+                    )
                 }
                 composable(route = SettingsDestination.route) {
                     SettingsScreen(
@@ -113,6 +124,7 @@ fun GeoQuestNavGraph(
                         navigateUp = { navController.navigateUp() },
                         lastCapturedPhotoViewModel = lastCapturedPhotoViewModel,
                         createViewModel = createQuestViewModel,
+
                     )
                 }
                 composable(route = SuccessScreenDestination.route) {
@@ -123,6 +135,15 @@ fun GeoQuestNavGraph(
                 composable(route = FailedScreenDestination.route) {
                     FailedScreen(
                         navigateUp = { navController.navigateUp() },
+                        navigateToHomeScreen = { navController.navigate(HomeDestination.route) }
+
+                    )
+                }
+                composable(route = Nav.route) {
+                    GeoQuestTopBar(
+                        navigateToHomeScreen = { navController.navigate(HomeDestination.route) },
+                        canNavigateBack = true,
+                        title = "",
                     )
                 }
             }
