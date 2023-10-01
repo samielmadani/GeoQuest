@@ -2,6 +2,7 @@ package com.example.geoquest.ui.quest.findQuest
 
 import android.Manifest
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -53,8 +54,8 @@ import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
-import com.google.maps.android.compose.rememberMarkerState
 
 object FindQuestDestination: NavigationDestination {
     override val route = "findQuestScreen"
@@ -230,19 +231,16 @@ fun MapTarget(
     viewModel2: HomeViewModel
 ){
     // Extract the position from the state
-    val positions = mutableListOf<LatLng>()
-        val lat_long = LatLng(viewModel.questUiState.questDetails.latitude, viewModel.questUiState.questDetails.longitude)
-        positions.add(lat_long)
-
+    val lat_long = LatLng(viewModel.questUiState.questDetails.latitude, viewModel.questUiState.questDetails.longitude)
 
     val cameraPositionState: CameraPositionState
-    if (positions.size == 0) {
+    if (viewModel.questUiState.questDetails.latitude == 0.0 && viewModel.questUiState.questDetails.longitude == 0.0) {
         cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(viewModel2.getLocation(), 10f)
+            position = CameraPosition.fromLatLngZoom(lat_long, 10f)
         }
     } else {
         cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(LatLng(viewModel.questUiState.questDetails.latitude, viewModel.questUiState.questDetails.longitude), 1f)
+            position = CameraPosition.fromLatLngZoom(lat_long, 1f)
         }
     }
 
@@ -252,14 +250,10 @@ fun MapTarget(
         cameraPositionState = cameraPositionState,
         properties = MapProperties(isMyLocationEnabled = true)
     ) {
-            val lat_long = LatLng(viewModel.questUiState.questDetails.latitude, viewModel.questUiState.questDetails.longitude)
             Marker(
-                state = rememberMarkerState(position = lat_long),
+                state = MarkerState(position = lat_long),
                 title = viewModel.questUiState.questDetails.questTitle,
-                snippet = viewModel.questUiState.questDetails.questDescription,
                 icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
             )
-
-
     }
 }

@@ -3,6 +3,7 @@ package com.example.geoquest.ui.home
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -31,8 +33,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -85,6 +91,7 @@ fun HomeScreen(
     val homeUiState by viewModel.homeUiState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val permissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
+    val selectedQuestId = remember { mutableIntStateOf(-1) }
 
     BackPressHandler(onBackPressed = {})
 
@@ -127,11 +134,12 @@ fun HomeScreen(
                         .fillMaxHeight(0.4f)
                         .padding(contentPadding)// Takes half of the screen height
                 ) {
-                    MapTarget(homeUiState.questList, viewModel)
+                    MapTarget(homeUiState.questList, viewModel, selectedQuestId)
                 }
                 HomeBody(
                     questList = homeUiState.questList,
                     navigateToViewQuest,
+                    selectedQuestId,
                     modifier = modifier
                         .fillMaxSize()
                 )
@@ -172,6 +180,7 @@ fun PermissionsDenied(modifier: Modifier, scrollBehavior: TopAppBarScrollBehavio
 fun HomeBody(
     questList: List<Quest>,
     navigateToViewQuest: (Int) -> Unit,
+    selectedQuestId: MutableIntState,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -187,7 +196,8 @@ fun HomeBody(
         } else {
             QuestList(
                 questList = questList,
-                navigateToViewQuest
+                navigateToViewQuest,
+                selectedQuestId
             )
         }
     }
@@ -197,27 +207,46 @@ fun HomeBody(
 fun QuestList(
     questList: List<Quest>,
     navigateToViewQuest: (Int) -> Unit,
-    modifier: Modifier = Modifier,
+    selectedQuestId: MutableIntState,
+    modifier: Modifier = Modifier
 ) {
-    LazyColumn(modifier = modifier) {
-        items(items = questList, key = { it.questId }) {quest ->
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(selectedQuestId.intValue) {
+        if (selectedQuestId.intValue != -1) {
+            val index = questList.indexOfFirst { quest -> quest.questId == selectedQuestId.intValue }
+            listState.animateScrollToItem(index)
+        }
+    }
+
+    LazyColumn(state = listState, modifier = modifier) {
+        items(items = questList, key = { it.questId }) { quest ->
             QuestCard(
                 quest = quest,
-                navigateToViewQuest
+                navigateToViewQuest,
+                isSelected = quest.questId == selectedQuestId.intValue,
+                selectedQuestId
             )
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuestCard(
     quest: Quest,
-    navigateToViewQuest: (Int) -> Unit
+    navigateToViewQuest: (Int) -> Unit,
+    isSelected: Boolean = false,
+    selectedQuestId: MutableIntState
 ) {
     val context = LocalContext.current
     Card(
         shape = RoundedCornerShape(dimensionResource(id = R.dimen.padding_small)),
+        onClick = {
+            selectedQuestId.intValue = quest.questId
+        },
         modifier = Modifier
+            .background(if (isSelected) Color.LightGray else Color.White)
             .fillMaxWidth()
             .padding(dimensionResource(id = R.dimen.padding_medium))
             .shadow(8.dp, shape = RoundedCornerShape(dimensionResource(id = R.dimen.padding_small))),
@@ -278,28 +307,32 @@ fun QuestCard(
 
 
 @Composable
-fun MapTarget(questList: List<Quest>, viewModel: HomeViewModel){
+fun MapTarget(questList: List<Quest>, viewModel: HomeViewModel, selectedQuestId: MutableIntState){
     // Extract the position from the state
-    val positions = mutableListOf<LatLng>()
-    for (quest in questList) {
-        val lat_long = LatLng(quest.latitude, quest.longitude)
-        positions.add(lat_long)
-    }
+    val positions = questList.map { LatLng(it.latitude, it.longitude) }
+    val averageLat = positions.map { it.latitude }.average()
+    val averageLng = positions.map { it.longitude }.average()
 
     val cameraPositionState: CameraPositionState
-    if (positions.size == 0) {
+    if (positions.isEmpty()) {
         cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(viewModel.getLocation(), 10f)
+            position = CameraPosition.fromLatLngZoom(viewModel.getLocation(), 1f)
         }
+    } else if (selectedQuestId.intValue != -1) {
+        val quest = questList.find { quest -> quest.questId == selectedQuestId.intValue }
+
+        val position = if (quest !== null) {
+            CameraPosition.fromLatLngZoom(LatLng(quest.latitude, quest.longitude), 1f)
+        } else {
+            CameraPosition.fromLatLngZoom(LatLng(averageLat, averageLng), 1f)
+        }
+
+        cameraPositionState = CameraPositionState(position = position)
     } else {
         cameraPositionState = rememberCameraPositionState {
-            val averageLat = positions.map { it.latitude }.average()
-            val averageLng = positions.map { it.longitude }.average()
-
             position = CameraPosition.fromLatLngZoom(LatLng(averageLat, averageLng), 1f)
         }
     }
-
 
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
@@ -307,12 +340,14 @@ fun MapTarget(questList: List<Quest>, viewModel: HomeViewModel){
         properties = MapProperties(isMyLocationEnabled = true)
     ) {
         for (quest in questList) {
-            val lat_long = LatLng(quest.latitude, quest.longitude)
             Marker(
-                state = rememberMarkerState(position = lat_long),
+                state = rememberMarkerState(position = LatLng(quest.latitude, quest.longitude)),
                 title = quest.questTitle,
-                snippet = quest.questDescription,
-                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
+                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE),
+                onClick = {
+                    selectedQuestId.intValue = quest.questId
+                    true
+                }
             )
 
         }
