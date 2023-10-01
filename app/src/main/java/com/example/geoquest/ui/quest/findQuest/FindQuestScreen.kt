@@ -250,7 +250,7 @@ fun MapTarget(
         }
     } else {
         cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(lat_long, 1f)
+            position = CameraPosition.fromLatLngZoom(lat_long, 3f)
         }
     }
 

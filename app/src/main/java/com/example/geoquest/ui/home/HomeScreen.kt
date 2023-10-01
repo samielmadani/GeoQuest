@@ -337,21 +337,21 @@ fun MapTarget(questList: List<Quest>, viewModel: HomeViewModel, selectedQuestId:
     val cameraPositionState: CameraPositionState
     if (positions.isEmpty()) {
         cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(viewModel.getLocation(), 1f)
+            position = CameraPosition.fromLatLngZoom(viewModel.getLocation(), 4.5f)
         }
     } else if (selectedQuestId.intValue != -1) {
         val quest = questList.find { quest -> quest.questId == selectedQuestId.intValue }
 
         val position = if (quest !== null) {
-            CameraPosition.fromLatLngZoom(LatLng(quest.latitude, quest.longitude), 1f)
+            CameraPosition.fromLatLngZoom(LatLng(quest.latitude, quest.longitude), 4.5f)
         } else {
-            CameraPosition.fromLatLngZoom(LatLng(averageLat, averageLng), 1f)
+            CameraPosition.fromLatLngZoom(LatLng(averageLat, averageLng), 4.5f)
         }
 
         cameraPositionState = CameraPositionState(position = position)
     } else {
         cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(LatLng(averageLat, averageLng), 1f)
+            position = CameraPosition.fromLatLngZoom(LatLng(averageLat, averageLng), 4.5f)
         }
     }
 
