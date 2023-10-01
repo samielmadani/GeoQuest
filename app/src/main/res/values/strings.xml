@@ -28,5 +28,8 @@
     <string name="validation_message">
         Only letters and numbers are allowed. If using a number, then a letter must be included.
     </string>
+    <string name="appwidget_text">GeoQuest</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">Nearest Quest</string>
 
 </resources>
