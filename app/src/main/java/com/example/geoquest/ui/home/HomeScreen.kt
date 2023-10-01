@@ -61,6 +61,7 @@ import com.example.geoquest.R
 import com.example.geoquest.model.Quest
 import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.navigation.NavigationDestination
+import com.example.geoquest.ui.quest.createQuest.CreateQuestViewModel
 import com.example.geoquest.ui.quest.findQuest.BackPressHandler
 import com.example.geoquest.ui.quest.viewQuest.DifficultyStars
 import com.example.geoquest.ui.theme.GeoQuestTheme
@@ -90,12 +91,15 @@ fun HomeScreen(
     navigateToViewQuest: (Int) -> Unit,
     navigateToSettings: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
-) {
+    viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    createViewModel: CreateQuestViewModel
+    ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val permissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
     val selectedQuestId = remember { mutableIntStateOf(-1) }
+
+    createViewModel.questUiState.questDetails.image = null
 
     BackPressHandler(onBackPressed = {})
 
@@ -390,14 +394,15 @@ fun shareQuest(quest: Quest, context: Context) {
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    GeoQuestTheme {
-        HomeScreen(
-            navigateToCreateQuest = {},
-            navigateToViewQuest = {},
-            navigateToSettings = {}
-        )
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun HomeScreenPreview() {
+//    GeoQuestTheme {
+//        HomeScreen(
+//            navigateToCreateQuest = {},
+//            navigateToViewQuest = {},
+//            navigateToSettings = {},
+//
+//        )
+//    }
+//}

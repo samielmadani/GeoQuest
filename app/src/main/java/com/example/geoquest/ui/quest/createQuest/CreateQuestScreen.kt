@@ -79,6 +79,7 @@ fun CreateQuest(
             onCreateClick = {
                     coroutineScope.launch {
                         viewModel.saveQuest()
+                        viewModel.questUiState.questDetails.image = null
                         navigateBack()
                     }
             },

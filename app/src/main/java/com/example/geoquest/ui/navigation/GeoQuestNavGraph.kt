@@ -65,6 +65,7 @@ fun GeoQuestNavGraph(
                         navigateToCreateQuest = { navController.navigate(CreateQuestDestination.route) },
                         navigateToViewQuest = { navController.navigate("${ViewQuestDestination.route}/${it}") },
                         navigateToSettings = { navController.navigate(SettingsDestination.route) },
+                        createViewModel = createQuestViewModel,
 
                     )
                 }
@@ -97,7 +98,8 @@ fun GeoQuestNavGraph(
                         lastCapturedPhotoViewModel = lastCapturedPhotoViewModel,
                         navigateToSuccessScreen = { navController.navigate(SuccessScreenDestination.route) },
                         navigateToFailedScreen = { navController.navigate(FailedScreenDestination.route) },
-                    )
+                        createViewModel = createQuestViewModel,
+                        )
                 }
                 composable(route = SettingsDestination.route) {
                     SettingsScreen(
