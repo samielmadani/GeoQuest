@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -222,7 +223,10 @@ fun QuestList(
         }
     }
 
-    LazyColumn(state = listState, modifier = modifier) {
+    LazyColumn(
+        state = listState,
+        modifier = modifier
+    ) {
         items(items = questList, key = { it.questId }) { quest ->
             QuestCard(
                 quest = quest,
@@ -249,7 +253,9 @@ fun QuestCard(
             selectedQuestId.intValue = quest.questId
         },
         modifier = Modifier
-            .background(if (isSelected) Color.LightGray else Color.White)
+            .background(
+                if (isSelected) if (isSystemInDarkTheme()) Color.Black else Color.LightGray else if (isSystemInDarkTheme()) Color.Transparent else Color.White
+            )
             .fillMaxWidth()
             .padding(dimensionResource(id = R.dimen.padding_medium))
             .shadow(8.dp, shape = RoundedCornerShape(dimensionResource(id = R.dimen.padding_small))),
@@ -271,12 +277,12 @@ fun QuestCard(
                 }
 
                 Box(modifier = Modifier
-                    .fillMaxHeight()
+                    .fillMaxHeight(0.7F)
                 ) {
                     Image(
                         painter = painter,
                         contentDescription = stringResource(id = R.string.default_image),
-                        modifier = Modifier.size(dimensionResource(id = R.dimen.image_size))
+                        modifier = Modifier.size(130.dp)
                     )
                 }
                 Column(
@@ -293,23 +299,28 @@ fun QuestCard(
                         style = MaterialTheme.typography.bodySmall,
                     )
                     DifficultyStars(quest.questDifficulty)
-                    Button(
-                        onClick = { navigateToViewQuest(quest.questId) },
-                        shape = MaterialTheme.shapes.small,
-                    ) {
-                        Text(text = stringResource(id = R.string.view_button))
+                    Row {
+
+                        Button(
+                            onClick = { navigateToViewQuest(quest.questId) },
+                            shape = MaterialTheme.shapes.small,
+                        ) {
+                            Text(text = stringResource(id = R.string.view_button))
+                        }
+                        Button(
+                            onClick = { shareQuest(quest, context) },
+                            shape = MaterialTheme.shapes.small,
+                            colors = ButtonDefaults.buttonColors(Color.Transparent),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = "Share Quest"
+                            )
+                        }
                     }
+
                 }
-                Button(
-                    onClick = { shareQuest(quest, context) },
-                    shape = MaterialTheme.shapes.small,
-                    colors = ButtonDefaults.buttonColors(Color.Transparent),
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Share,
-                        contentDescription = "Share Quest"
-                    )
-                }
+
             }
         }
     }
