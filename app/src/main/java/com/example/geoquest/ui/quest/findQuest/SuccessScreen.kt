@@ -60,7 +60,7 @@ fun SuccessScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(contentPadding)
-                .background(if (isSystemInDarkTheme()) Color.DarkGray else Color.White),
+                .background(Color.Transparent),
             contentAlignment = Alignment.Center
         ) {
             Column(
