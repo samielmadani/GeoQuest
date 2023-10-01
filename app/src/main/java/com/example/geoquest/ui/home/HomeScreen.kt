@@ -254,7 +254,7 @@ fun QuestCard(
         },
         modifier = Modifier
             .background(
-                if (isSelected) if (isSystemInDarkTheme()) Color.Black else Color.LightGray else if (isSystemInDarkTheme()) Color.Transparent else Color.White
+                if (isSelected) if (isSystemInDarkTheme()) Color.Black else Color.LightGray else Color.Transparent
             )
             .fillMaxWidth()
             .padding(dimensionResource(id = R.dimen.padding_medium))
