@@ -3,6 +3,7 @@ package com.example.geoquest.ui.home
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
@@ -52,6 +54,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
 import com.example.geoquest.GeoQuestTopBar
 import com.example.geoquest.R
 import com.example.geoquest.model.Quest
@@ -261,14 +264,21 @@ fun QuestCard(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(80.dp)
-                        .padding(end = 16.dp),
-                    tint = Color.Green
-                )
+                val painter: Painter = if (quest.questImageUri != null) {
+                    rememberAsyncImagePainter(model = quest.questImageUri)
+                } else {
+                    painterResource(id = R.drawable.default_image)
+                }
+
+                Box(modifier = Modifier
+                    .fillMaxHeight()
+                ) {
+                    Image(
+                        painter = painter,
+                        contentDescription = stringResource(id = R.string.default_image),
+                        modifier = Modifier.size(dimensionResource(id = R.dimen.image_size))
+                    )
+                }
                 Column(
                     modifier = Modifier
                         .weight(1f)

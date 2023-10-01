@@ -12,12 +12,14 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.home.HomeDestination
 import com.example.geoquest.ui.home.HomeScreen
 import com.example.geoquest.ui.quest.createQuest.CameraScreen
 import com.example.geoquest.ui.quest.createQuest.CameraScreenDestination
 import com.example.geoquest.ui.quest.createQuest.CreateQuest
 import com.example.geoquest.ui.quest.createQuest.CreateQuestDestination
+import com.example.geoquest.ui.quest.createQuest.CreateQuestViewModel
 import com.example.geoquest.ui.quest.findQuest.FailedScreen
 import com.example.geoquest.ui.quest.findQuest.FailedScreenDestination
 import com.example.geoquest.ui.quest.findQuest.FindQuestDestination
@@ -43,6 +45,7 @@ fun GeoQuestNavGraph(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val lastCapturedPhotoViewModel: LastCapturedPhotoViewModel = viewModel()
+    val createQuestViewModel: CreateQuestViewModel = viewModel(factory = AppViewModelProvider.Factory)
 
     Scaffold {contentPadding ->
         Box(modifier = Modifier.padding(contentPadding))
@@ -70,7 +73,7 @@ fun GeoQuestNavGraph(
                         coroutineScope = coroutineScope,
                         navigateBack = { navController.navigate(HomeDestination.route) },
                         navigateToCamera = { navController.navigate(CameraScreenDestination.route) },
-                        lastCapturedPhotoViewModel = lastCapturedPhotoViewModel
+                        viewModel = createQuestViewModel,
                     )
                 }
                 composable(route = ViewQuestDestination.routeWithArgs,
@@ -106,7 +109,8 @@ fun GeoQuestNavGraph(
                     CameraScreen(
                         navigateToCreateQuest = { navController.navigate(CreateQuestDestination.route) },
                         navigateUp = { navController.navigateUp() },
-                        lastCapturedPhotoViewModel = lastCapturedPhotoViewModel
+                        lastCapturedPhotoViewModel = lastCapturedPhotoViewModel,
+                        createViewModel = createQuestViewModel,
                     )
                 }
                 composable(route = SuccessScreenDestination.route) {

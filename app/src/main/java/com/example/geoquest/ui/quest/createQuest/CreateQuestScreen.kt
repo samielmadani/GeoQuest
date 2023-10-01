@@ -1,6 +1,5 @@
 package com.example.geoquest.ui.quest.createQuest
 
-import android.graphics.Bitmap
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -25,12 +24,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -38,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
 import com.example.geoquest.GeoQuestTopBar
 import com.example.geoquest.R
 import com.example.geoquest.model.getCurrentLocation
@@ -62,10 +60,8 @@ fun CreateQuest(
     coroutineScope: CoroutineScope,
     navigateBack: () -> Unit,
     navigateToCamera: () -> Unit,
-    lastCapturedPhotoViewModel: LastCapturedPhotoViewModel,
-    viewModel: CreateQuestViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: CreateQuestViewModel
 ) {
-
     val cameraPermissionState: PermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
 
     Scaffold(
@@ -94,7 +90,6 @@ fun CreateQuest(
                 .verticalScroll(rememberScrollState())
                 .fillMaxWidth(),
             viewModel = viewModel,
-            lastCapturedPhotoViewModel = lastCapturedPhotoViewModel
         )
     }
 }
@@ -109,31 +104,24 @@ fun CreateQuestBody(
     navigateToCamera: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CreateQuestViewModel,
-    lastCapturedPhotoViewModel: LastCapturedPhotoViewModel
 ) {
-    val lastCapturedPhoto:Bitmap? by lastCapturedPhotoViewModel.lastCapturedPhoto.observeAsState(null)
-
-
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (lastCapturedPhoto != null) {
-            lastCapturedPhoto?.asImageBitmap()?.let {
-                Image(
-                    bitmap = it,
-                    contentDescription = stringResource(id = R.string.default_image),
-                    modifier = Modifier.size(dimensionResource(id = R.dimen.image_size))
-                )
-            }
+        val painter: Painter = if (questUiState.questDetails.image != null) {
+            rememberAsyncImagePainter(model = questUiState.questDetails.image)
         } else {
-            Image(
-                painter = painterResource(id = R.drawable.default_image),
-                contentDescription = stringResource(id = R.string.default_image),
-                modifier = Modifier.size(dimensionResource(id = R.dimen.image_size))
-            )
+            painterResource(id = R.drawable.default_image)
         }
+
+        Image(
+            painter = painter,
+            contentDescription = stringResource(id = R.string.default_image),
+            modifier = Modifier.size(dimensionResource(id = R.dimen.image_size))
+        )
+
         Button(onClick = {
             if (hasPermission) {
                 navigateToCamera()
@@ -321,7 +309,7 @@ fun CreateScreenPreview() {
             rememberCoroutineScope(),
             navigateBack = {},
             navigateToCamera = {},
-            lastCapturedPhotoViewModel = viewModel()
+            viewModel = viewModel(factory = AppViewModelProvider.Factory)
         )
     }
 }

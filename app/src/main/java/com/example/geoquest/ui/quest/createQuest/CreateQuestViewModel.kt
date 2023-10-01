@@ -2,6 +2,7 @@ package com.example.geoquest.ui.quest.createQuest
 
 import android.net.Uri
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -23,11 +24,8 @@ class CreateQuestViewModel(private val sharedPreferences: SharedPreferences, pri
     var questUiState by mutableStateOf(QuestUiState())
         private set
 
-    private var capturedImageUri by mutableStateOf<Uri?>(null)
-
     var selectedDifficulty by mutableStateOf(1)
         private set
-
 
     fun onDifficultySelected(selectedDifficulty: Int) {
         // Update the selected difficulty level in your ViewModel or wherever you need it
@@ -35,12 +33,9 @@ class CreateQuestViewModel(private val sharedPreferences: SharedPreferences, pri
     }
 
     fun updateUiState(questDetails: QuestDetails) {
+        Log.d("IMAGE", "Updating: ${questDetails.image}")
         questUiState =
             QuestUiState(questDetails = questDetails, isEntryValid = validateInput(questDetails))
-    }
-
-    fun setCapturedUri(uri: Uri) {
-        capturedImageUri = uri
     }
 
     private fun validateInput(uiState: QuestDetails = questUiState.questDetails): Boolean {
@@ -59,7 +54,6 @@ class CreateQuestViewModel(private val sharedPreferences: SharedPreferences, pri
         questDetails.author = sharedPreferences.getString("userName", "GeoQuest").toString()
         if (validateInput(questDetails)) {
             val quest = questDetails.toQuest()
-            quest.questImageUri = capturedImageUri.toString()
             quest.questDifficulty = selectedDifficulty
             questRepository.addQuest(quest)
         }
@@ -96,7 +90,8 @@ data class QuestDetails(
     var questImageUri: String? = null,
     var latitude: Double = 0.0,
     var longitude: Double = 0.0,
-    var author: String = "GeoQuest"
+    var author: String = "GeoQuest",
+    var image: String? = null
 )
 
 /**
@@ -115,7 +110,7 @@ fun QuestDetails.toQuest(): Quest = Quest(
     questTitle = questTitle,
     questDescription = questDescription,
     questDifficulty = questDifficulty,
-    questImageUri = questImageUri,
+    questImageUri = image,
     latitude = latitude,
     longitude = longitude,
     author = author
@@ -129,7 +124,7 @@ fun Quest.toQuestDetails(): QuestDetails = QuestDetails(
     questTitle = questTitle,
     questDescription = questDescription,
     questDifficulty = questDifficulty,
-    questImageUri = questImageUri,
+    image = questImageUri,
     latitude = latitude,
     longitude = longitude,
     author = author

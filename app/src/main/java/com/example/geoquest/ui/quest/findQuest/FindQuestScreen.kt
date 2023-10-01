@@ -28,6 +28,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -37,6 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
 import com.example.geoquest.GeoQuestTopBar
 import com.example.geoquest.R
 import com.example.geoquest.model.Quest
@@ -44,6 +46,7 @@ import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.home.HomeViewModel
 import com.example.geoquest.ui.navigation.NavigationDestination
 import com.example.geoquest.ui.quest.createQuest.LastCapturedPhotoViewModel
+import com.example.geoquest.ui.quest.createQuest.toQuest
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
@@ -85,12 +88,13 @@ fun FindQuestScreen(
     val hasPermission = cameraPermissionState.hasPermission
     val onRequestPermission = cameraPermissionState::launchPermissionRequest
 
+    val quest = viewModel.questUiState.questDetails.toQuest()
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             GeoQuestTopBar(
-                title = "Hunting for " + viewModel.questUiState.questDetails.questTitle,
+                title = "Hunting for " + quest.questTitle,
                 canNavigateBack = true,
                 navigateUp = navigateUp
             )
@@ -135,8 +139,14 @@ fun FindQuestScreen(
                 ){
                     Text(text = "GoeQuest:")
 
+                    val painter: Painter = if (quest.questImageUri != null) {
+                        rememberAsyncImagePainter(model = quest.questImageUri)
+                    } else {
+                        painterResource(id = R.drawable.default_image)
+                    }
+
                     Image(
-                        painter = painterResource(id = R.drawable.default_image),
+                        painter = painter,
                         contentDescription = stringResource(id = R.string.default_image),
                         modifier = Modifier.size(dimensionResource(id = R.dimen.image_size))
                     )

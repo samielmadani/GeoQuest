@@ -2,6 +2,7 @@ package com.example.geoquest.ui.quest.createQuest
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.geoquest.model.SavePhotoToGallery
@@ -16,14 +17,18 @@ class CameraViewModel(
     private val _state = MutableStateFlow(CameraState())
     val state = _state.asStateFlow()
 
-    private val _capturedImageUri = MutableStateFlow<Uri?>(null)
-    val capturedImageUri = _capturedImageUri.asStateFlow()
+    val capturedImageUri = MutableStateFlow<Uri?>(null)
 
     fun storePhotoInGallery(bitmap: Bitmap) {
         viewModelScope.launch {
             savePhotoToGallery.savePhotoToGallery(bitmap)
             updateCapturedPhotoState(bitmap)
         }
+    }
+
+    fun storePhoto(uri: Uri?) {
+        Log.d("CameraViewModel", "storePhoto: $uri")
+        capturedImageUri.value = uri
     }
 
     private fun updateCapturedPhotoState(updatedPhoto: Bitmap?) {

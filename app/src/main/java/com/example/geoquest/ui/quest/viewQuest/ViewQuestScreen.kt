@@ -2,9 +2,11 @@ package com.example.geoquest.ui.quest.viewQuest
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
@@ -32,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
 import com.example.geoquest.GeoQuestTopBar
 import com.example.geoquest.R
 import com.example.geoquest.ui.AppViewModelProvider
@@ -55,6 +59,7 @@ fun ViewQuestScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
+    val quest = viewModel.questUiState.questDetails.toQuest()
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -63,7 +68,7 @@ fun ViewQuestScreen(
                 title = stringResource(id = ViewQuestDestination.titleRes),
                 canNavigateBack = true,
                 navigateUp = navigateUp,
-                onShareClick = { shareQuest(viewModel.questUiState.questDetails.toQuest(), context) }
+                onShareClick = { shareQuest(quest, context) }
             )
         }
     ) { contentPadding ->
@@ -74,13 +79,19 @@ fun ViewQuestScreen(
                 .padding(16.dp), // Add padding to center-align content
             horizontalAlignment = Alignment.CenterHorizontally // Center-align content horizontally
         ) {
+            val painter: Painter = if (quest.questImageUri != null) {
+                rememberAsyncImagePainter(model = quest.questImageUri)
+            } else {
+                painterResource(id = R.drawable.default_image)
+            }
+
             Image(
-                painter = painterResource(id = R.drawable.default_image),
+                painter = painter,
                 contentDescription = stringResource(id = R.string.default_image),
                 modifier = Modifier.size(dimensionResource(id = R.dimen.image_size))
             )
             Text(
-                text = viewModel.questUiState.questDetails.questTitle,
+                text = quest.questTitle,
                 style = TextStyle(
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
@@ -88,13 +99,13 @@ fun ViewQuestScreen(
 
             )
             Text(
-                text = "By: " + viewModel.questUiState.questDetails.author,
+                text = "By: " + quest.author,
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
 
-            DifficultyStars(viewModel.questUiState.questDetails.questDifficulty)
+            DifficultyStars(quest.questDifficulty)
             Spacer(modifier = Modifier.weight(0.1f))
             Text(
                 text = stringResource(id = R.string.quest_description),
@@ -104,7 +115,7 @@ fun ViewQuestScreen(
                 )
             )
             Text(
-                text = viewModel.questUiState.questDetails.questDescription,
+                text = quest.questDescription,
                 style = TextStyle(
                     fontSize = 16.sp
                 ),
@@ -115,7 +126,7 @@ fun ViewQuestScreen(
             Spacer(modifier = Modifier.weight(1f)) // Pushes the "Find" button to the bottom
 
             Button(
-                onClick = { navigateToFindQuest(viewModel.questId) },
+                onClick = { navigateToFindQuest(quest.questId) },
                 shape = MaterialTheme.shapes.small
             ) {
                 Text(text = stringResource(id = R.string.begin_hunt))

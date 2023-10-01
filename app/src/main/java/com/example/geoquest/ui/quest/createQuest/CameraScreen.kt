@@ -4,6 +4,7 @@ package com.example.geoquest.ui.quest.createQuest
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Matrix
+import android.net.Uri
 import android.util.Log
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.LinearLayout
@@ -17,6 +18,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Card
@@ -37,19 +39,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import com.example.geoquest.R
 import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.navigation.NavigationDestination
 import com.example.geoquest.ui.theme.GeoQuestTheme
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.util.concurrent.Executor
 
 object CameraScreenDestination: NavigationDestination {
@@ -60,20 +70,15 @@ object CameraScreenDestination: NavigationDestination {
 fun CameraScreen(
     navigateToCreateQuest: () -> Unit,
     viewModel: CameraViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    createViewModel: CreateQuestViewModel,
     lastCapturedPhotoViewModel: LastCapturedPhotoViewModel,
     navigateUp: () -> Unit
 ) {
-    val cameraState: CameraState by viewModel.state.collectAsState()
-    val lastCapturedPhoto = cameraState.capturedImage
-
-    lastCapturedPhotoViewModel.setLastCapturedPhoto(lastCapturedPhoto)
-    println("view model: $lastCapturedPhotoViewModel")
-    println("variable: $lastCapturedPhoto")
-
     CameraContent(
-        onPhotoCaptured = viewModel::storePhotoInGallery,
-        lastCapturedPhoto = lastCapturedPhoto,
-        navigateToCreateQuest = navigateToCreateQuest,
+        onPhotoCaptured = {
+            createViewModel.updateUiState(createViewModel.questUiState.questDetails.copy(image = it.toString()))
+        },
+        lastCapturedPhoto = createViewModel.questUiState.questDetails.image,
         navigateUp = navigateUp
     )
 }
@@ -81,9 +86,8 @@ fun CameraScreen(
 
 @Composable
 fun CameraContent(
-    onPhotoCaptured: (Bitmap) -> Unit,
-    lastCapturedPhoto: Bitmap? = null,
-    navigateToCreateQuest: () -> Unit,
+    onPhotoCaptured: (Uri?) -> Unit,
+    lastCapturedPhoto: String? = null,
     navigateUp: () -> Unit
 ) {
 
@@ -144,7 +148,7 @@ fun CameraContent(
             if (lastCapturedPhoto != null) {
                 LastPhotoPreview(
                     modifier = Modifier.align(alignment = BottomStart),
-                    lastCapturedPhoto = lastCapturedPhoto
+                    uri = lastCapturedPhoto
                 )
             }
         }
@@ -152,13 +156,29 @@ fun CameraContent(
 }
 
 @Composable
+fun DisplayImage(uri: String?) {
+    if (uri == null) {
+        Image(
+            painter = painterResource(id = R.drawable.default_image),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+    }
+
+    Image(
+        painter = rememberAsyncImagePainter(model = uri),
+        contentDescription = null,
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop
+    )
+}
+
+@Composable
 private fun LastPhotoPreview(
     modifier: Modifier = Modifier,
-    lastCapturedPhoto: Bitmap
+    uri: String??
 ) {
-
-    val capturedPhoto: ImageBitmap = remember(lastCapturedPhoto.hashCode()) { lastCapturedPhoto.asImageBitmap() }
-
     Card(
         modifier = modifier
             .size(dimensionResource(id = R.dimen.card_size))
@@ -166,29 +186,40 @@ private fun LastPhotoPreview(
         elevation = dimensionResource(id = R.dimen.padding_small),
         shape = MaterialTheme.shapes.large
     ) {
-        Image(
-            bitmap = capturedPhoto,
-            contentDescription = "Last captured photo",
-            contentScale = androidx.compose.ui.layout.ContentScale.Crop
-        )
+        DisplayImage(uri)
     }
+}
+
+fun ImageProxy.toFile(context: Context, fileName: String): File {
+    val file = File(context.externalCacheDir, fileName)
+    val buffer = planes[0].buffer
+    val bytes = ByteArray(buffer.remaining())
+    buffer.get(bytes)
+    try {
+        FileOutputStream(file).use {
+            it.write(bytes)
+        }
+    } catch (e: IOException) {
+        e.printStackTrace()
+    }
+    return file
 }
 
 private fun capturePhoto(
     context: Context,
     cameraController: LifecycleCameraController,
-    onPhotoCaptured: (Bitmap) -> Unit
+    onPhotoCaptured: (Uri?) -> Unit
 ) {
     val mainExecutor: Executor = ContextCompat.getMainExecutor(context)
 
     cameraController.takePicture(mainExecutor, object: ImageCapture.OnImageCapturedCallback() {
         override fun onCaptureSuccess(image: ImageProxy) {
-            val correctedBitmap: Bitmap = image
-                .toBitmap()
-                .rotateBitmap(image.imageInfo.rotationDegrees)
-
-            onPhotoCaptured(correctedBitmap)
+            val filename = "${System.currentTimeMillis()}.jpg"
+            val file = image.toFile(context, filename)
             image.close()
+
+            // Convert the saved file to a Uri and send back to the Composable.
+            onPhotoCaptured(Uri.fromFile(file))
         }
 
         override fun onError(exception: ImageCaptureException) {
@@ -214,7 +245,8 @@ fun CameraScreenPreview() {
         CameraScreen(
             navigateToCreateQuest = {},
             lastCapturedPhotoViewModel = viewModel(),
-            navigateUp = {}
+            navigateUp = {},
+            createViewModel = viewModel(factory = AppViewModelProvider.Factory)
         )
     }
 }
