@@ -510,7 +510,7 @@ fun discoverQuest(context: Context) {
     startDiscovery(context)
 }
 
-private fun startAdvertising(context: Context) {
+private fun startAdvertising(quest: Quest, context: Context) {
     val advertisingOptions = AdvertisingOptions.Builder().setStrategy(Strategy.P2P_STAR).build()
 
     class ReceiveBytesPayloadListener : PayloadCallback() {
@@ -544,7 +544,10 @@ private fun startAdvertising(context: Context) {
             override fun onConnectionResult(endpointId: String, result: ConnectionResolution) {
                 Log.i("SHARE SEND", "Connection Result")
                 when (result.status.statusCode) {
-                    ConnectionsStatusCodes.STATUS_OK -> {}
+                    ConnectionsStatusCodes.STATUS_OK -> {
+                        val bytesPayload = Payload.fromBytes(convertQuestToJson(quest).toByteArray())
+                        Nearby.getConnectionsClient(context).sendPayload(endpointId, bytesPayload)
+                    }
                     ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {}
                     ConnectionsStatusCodes.STATUS_ERROR -> {}
                     else -> {}
@@ -575,6 +578,11 @@ private fun startDiscovery(context: Context) {
             if (payload.type == Payload.Type.BYTES) {
                 val receivedBytes = payload.asBytes()
                 Log.i("SHARE RCV", "Received data")
+
+                if (receivedBytes != null) {
+                    val quest = convertJsonToQuest(String(receivedBytes))
+                    Log.i("SHARE RCV", "QUEST: $quest")
+                }
             }
         }
 
@@ -637,7 +645,7 @@ private fun startDiscovery(context: Context) {
 
 @OptIn(ExperimentalPermissionsApi::class)
 fun shareQuest(quest: Quest, context: Context) {
-    startAdvertising(context)
+    startAdvertising(quest, context)
 }
 
 
