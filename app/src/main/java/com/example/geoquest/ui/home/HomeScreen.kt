@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -56,7 +55,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.geoquest.GeoQuestTopBar
@@ -70,7 +68,6 @@ import com.example.geoquest.ui.quest.viewQuest.DifficultyStars
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionRequired
-import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -89,8 +86,6 @@ import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.PayloadCallback
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate
 import com.google.android.gms.nearby.connection.Strategy
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
@@ -560,7 +555,7 @@ private fun startAdvertising(context: Context) {
 
     Nearby.getConnectionsClient(context)
         .startAdvertising(
-            Build.ID, Build.MODEL, connectionLifecycleCallback, advertisingOptions
+            Build.ID, "com.example.geoquest", connectionLifecycleCallback, advertisingOptions
         )
         .addOnSuccessListener { Log.i("SHARE SEND", "startAdvertising OnSuccessListener") }
         .addOnFailureListener { error -> Log.e("SHARE SEND", "startAdvertising Error: $error") }
@@ -630,7 +625,7 @@ private fun startDiscovery(context: Context) {
         }
 
     Nearby.getConnectionsClient(context)
-        .startDiscovery(id, endpointDiscoveryCallback, discoveryOptions)
+        .startDiscovery("com.example.geoquest", endpointDiscoveryCallback, discoveryOptions)
         .addOnSuccessListener { Log.i("SHARE RCV", "startDiscovery OnSuccessListener") }
         .addOnFailureListener { error -> Log.e("SHARE RCV", "startDiscovery Error: $error") }
 }

@@ -113,7 +113,7 @@ dependencies {
     implementation 'com.google.maps.android:maps-utils-ktx:3.2.1'
 
     // Sharing
-    implementation 'com.google.android.gms:play-services-nearby:18.0.2' // Check for the latest version
+    implementation 'com.google.android.gms:play-services-nearby:19.0.0' // Check for the latest version
 
     // Hilt
     implementation "com.google.dagger:hilt-android:2.42"
