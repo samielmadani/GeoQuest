@@ -476,26 +476,8 @@ fun MapTarget(questList: List<Quest>, viewModel: HomeViewModel, selectedQuestId:
 }
 
 fun convertQuestToJson(quest: Quest): String {
-    // Convert quest details to JSON
-    val jsonObject = JSONObject().apply {
-        put("id", quest.questId)
-        put("title", quest.questTitle)
-        put("description", quest.questDescription)
-        put("difficulty", quest.questDifficulty)
-        put("latitude", quest.latitude)
-        put("longitude", quest.longitude)
-    }
-
-    // Convert Bitmap image to Base64 encoded string
-    val byteArrayOutputStream = ByteArrayOutputStream()
-//    quest.image.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
-//    val byteArray = byteArrayOutputStream.toByteArray()
-//    val encodedImage = Base64.encodeToString(byteArray, Base64.DEFAULT)
-
-    // Add the encoded image to the JSON object
-//    jsonObject.put("image", encodedImage)
-
-    return jsonObject.toString()
+    val gson = Gson()
+    return gson.toJson(quest, Quest::class.java)
 }
 
 // Assuming you have a method to convert a JSON string to a Quest object
