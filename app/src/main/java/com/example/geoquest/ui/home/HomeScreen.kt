@@ -96,8 +96,6 @@ import com.google.maps.android.compose.rememberMarkerState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.json.JSONObject
-import java.io.ByteArrayOutputStream
 
 object HomeDestination: NavigationDestination {
     override val route = "home"
@@ -153,9 +151,6 @@ fun HomeScreen(
     val context = LocalContext.current
 
     BackPressHandler(onBackPressed = {})
-
-    // Listen for quests (test)
-    discoverQuest(context, createViewModel)
 
     val multiplePermissionsState =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -249,6 +244,8 @@ fun HomeScreen(
                     questList = homeUiState.questList,
                     navigateToViewQuest,
                     selectedQuestId,
+                    context,
+                    createViewModel,
                     modifier = modifier
                         .fillMaxSize()
                 )
@@ -291,8 +288,13 @@ fun HomeBody(
     questList: List<Quest>,
     navigateToViewQuest: (Int) -> Unit,
     selectedQuestId: MutableIntState,
+    context: Context,
+    createViewModel: CreateQuestViewModel,
     modifier: Modifier = Modifier
 ) {
+    // Listen for quests (test)
+    discoverQuest(context, createViewModel)
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -506,12 +508,7 @@ private fun startAdvertising(quest: Quest, context: Context) {
         override fun onPayloadReceived(endpointId: String, payload: Payload) {
             // This always gets the full data of the payload. Is null if it's not a BYTES payload.
             if (payload.type == Payload.Type.BYTES) {
-                val receivedBytes = payload.asBytes()
                 Log.i("SHARE SEND", "Received data")
-                if (receivedBytes != null) {
-                    val quest = convertJsonToQuest(String(receivedBytes))
-                    Log.i("SHARE SEND", "QUEST: $quest")
-                }
             }
         }
 
@@ -536,6 +533,7 @@ private fun startAdvertising(quest: Quest, context: Context) {
                     ConnectionsStatusCodes.STATUS_OK -> {
                         val bytesPayload = Payload.fromBytes(convertQuestToJson(quest).toByteArray())
                         Nearby.getConnectionsClient(context).sendPayload(endpointId, bytesPayload)
+                        Nearby.getConnectionsClient(context).disconnectFromEndpoint(endpointId)
                     }
                     ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {}
                     ConnectionsStatusCodes.STATUS_ERROR -> {}
@@ -573,6 +571,8 @@ private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel) {
                     Log.i("SHARE RCV", "QUEST: $quest")
                     CoroutineScope(Dispatchers.Main).launch {
                         viewModel.createQuest(quest)
+                        // Disconnect after saving the quest
+                        Nearby.getConnectionsClient(context).disconnectFromEndpoint(endpointId)
                     }
                 }
             }
