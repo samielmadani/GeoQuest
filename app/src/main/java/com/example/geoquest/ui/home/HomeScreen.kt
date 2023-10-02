@@ -1,9 +1,11 @@
 package com.example.geoquest.ui.home
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -54,6 +56,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.geoquest.GeoQuestTopBar
@@ -65,8 +68,10 @@ import com.example.geoquest.ui.quest.createQuest.CreateQuestViewModel
 import com.example.geoquest.ui.quest.findQuest.BackPressHandler
 import com.example.geoquest.ui.quest.viewQuest.DifficultyStars
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionRequired
 import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -100,6 +105,39 @@ object HomeDestination: NavigationDestination {
     override val titleRes = R.string.app_name
 }
 
+@SuppressLint("PermissionLaunchedDuringComposition")
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun RequestMultiplePermissions() {
+    val multiplePermissionsState = rememberMultiplePermissionsState(
+        permissions = listOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_WIFI_STATE,
+            Manifest.permission.ACCESS_WIFI_STATE,
+            Manifest.permission.CHANGE_WIFI_STATE,
+            Manifest.permission.BLUETOOTH,
+            Manifest.permission.BLUETOOTH_ADMIN,
+        )
+    )
+
+    when {
+        multiplePermissionsState.allPermissionsGranted -> {
+            // All permissions are granted, proceed with the app's functionality
+        }
+        multiplePermissionsState.shouldShowRationale -> {
+            // Show rationale to the user and provide a way to request permissions again
+        }
+        !multiplePermissionsState.permissionRequested -> {
+            // Request permissions
+            multiplePermissionsState.launchMultiplePermissionRequest()
+        }
+        else -> {
+            // Handle the case where permissions are denied
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
@@ -112,22 +150,66 @@ fun HomeScreen(
     ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val permissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
     val selectedQuestId = remember { mutableIntStateOf(-1) }
-
-    createViewModel.questUiState.questDetails.image = null
 
     BackPressHandler(onBackPressed = {})
 
+    val multiplePermissionsState =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            rememberMultiplePermissionsState(
+                permissions = listOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_WIFI_STATE,
+                    Manifest.permission.ACCESS_WIFI_STATE,
+                    Manifest.permission.CHANGE_WIFI_STATE,
+                    Manifest.permission.BLUETOOTH,
+                    Manifest.permission.BLUETOOTH_ADMIN,
+                    Manifest.permission.BLUETOOTH_ADVERTISE,
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                    Manifest.permission.BLUETOOTH_SCAN,
+                    Manifest.permission.NEARBY_WIFI_DEVICES,
+                )
+            )
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        rememberMultiplePermissionsState(
+            permissions = listOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_WIFI_STATE,
+                Manifest.permission.ACCESS_WIFI_STATE,
+                Manifest.permission.CHANGE_WIFI_STATE,
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_ADMIN,
+                Manifest.permission.BLUETOOTH_ADVERTISE,
+                Manifest.permission.BLUETOOTH_CONNECT,
+                Manifest.permission.BLUETOOTH_SCAN,
+            )
+        )
+    } else {
+        rememberMultiplePermissionsState(
+            permissions = listOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_WIFI_STATE,
+                Manifest.permission.ACCESS_WIFI_STATE,
+                Manifest.permission.CHANGE_WIFI_STATE,
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_ADMIN,
+            )
+        )
+    }
+
+    val permissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
     PermissionRequired(
         permissionState = permissionState,
         permissionNotGrantedContent = {
             // Content to show when permission is not granted
-            PermissionsDenied(modifier = modifier, scrollBehavior = scrollBehavior, permissionState = permissionState)
+            PermissionsDenied(modifier = modifier, scrollBehavior = scrollBehavior, multiplePermissionsState = multiplePermissionsState)
         },
         permissionNotAvailableContent = {
             // Content to show when permission is not available (e.g., policy restrictions)
-            PermissionsDenied(modifier = modifier, scrollBehavior = scrollBehavior, permissionState = permissionState)
+            PermissionsDenied(modifier = modifier, scrollBehavior = scrollBehavior, multiplePermissionsState = multiplePermissionsState)
         }
     ) {
         // Content to show when permission is granted
@@ -175,7 +257,7 @@ fun HomeScreen(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
-fun PermissionsDenied(modifier: Modifier, scrollBehavior: TopAppBarScrollBehavior, permissionState: PermissionState) {
+fun PermissionsDenied(modifier: Modifier, scrollBehavior: TopAppBarScrollBehavior, multiplePermissionsState: MultiplePermissionsState) {
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -193,7 +275,8 @@ fun PermissionsDenied(modifier: Modifier, scrollBehavior: TopAppBarScrollBehavio
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text("Location permissions are required to use this app.")
-            Button(onClick = { permissionState.launchPermissionRequest() }) {
+            Button(onClick = { multiplePermissionsState.launchMultiplePermissionRequest()
+            }) {
                 Text("Request Permission")
             }
         }
