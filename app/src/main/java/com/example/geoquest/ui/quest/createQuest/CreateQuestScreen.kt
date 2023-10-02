@@ -61,7 +61,6 @@ fun CreateQuest(
     navigateBack: () -> Unit,
     navigateToCamera: () -> Unit,
     viewModel: CreateQuestViewModel,
-    navigateToHomeScreen: () -> Unit,
 
     ) {
     val cameraPermissionState: PermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
@@ -72,7 +71,6 @@ fun CreateQuest(
                 title = stringResource(id = CreateQuestDestination.titleRes),
                 canNavigateBack = true,
                 navigateUp = navigateBack,
-                navigateToHomeScreen = navigateToHomeScreen,
             )
         }
     ) {contentPadding ->
@@ -314,7 +312,6 @@ fun CreateScreenPreview() {
             navigateBack = {},
             navigateToCamera = {},
             viewModel = viewModel(factory = AppViewModelProvider.Factory),
-            navigateToHomeScreen = {},
         )
     }
 }
