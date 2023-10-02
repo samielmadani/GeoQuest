@@ -516,6 +516,7 @@ private fun startAdvertising(quest: Quest, context: Context) {
             // Bytes payloads are sent as a single chunk, so you'll receive a SUCCESS update immediately
             // after the call to onPayloadReceived().
             Log.i("SHARE SEND", "Update")
+            Log.i("SHARE SEND", "Update: $update")
 
             if (update.status == PayloadTransferUpdate.Status.SUCCESS || update.status == PayloadTransferUpdate.Status.FAILURE) {
                 Nearby.getConnectionsClient(context).disconnectFromEndpoint(endpointId)
@@ -537,7 +538,6 @@ private fun startAdvertising(quest: Quest, context: Context) {
                     ConnectionsStatusCodes.STATUS_OK -> {
                         val bytesPayload = Payload.fromBytes(convertQuestToJson(quest).toByteArray())
                         Nearby.getConnectionsClient(context).sendPayload(endpointId, bytesPayload)
-                        Nearby.getConnectionsClient(context).disconnectFromEndpoint(endpointId)
                     }
                     ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {}
                     ConnectionsStatusCodes.STATUS_ERROR -> {}
@@ -586,6 +586,7 @@ private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel) {
             // Bytes payloads are sent as a single chunk, so you'll receive a SUCCESS update immediately
             // after the call to onPayloadReceived().
             Log.i("SHARE RCV", "Update")
+            Log.i("SHARE SEND", "Update: $update")
 
             if (update.status == PayloadTransferUpdate.Status.SUCCESS || update.status == PayloadTransferUpdate.Status.FAILURE) {
                 Nearby.getConnectionsClient(context).disconnectFromEndpoint(endpointId)
