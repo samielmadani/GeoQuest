@@ -2,7 +2,6 @@ package com.example.geoquest.ui.quest.findQuest
 
 import android.Manifest
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,7 +26,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
@@ -41,7 +39,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.geoquest.GeoQuestTopBar
 import com.example.geoquest.R
-import com.example.geoquest.model.Quest
 import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.home.HomeViewModel
 import com.example.geoquest.ui.navigation.NavigationDestination
@@ -80,7 +77,6 @@ fun FindQuestScreen(
     navigateToSuccessScreen: () -> Unit,
     navigateToFailedScreen: () -> Unit,
     createViewModel: CreateQuestViewModel,
-    navigateToHomeScreen: () -> Unit,
 
 
     ) {
@@ -100,8 +96,7 @@ fun FindQuestScreen(
             GeoQuestTopBar(
                 title = "Hunting for " + quest.questTitle,
                 canNavigateBack = true,
-                navigateUp = navigateUp,
-                navigateToHomeScreen = navigateToHomeScreen
+                navigateUp = navigateUp
             )
         }
     ) { contentPadding ->

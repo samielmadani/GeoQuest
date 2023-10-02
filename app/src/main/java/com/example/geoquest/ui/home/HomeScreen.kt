@@ -95,7 +95,6 @@ import com.google.maps.android.compose.rememberMarkerState
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 
-
 object HomeDestination: NavigationDestination {
     override val route = "home"
     override val titleRes = R.string.app_name
@@ -110,7 +109,6 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
     createViewModel: CreateQuestViewModel,
-    navigateToHomeScreen: () -> Unit,
     ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -139,8 +137,7 @@ fun HomeScreen(
                 GeoQuestTopBar(
                     title = stringResource(id = HomeDestination.titleRes),
                     canNavigateBack = false,
-                    onSettingsClick = navigateToSettings,
-                    navigateToHomeScreen = navigateToHomeScreen,
+                    onSettingsClick = navigateToSettings
                 )
             },
             floatingActionButton = {

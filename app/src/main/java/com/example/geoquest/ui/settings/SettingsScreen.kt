@@ -40,7 +40,6 @@ import com.example.geoquest.R
 import com.example.geoquest.model.getCurrentLocation
 import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.home.HomeDestination
-import com.example.geoquest.ui.home.discoverQuest
 import com.example.geoquest.ui.navigation.NavigationDestination
 import com.example.geoquest.ui.theme.GeoQuestTheme
 
@@ -53,8 +52,8 @@ object SettingsDestination: NavigationDestination {
 @Composable
 fun SettingsScreen(
     navigateUp: () -> Unit,
-    navigateToHomeScreen: () -> Unit,
-    viewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    navigateToHomeScreen: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
@@ -65,8 +64,7 @@ fun SettingsScreen(
             GeoQuestTopBar(
                 title = stringResource(id = HomeDestination.titleRes),
                 canNavigateBack = true,
-                navigateUp = navigateUp,
-                navigateToHomeScreen = navigateToHomeScreen
+                navigateUp = navigateUp
 
             )
         }

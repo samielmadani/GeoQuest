@@ -2,8 +2,6 @@ package com.example.geoquest
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
@@ -20,10 +18,8 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import coil.decode.ImageSource
 import com.example.geoquest.ui.navigation.GeoQuestNavGraph
 import com.example.geoquest.ui.navigation.NavigationDestination
 
@@ -52,8 +48,7 @@ fun GeoQuestTopBar(
     canNavigateBack: Boolean,
     navigateUp: () -> Unit = {},
     onSettingsClick: (() -> Unit)? = null,
-    onShareClick: (() -> Unit)? = null,
-    navigateToHomeScreen: () -> Unit
+    onShareClick: (() -> Unit)? = null
 
 ) {
     val imageResource: Painter = painterResource(id = R.drawable.logo)
@@ -74,9 +69,6 @@ fun GeoQuestTopBar(
                     contentDescription = "My Image",
                     modifier = Modifier
                         .scale(0.6f) // Scale the image to 60% of its original size
-                        .clickable {
-                            navigateToHomeScreen()
-                        }
                 )
             }
         },

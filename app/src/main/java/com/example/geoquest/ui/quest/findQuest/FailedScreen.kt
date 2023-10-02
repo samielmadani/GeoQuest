@@ -32,7 +32,6 @@ object FailedScreenDestination: NavigationDestination {
 fun FailedScreen(
     navigateUp: () -> Unit,
     viewModel: FailedViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    navigateToHomeScreen: () -> Unit,
 
     ) {
     Scaffold(
@@ -40,8 +39,7 @@ fun FailedScreen(
             GeoQuestTopBar(
                 title = stringResource(id = FailedScreenDestination.titleRes),
                 canNavigateBack = true,
-                navigateUp = navigateUp,
-                navigateToHomeScreen = navigateToHomeScreen
+                navigateUp = navigateUp
             )
         }
     ) { contentPadding ->
