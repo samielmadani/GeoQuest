@@ -579,7 +579,7 @@ private fun startAdvertising(quest: Quest, context: Context) {
 
             if (update.status == PayloadTransferUpdate.Status.SUCCESS || update.status == PayloadTransferUpdate.Status.FAILURE) {
                 Log.i("SHARE SEND", "Disconnecting from $endpointId....")
-                Nearby.getConnectionsClient(context).disconnectFromEndpoint(endpointId)
+                Nearby.getConnectionsClient(context).stopAllEndpoints()
             }
         }
     }
@@ -599,7 +599,16 @@ private fun startAdvertising(quest: Quest, context: Context) {
                         // Send the quest
                         Log.i("SHARE SEND", "Sending data...")
                         val bytesPayload = Payload.fromBytes(convertQuestToJson(quest, context).toByteArray())
+                        Nearby.getConnectionsClient(context).stopDiscovery()
                         Nearby.getConnectionsClient(context).sendPayload(endpointId, bytesPayload)
+                            .addOnSuccessListener {
+                                Log.i("SHARE SEND", "Successfully sent, disconnecting...")
+                                Nearby.getConnectionsClient(context).stopAllEndpoints()
+                            }
+                            .addOnFailureListener {
+                                Log.i("SHARE SEND", "Successfully sent, disconnecting...")
+                                Nearby.getConnectionsClient(context).stopAllEndpoints()
+                            }
                     }
                     ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
                         Log.e("SHARE SEND", "Connection rejected")
@@ -661,9 +670,9 @@ private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel) {
                             )
                         )
 
-                        Log.i("SHARE RCV", "Disconnecting....")
+                        Log.i("SHARE RCV", "Disconnecting from $endpointId....")
                         // Disconnect after saving the quest
-                        Nearby.getConnectionsClient(context).disconnectFromEndpoint(endpointId)
+                        Nearby.getConnectionsClient(context).stopAllEndpoints()
                     }
                 }
             }
