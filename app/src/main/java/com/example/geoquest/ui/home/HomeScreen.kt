@@ -86,6 +86,7 @@ import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.PayloadCallback
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate
 import com.google.android.gms.nearby.connection.Strategy
+import com.google.gson.Gson
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
@@ -497,13 +498,13 @@ fun convertQuestToJson(quest: Quest): String {
     return jsonObject.toString()
 }
 
-//// Assuming you have a method to convert a JSON string to a Quest object
-//fun convertJsonToQuest(json: String): Quest {
-//    // Convert the JSON string to a Quest object
-//    // You can use libraries like Gson or Moshi for this
-//    val gson = Gson()
-//    return gson.fromJson(json, Quest::class.java)
-//}
+// Assuming you have a method to convert a JSON string to a Quest object
+fun convertJsonToQuest(json: String): Quest {
+    // Convert the JSON string to a Quest object
+    // You can use libraries like Gson or Moshi for this
+    val gson = Gson()
+    return gson.fromJson(json, Quest::class.java)
+}
 
 fun discoverQuest(context: Context) {
     startDiscovery(context)
@@ -518,6 +519,10 @@ private fun startAdvertising(context: Context) {
             if (payload.type == Payload.Type.BYTES) {
                 val receivedBytes = payload.asBytes()
                 Log.i("SHARE SEND", "Received data")
+                if (receivedBytes != null) {
+                    val quest = convertJsonToQuest(String(receivedBytes))
+                    Log.i("SHARE SEND", "QUEST: $quest")
+                }
             }
         }
 
