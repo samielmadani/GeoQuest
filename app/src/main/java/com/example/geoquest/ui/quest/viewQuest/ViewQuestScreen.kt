@@ -68,7 +68,7 @@ fun ViewQuestScreen(
                 title = stringResource(id = ViewQuestDestination.titleRes),
                 canNavigateBack = true,
                 navigateUp = navigateUp,
-                onShareClick = { shareQuest(quest, context) }
+                onShareClick = { }
             )
         }
     ) { contentPadding ->

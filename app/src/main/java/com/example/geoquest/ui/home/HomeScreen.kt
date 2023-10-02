@@ -3,6 +3,10 @@ package com.example.geoquest.ui.home
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.nfc.NdefMessage
+import android.nfc.NdefRecord
+import android.nfc.NfcAdapter
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -70,12 +74,26 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.nearby.Nearby
+import com.google.android.gms.nearby.connection.AdvertisingOptions
+import com.google.android.gms.nearby.connection.ConnectionInfo
+import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback
+import com.google.android.gms.nearby.connection.ConnectionResolution
+import com.google.android.gms.nearby.connection.DiscoveredEndpointInfo
+import com.google.android.gms.nearby.connection.DiscoveryOptions
+import com.google.android.gms.nearby.connection.EndpointDiscoveryCallback
+import com.google.android.gms.nearby.connection.Payload
+import com.google.android.gms.nearby.connection.PayloadCallback
+import com.google.android.gms.nearby.connection.PayloadTransferUpdate
+import com.google.android.gms.nearby.connection.Strategy
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
+import org.json.JSONObject
+import java.io.ByteArrayOutputStream
 
 object HomeDestination: NavigationDestination {
     override val route = "home"
@@ -234,7 +252,7 @@ fun QuestList(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun QuestCard(
     quest: Quest,
@@ -243,6 +261,7 @@ fun QuestCard(
     selectedQuestId: MutableIntState
 ) {
     val context = LocalContext.current
+
     Card(
         shape = RoundedCornerShape(dimensionResource(id = R.dimen.padding_small)),
         onClick = {
@@ -364,18 +383,154 @@ fun MapTarget(questList: List<Quest>, viewModel: HomeViewModel, selectedQuestId:
     }
 }
 
-fun shareQuest(quest: Quest, context: Context) {
-    val sendIntent = Intent()
-    sendIntent.action = Intent.ACTION_SEND
-    sendIntent.putExtra(
-        Intent.EXTRA_TEXT,
-        "Quest Title: ${quest.questTitle}\nQuest Description: ${quest.questDescription}" +
-                "\nQuest Difficulty: ${quest.questDifficulty}/5"
-    )
-    sendIntent.type = "text/plain"
+fun convertQuestToJson(quest: Quest): String {
+    // Convert quest details to JSON
+    val jsonObject = JSONObject().apply {
+        put("id", quest.questId)
+        put("title", quest.questTitle)
+        put("description", quest.questDescription)
+        put("difficulty", quest.questDifficulty)
+        put("latitude", quest.latitude)
+        put("longitude", quest.longitude)
+    }
 
-    val chooserIntent = Intent.createChooser(sendIntent, "Share Quest")
-    context.startActivity(chooserIntent)
+    // Convert Bitmap image to Base64 encoded string
+    val byteArrayOutputStream = ByteArrayOutputStream()
+//    quest.image.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+//    val byteArray = byteArrayOutputStream.toByteArray()
+//    val encodedImage = Base64.encodeToString(byteArray, Base64.DEFAULT)
+
+    // Add the encoded image to the JSON object
+//    jsonObject.put("image", encodedImage)
+
+    return jsonObject.toString()
+}
+
+//// Assuming you have a method to convert a JSON string to a Quest object
+//fun convertJsonToQuest(json: String): Quest {
+//    // Convert the JSON string to a Quest object
+//    // You can use libraries like Gson or Moshi for this
+//    val gson = Gson()
+//    return gson.fromJson(json, Quest::class.java)
+//}
+
+fun discoverQuest(context: Context) {
+    Log.i("NFC-RECEIVE", "Called discover")
+    val connectionsClient = Nearby.getConnectionsClient(context)
+
+    val discoveryOptions = DiscoveryOptions.Builder()
+        .setStrategy(Strategy.P2P_STAR)
+        .build()
+
+    val payloadCallback = object : PayloadCallback() {
+        override fun onPayloadReceived(endpointId: String, payload: Payload) {
+            // Handle received payloads here
+            val receivedQuestJson = String(payload.asBytes()!!)
+//            val quest = convertJsonToQuest(receivedQuestJson)
+            val data = JSONObject(receivedQuestJson)
+            Log.i("NFC-RECEIVE", "Received: $data")
+            // Now you have the received Quest object and can process it as needed
+        }
+
+        override fun onPayloadTransferUpdate(endpointId: String, update: PayloadTransferUpdate) {
+            // Handle payload transfer updates if needed
+            Log.i("NFC-RECEIVE", "Payload update? $update")
+        }
+    }
+
+    Log.i("NFC-RECEIVE", "Starting discovery")
+    connectionsClient.startDiscovery(
+        "com.example.geoquest", object : EndpointDiscoveryCallback() {
+            override fun onEndpointFound(endpointId: String, info: DiscoveredEndpointInfo) {
+                // An endpoint was found. Request a connection to it.
+                connectionsClient.requestConnection(
+                    "DeviceName",
+                    endpointId,
+                    object : ConnectionLifecycleCallback() {
+                        override fun onConnectionInitiated(endpointId: String, connectionInfo: ConnectionInfo) {
+                            // Automatically accept the connection
+                            connectionsClient.acceptConnection(endpointId, payloadCallback)
+                            Log.i("NFC-RECEIVE", "Connection accepted")
+                        }
+
+                        override fun onConnectionResult(endpointId: String, result: ConnectionResolution) {
+                            if (result.status.isSuccess) {
+                                // Connection was successful. You can now receive payloads.
+                                Log.i("NFC-RECEIVE", "Connection success")
+                            }
+                        }
+
+                        override fun onDisconnected(endpointId: String) {
+                            // Disconnected from the endpoint. Handle as needed.
+                            Log.i("NFC-RECEIVE", "Disconnected")
+                        }
+                    }
+                )
+            }
+
+            override fun onEndpointLost(endpointId: String) {
+                // A previously discovered endpoint has gone away. Handle as needed.
+                Log.i("NFC-RECEIVE", "Endpoint lost")
+            }
+        },
+        discoveryOptions
+    )
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+fun shareQuest(quest: Quest, context: Context) {
+    val connectionsClient = Nearby.getConnectionsClient(context)
+
+    val advertisingOptions = AdvertisingOptions.Builder()
+        .setStrategy(Strategy.P2P_STAR)
+        .build()
+
+    val payloadCallback = object : PayloadCallback() {
+        override fun onPayloadReceived(endpointId: String, payload: Payload) {
+            // Handle received payloads here if needed
+        }
+
+        override fun onPayloadTransferUpdate(endpointId: String, update: PayloadTransferUpdate) {
+            // Handle payload transfer updates if needed
+        }
+    }
+    Log.e("NFC", "Advertising")
+
+    try {
+        connectionsClient.startAdvertising(
+            "DeviceName", "com.example.geoquest", object : ConnectionLifecycleCallback() {
+                override fun onConnectionInitiated(endpointId: String, connectionInfo: ConnectionInfo) {
+                    // Automatically accept the connection on both sides.
+                    connectionsClient.acceptConnection(endpointId, payloadCallback)
+
+                    Log.e("NFC", "Accepted connection: $endpointId")
+                }
+
+                override fun onConnectionResult(endpointId: String, result: ConnectionResolution) {
+                    Log.e("NFC", "Connection result: $endpointId")
+                    if (result.status.isSuccess) {
+                        // We're connected! Can now start sending the quest data.
+                        Log.e("NFC", "Sending data")
+
+                        val questJson = convertQuestToJson(quest) // Assuming you have this method
+                        val bytesPayload = Payload.fromBytes(questJson.toByteArray())
+                        connectionsClient.sendPayload(endpointId, bytesPayload)
+
+                        Log.e("NFC", "Sent data")
+
+                    }
+                }
+
+                override fun onDisconnected(endpointId: String) {
+                    // We've been disconnected from this endpoint. No more data can be sent or received.
+                    Log.e("NFC", "Disconnected from endpoint: $endpointId")
+                }
+            },
+            advertisingOptions
+        )
+    } catch (e: Exception) {
+        Log.e("NFC", "Exception: $e")
+    }
 }
 
 

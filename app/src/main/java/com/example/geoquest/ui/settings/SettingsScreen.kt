@@ -40,6 +40,7 @@ import com.example.geoquest.R
 import com.example.geoquest.model.getCurrentLocation
 import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.home.HomeDestination
+import com.example.geoquest.ui.home.discoverQuest
 import com.example.geoquest.ui.navigation.NavigationDestination
 import com.example.geoquest.ui.theme.GeoQuestTheme
 
