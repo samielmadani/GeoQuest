@@ -545,7 +545,7 @@ fun convertQuestToJson(quest: Quest, context: Context): String {
         convertImageBytesToBase64(getImageBytesFromUri(context, quest.questImageUri))
     )
     val gson = Gson()
-    return gson.toJson(quest, QuestPayload::class.java)
+    return gson.toJson(payload, QuestPayload::class.java)
 }
 
 // Assuming you have a method to convert a JSON string to a Quest object
@@ -578,7 +578,7 @@ private fun startAdvertising(quest: Quest, context: Context) {
             Log.i("SHARE SEND", "Update: $update")
 
             if (update.status == PayloadTransferUpdate.Status.SUCCESS || update.status == PayloadTransferUpdate.Status.FAILURE) {
-                Log.i("SHARE SEND", "Disconnecting....")
+                Log.i("SHARE SEND", "Disconnecting from $endpointId....")
                 Nearby.getConnectionsClient(context).disconnectFromEndpoint(endpointId)
             }
         }
@@ -597,6 +597,7 @@ private fun startAdvertising(quest: Quest, context: Context) {
                 when (result.status.statusCode) {
                     ConnectionsStatusCodes.STATUS_OK -> {
                         // Send the quest
+                        Log.i("SHARE SEND", "Sending data...")
                         val bytesPayload = Payload.fromBytes(convertQuestToJson(quest, context).toByteArray())
                         Nearby.getConnectionsClient(context).sendPayload(endpointId, bytesPayload)
                     }
@@ -640,9 +641,12 @@ private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel) {
                     Log.i("SHARE RCV", "QUEST: $quest")
                     CoroutineScope(Dispatchers.Main).launch {
 
-                        // Save the image bytes
-                        val bitmap = base64ToBitmap(quest.questImage)
-                        val uri = saveBitmapToFile(context, bitmap)
+                        var uri: String? = null
+                        if (quest.questImage.length > 30) {
+                            // Save the image bytes
+                            val bitmap = base64ToBitmap(quest.questImage)
+                            uri = saveBitmapToFile(context, bitmap).toString()
+                        }
 
                         // Save the quest
                         viewModel.createQuest(
@@ -650,7 +654,7 @@ private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel) {
                                 questTitle = quest.questTitle,
                                 questDescription = quest.questDescription,
                                 questDifficulty = quest.questDifficulty,
-                                questImageUri = uri.toString(),
+                                questImageUri = uri,
                                 latitude = quest.latitude,
                                 longitude = quest.longitude,
                                 author = quest.author
