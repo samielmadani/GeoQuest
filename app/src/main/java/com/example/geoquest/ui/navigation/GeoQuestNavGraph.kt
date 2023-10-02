@@ -52,26 +52,6 @@ fun GeoQuestNavGraph(
     val coroutineScope = rememberCoroutineScope()
     val lastCapturedPhotoViewModel: LastCapturedPhotoViewModel = viewModel()
     val createQuestViewModel: CreateQuestViewModel = viewModel(factory = AppViewModelProvider.Factory)
-    val context = LocalContext.current
-
-//    val permissions = listOf<PermissionState>(
-//        rememberPermissionState(Manifest.permission.BLUETOOTH),
-//        rememberPermissionState(Manifest.permission.BLUETOOTH_ADMIN),
-//        rememberPermissionState(Manifest.permission.ACCESS_WIFI_STATE),
-//        rememberPermissionState(Manifest.permission.CHANGE_WIFI_STATE)
-//    )
-//    Log.i("NFC", "Checking permissions")
-//
-//    for (permission in permissions) {
-//        if (!permission.hasPermission) {
-//            Log.i("NFC", "Permission not granted ${permission.permission}")
-//            permission.launchPermissionRequest()
-//            return
-//        }
-//    }
-
-    // Listen for quests (test)
-    discoverQuest(context)
 
     Scaffold {contentPadding ->
         Box(modifier = Modifier.padding(contentPadding))

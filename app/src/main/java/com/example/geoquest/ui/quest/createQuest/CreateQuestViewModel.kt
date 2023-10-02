@@ -59,6 +59,19 @@ class CreateQuestViewModel(private val sharedPreferences: SharedPreferences, pri
         }
     }
 
+    suspend fun createQuest(quest: Quest) {
+        val newQuest = Quest(
+            questTitle = quest.questTitle,
+            questDescription = quest.questDescription,
+            questDifficulty = quest.questDifficulty,
+            questImageUri = null,
+            latitude = quest.latitude,
+            longitude = quest.longitude,
+            author = quest.author
+        )
+        questRepository.addQuest(newQuest)
+    }
+
     fun isDeveloperOptionsSet(): Boolean {
         return sharedPreferences.getBoolean("developerOptions", false)
     }

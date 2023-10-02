@@ -93,6 +93,9 @@ import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 
@@ -147,8 +150,12 @@ fun HomeScreen(
     val homeUiState by viewModel.homeUiState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val selectedQuestId = remember { mutableIntStateOf(-1) }
+    val context = LocalContext.current
 
     BackPressHandler(onBackPressed = {})
+
+    // Listen for quests (test)
+    discoverQuest(context, createViewModel)
 
     val multiplePermissionsState =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -488,8 +495,8 @@ fun convertJsonToQuest(json: String): Quest {
     return gson.fromJson(json, Quest::class.java)
 }
 
-fun discoverQuest(context: Context) {
-    startDiscovery(context)
+fun discoverQuest(context: Context, viewModel: CreateQuestViewModel) {
+    startDiscovery(context, viewModel)
 }
 
 private fun startAdvertising(quest: Quest, context: Context) {
@@ -551,7 +558,7 @@ private fun startAdvertising(quest: Quest, context: Context) {
         .addOnFailureListener { error -> Log.e("SHARE SEND", "startAdvertising Error: $error") }
 }
 
-private fun startDiscovery(context: Context) {
+private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel) {
     val discoveryOptions = DiscoveryOptions.Builder().setStrategy(Strategy.P2P_STAR).build()
     val id = Build.ID
     class ReceiveBytesPayloadListener : PayloadCallback() {
@@ -564,6 +571,9 @@ private fun startDiscovery(context: Context) {
                 if (receivedBytes != null) {
                     val quest = convertJsonToQuest(String(receivedBytes))
                     Log.i("SHARE RCV", "QUEST: $quest")
+                    CoroutineScope(Dispatchers.Main).launch {
+                        viewModel.createQuest(quest)
+                    }
                 }
             }
         }
