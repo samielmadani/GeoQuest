@@ -581,7 +581,11 @@ private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel) {
         override fun onPayloadTransferUpdate(endpointId: String, update: PayloadTransferUpdate) {
             // Bytes payloads are sent as a single chunk, so you'll receive a SUCCESS update immediately
             // after the call to onPayloadReceived().
-            Log.i("SHARE RCV", "Update requested??")
+            Log.i("SHARE RCV", "Update")
+
+            if (update.status == PayloadTransferUpdate.Status.SUCCESS || update.status == PayloadTransferUpdate.Status.FAILURE) {
+                Nearby.getConnectionsClient(context).disconnectFromEndpoint(endpointId)
+            }
         }
     }
 
