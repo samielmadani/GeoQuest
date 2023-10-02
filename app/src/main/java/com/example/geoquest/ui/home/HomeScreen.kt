@@ -9,6 +9,7 @@ import android.nfc.NfcAdapter
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -64,6 +65,7 @@ import com.example.geoquest.R
 import com.example.geoquest.model.Quest
 import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.navigation.NavigationDestination
+import com.example.geoquest.ui.quest.createQuest.CreateQuestViewModel
 import com.example.geoquest.ui.quest.findQuest.BackPressHandler
 import com.example.geoquest.ui.quest.viewQuest.DifficultyStars
 import com.example.geoquest.ui.theme.GeoQuestTheme
@@ -107,12 +109,16 @@ fun HomeScreen(
     navigateToViewQuest: (Int) -> Unit,
     navigateToSettings: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
-) {
+    viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    createViewModel: CreateQuestViewModel,
+    navigateToHomeScreen: () -> Unit,
+    ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val permissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
     val selectedQuestId = remember { mutableIntStateOf(-1) }
+
+    createViewModel.questUiState.questDetails.image = null
 
     BackPressHandler(onBackPressed = {})
 
@@ -135,6 +141,7 @@ fun HomeScreen(
                     title = stringResource(id = HomeDestination.titleRes),
                     canNavigateBack = false,
                     onSettingsClick = navigateToSettings,
+                    navigateToHomeScreen = navigateToHomeScreen,
                 )
             },
             floatingActionButton = {
@@ -240,7 +247,10 @@ fun QuestList(
         }
     }
 
-    LazyColumn(state = listState, modifier = modifier) {
+    LazyColumn(
+        state = listState,
+        modifier = modifier
+    ) {
         items(items = questList, key = { it.questId }) { quest ->
             QuestCard(
                 quest = quest,
@@ -268,7 +278,9 @@ fun QuestCard(
             selectedQuestId.intValue = quest.questId
         },
         modifier = Modifier
-            .background(if (isSelected) Color.LightGray else Color.White)
+            .background(
+                if (isSelected) if (isSystemInDarkTheme()) Color.Black else Color.LightGray else Color.Transparent
+            )
             .fillMaxWidth()
             .padding(dimensionResource(id = R.dimen.padding_medium))
             .shadow(8.dp, shape = RoundedCornerShape(dimensionResource(id = R.dimen.padding_small))),
@@ -290,12 +302,12 @@ fun QuestCard(
                 }
 
                 Box(modifier = Modifier
-                    .fillMaxHeight()
+                    .fillMaxHeight(0.7F)
                 ) {
                     Image(
                         painter = painter,
                         contentDescription = stringResource(id = R.string.default_image),
-                        modifier = Modifier.size(dimensionResource(id = R.dimen.image_size))
+                        modifier = Modifier.size(130.dp)
                     )
                 }
                 Column(
@@ -312,23 +324,28 @@ fun QuestCard(
                         style = MaterialTheme.typography.bodySmall,
                     )
                     DifficultyStars(quest.questDifficulty)
-                    Button(
-                        onClick = { navigateToViewQuest(quest.questId) },
-                        shape = MaterialTheme.shapes.small,
-                    ) {
-                        Text(text = stringResource(id = R.string.view_button))
+                    Row {
+
+                        Button(
+                            onClick = { navigateToViewQuest(quest.questId) },
+                            shape = MaterialTheme.shapes.small,
+                        ) {
+                            Text(text = stringResource(id = R.string.view_button))
+                        }
+                        Button(
+                            onClick = { shareQuest(quest, context) },
+                            shape = MaterialTheme.shapes.small,
+                            colors = ButtonDefaults.buttonColors(Color.Transparent),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = "Share Quest"
+                            )
+                        }
                     }
+
                 }
-                Button(
-                    onClick = { shareQuest(quest, context) },
-                    shape = MaterialTheme.shapes.small,
-                    colors = ButtonDefaults.buttonColors(Color.Transparent),
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Share,
-                        contentDescription = "Share Quest"
-                    )
-                }
+
             }
         }
     }
@@ -345,21 +362,21 @@ fun MapTarget(questList: List<Quest>, viewModel: HomeViewModel, selectedQuestId:
     val cameraPositionState: CameraPositionState
     if (positions.isEmpty()) {
         cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(viewModel.getLocation(), 1f)
+            position = CameraPosition.fromLatLngZoom(viewModel.getLocation(), 4.5f)
         }
     } else if (selectedQuestId.intValue != -1) {
         val quest = questList.find { quest -> quest.questId == selectedQuestId.intValue }
 
         val position = if (quest !== null) {
-            CameraPosition.fromLatLngZoom(LatLng(quest.latitude, quest.longitude), 1f)
+            CameraPosition.fromLatLngZoom(LatLng(quest.latitude, quest.longitude), 4.5f)
         } else {
-            CameraPosition.fromLatLngZoom(LatLng(averageLat, averageLng), 1f)
+            CameraPosition.fromLatLngZoom(LatLng(averageLat, averageLng), 4.5f)
         }
 
         cameraPositionState = CameraPositionState(position = position)
     } else {
         cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(LatLng(averageLat, averageLng), 1f)
+            position = CameraPosition.fromLatLngZoom(LatLng(averageLat, averageLng), 4.5f)
         }
     }
 
@@ -534,14 +551,15 @@ fun shareQuest(quest: Quest, context: Context) {
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    GeoQuestTheme {
-        HomeScreen(
-            navigateToCreateQuest = {},
-            navigateToViewQuest = {},
-            navigateToSettings = {}
-        )
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun HomeScreenPreview() {
+//    GeoQuestTheme {
+//        HomeScreen(
+//            navigateToCreateQuest = {},
+//            navigateToViewQuest = {},
+//            navigateToSettings = {},
+//
+//        )
+//    }
+//}

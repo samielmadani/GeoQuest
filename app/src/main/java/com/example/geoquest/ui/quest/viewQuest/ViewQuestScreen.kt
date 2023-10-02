@@ -55,8 +55,10 @@ object ViewQuestDestination: NavigationDestination {
 fun ViewQuestScreen(
     navigateUp: () -> Unit,
     navigateToFindQuest: (Int) -> Unit,
-    viewModel: ViewQuestViewModel = viewModel(factory = AppViewModelProvider.Factory)
-) {
+    viewModel: ViewQuestViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    navigateToHomeScreen: () -> Unit,
+
+    ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
     val quest = viewModel.questUiState.questDetails.toQuest()
@@ -68,7 +70,9 @@ fun ViewQuestScreen(
                 title = stringResource(id = ViewQuestDestination.titleRes),
                 canNavigateBack = true,
                 navigateUp = navigateUp,
-                onShareClick = { }
+                onShareClick = { shareQuest(quest, context) },
+                navigateToHomeScreen = navigateToHomeScreen
+
             )
         }
     ) { contentPadding ->

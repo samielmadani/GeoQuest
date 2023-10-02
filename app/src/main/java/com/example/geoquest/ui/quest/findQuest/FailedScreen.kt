@@ -31,14 +31,17 @@ object FailedScreenDestination: NavigationDestination {
 @Composable
 fun FailedScreen(
     navigateUp: () -> Unit,
-    viewModel: FailedViewModel = viewModel(factory = AppViewModelProvider.Factory)
-) {
+    viewModel: FailedViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    navigateToHomeScreen: () -> Unit,
+
+    ) {
     Scaffold(
         topBar = {
             GeoQuestTopBar(
                 title = stringResource(id = FailedScreenDestination.titleRes),
                 canNavigateBack = true,
-                navigateUp = navigateUp
+                navigateUp = navigateUp,
+                navigateToHomeScreen = navigateToHomeScreen
             )
         }
     ) { contentPadding ->
@@ -46,7 +49,7 @@ fun FailedScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(contentPadding)
-                .background(if (isSystemInDarkTheme()) Color.DarkGray else Color.White),
+                .background(Color.Transparent),
             contentAlignment = Alignment.Center
         ) {
             Column(

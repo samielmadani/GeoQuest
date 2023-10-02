@@ -43,7 +43,8 @@ object SuccessScreenDestination: NavigationDestination {
 @Composable
 fun SuccessScreen(
     navigateToHomeScreen: () -> Unit,
-    viewModel: SuccessViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: SuccessViewModel = viewModel(factory = AppViewModelProvider.Factory),
+
 ) {
 
     BackPressHandler(onBackPressed = {})
@@ -53,6 +54,8 @@ fun SuccessScreen(
             GeoQuestTopBar(
                 title = stringResource(id = SuccessScreenDestination.titleRes),
                 canNavigateBack = false,
+                navigateToHomeScreen = navigateToHomeScreen
+
             )
         }
     ) { contentPadding ->
@@ -60,7 +63,7 @@ fun SuccessScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(contentPadding)
-                .background(if (isSystemInDarkTheme()) Color.DarkGray else Color.White),
+                .background(Color.Transparent),
             contentAlignment = Alignment.Center
         ) {
             Column(

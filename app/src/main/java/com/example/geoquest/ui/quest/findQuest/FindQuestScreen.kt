@@ -45,6 +45,7 @@ import com.example.geoquest.model.Quest
 import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.home.HomeViewModel
 import com.example.geoquest.ui.navigation.NavigationDestination
+import com.example.geoquest.ui.quest.createQuest.CreateQuestViewModel
 import com.example.geoquest.ui.quest.createQuest.LastCapturedPhotoViewModel
 import com.example.geoquest.ui.quest.createQuest.toQuest
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -77,9 +78,12 @@ fun FindQuestScreen(
     navigateToCamera: () -> Unit,
     lastCapturedPhotoViewModel: LastCapturedPhotoViewModel,
     navigateToSuccessScreen: () -> Unit,
-    navigateToFailedScreen: () -> Unit
+    navigateToFailedScreen: () -> Unit,
+    createViewModel: CreateQuestViewModel,
+    navigateToHomeScreen: () -> Unit,
 
-) {
+
+    ) {
     val lastCapturedPhoto: Bitmap? by lastCapturedPhotoViewModel.lastCapturedPhoto.observeAsState(null)
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -96,7 +100,8 @@ fun FindQuestScreen(
             GeoQuestTopBar(
                 title = "Hunting for " + quest.questTitle,
                 canNavigateBack = true,
-                navigateUp = navigateUp
+                navigateUp = navigateUp,
+                navigateToHomeScreen = navigateToHomeScreen
             )
         }
     ) { contentPadding ->
@@ -158,21 +163,17 @@ fun FindQuestScreen(
                 ){
                     Text(text = "Your Image:")
 
-                    if (lastCapturedPhoto != null) {
-                        lastCapturedPhoto?.asImageBitmap()?.let {
-                            Image(
-                                bitmap = it,
-                                contentDescription = stringResource(id = R.string.default_image),
-                                modifier = Modifier.size(dimensionResource(id = R.dimen.image_size))
-                            )
-                        }
+                    val painter2: Painter = if (createViewModel.questUiState.questDetails.image != null) {
+                        rememberAsyncImagePainter(model = createViewModel.questUiState.questDetails.image)
                     } else {
-                        Image(
-                            painter = painterResource(id = R.drawable.default_image),
-                            contentDescription = stringResource(id = R.string.default_image),
-                            modifier = Modifier.size(dimensionResource(id = R.dimen.image_size))
-                        )
+                        painterResource(id = R.drawable.default_image)
                     }
+
+                    Image(
+                        painter = painter2,
+                        contentDescription = stringResource(id = R.string.default_image),
+                        modifier = Modifier.size(dimensionResource(id = R.dimen.image_size))
+                    )
                 }
 
             }
@@ -181,7 +182,7 @@ fun FindQuestScreen(
 
             Spacer(modifier = Modifier.weight(1f)) // Spacer to push button to the bottom
 
-            if (lastCapturedPhoto != null) {
+            if (createViewModel.questUiState.questDetails.image != null) {
                 Button(
                     onClick = {
                         if (viewModel.randomBoolean()) { // Replace this with ML Kit comparison
@@ -250,7 +251,7 @@ fun MapTarget(
         }
     } else {
         cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(lat_long, 1f)
+            position = CameraPosition.fromLatLngZoom(lat_long, 3f)
         }
     }
 
