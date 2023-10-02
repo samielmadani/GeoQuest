@@ -3,7 +3,11 @@ package com.example.geoquest.ui.home
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Build
+import android.util.Base64
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -96,6 +100,9 @@ import com.google.maps.android.compose.rememberMarkerState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
 
 object HomeDestination: NavigationDestination {
     override val route = "home"
@@ -484,17 +491,69 @@ fun MapTarget(questList: List<Quest>, viewModel: HomeViewModel, selectedQuestId:
     }
 }
 
-fun convertQuestToJson(quest: Quest): String {
+fun getImageBytesFromUri(context: Context, uri: String?): ByteArray {
+    if (uri == null) {
+        return ByteArray(0)
+    }
+
+    val inputStream = context.contentResolver.openInputStream(Uri.parse(uri))
+    val outputStream = ByteArrayOutputStream()
+    val buffer = ByteArray(1024)
+    var length: Int
+    while (inputStream?.read(buffer).also { length = it ?: 0 } != -1) {
+        outputStream.write(buffer, 0, length)
+    }
+    return outputStream.toByteArray()
+}
+
+fun convertImageBytesToBase64(imageBytes: ByteArray): String {
+    return Base64.encodeToString(imageBytes, Base64.DEFAULT)
+}
+
+fun base64ToBitmap(base64String: String): Bitmap {
+    val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
+    return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+}
+
+fun saveBitmapToFile(context: Context, bitmap: Bitmap): Uri {
+    val filename = "${System.currentTimeMillis()}.jpg"
+    val file = File(context.filesDir, filename)
+    val fos = FileOutputStream(file)
+    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+    fos.close()
+    return Uri.fromFile(file)
+}
+
+data class QuestPayload (
+    val questTitle: String,
+    val questDescription: String,
+    var questDifficulty: Int,
+    val latitude: Double,
+    val longitude: Double,
+    val author: String,
+    val questImage: String
+)
+
+fun convertQuestToJson(quest: Quest, context: Context): String {
+    val payload = QuestPayload(
+        quest.questTitle,
+        quest.questDescription,
+        quest.questDifficulty,
+        quest.latitude,
+        quest.longitude,
+        quest.author,
+        convertImageBytesToBase64(getImageBytesFromUri(context, quest.questImageUri))
+    )
     val gson = Gson()
-    return gson.toJson(quest, Quest::class.java)
+    return gson.toJson(quest, QuestPayload::class.java)
 }
 
 // Assuming you have a method to convert a JSON string to a Quest object
-fun convertJsonToQuest(json: String): Quest {
+fun convertJsonToQuestPayload(json: String): QuestPayload {
     // Convert the JSON string to a Quest object
     // You can use libraries like Gson or Moshi for this
     val gson = Gson()
-    return gson.fromJson(json, Quest::class.java)
+    return gson.fromJson(json, QuestPayload::class.java)
 }
 
 fun discoverQuest(context: Context, viewModel: CreateQuestViewModel) {
@@ -519,6 +578,7 @@ private fun startAdvertising(quest: Quest, context: Context) {
             Log.i("SHARE SEND", "Update: $update")
 
             if (update.status == PayloadTransferUpdate.Status.SUCCESS || update.status == PayloadTransferUpdate.Status.FAILURE) {
+                Log.i("SHARE SEND", "Disconnecting....")
                 Nearby.getConnectionsClient(context).disconnectFromEndpoint(endpointId)
             }
         }
@@ -528,19 +588,24 @@ private fun startAdvertising(quest: Quest, context: Context) {
         object : ConnectionLifecycleCallback() {
             override fun onConnectionInitiated(endpointId: String, connectionInfo: ConnectionInfo) {
                 // Automatically accept the connection on both sides.
-                Log.i("SHARE SEND", "Connection initiated")
+                Log.i("SHARE SEND", "Connection initiated with $endpointId")
                 Nearby.getConnectionsClient(context).acceptConnection(endpointId, ReceiveBytesPayloadListener())
             }
 
             override fun onConnectionResult(endpointId: String, result: ConnectionResolution) {
-                Log.i("SHARE SEND", "Connection Result")
+                Log.i("SHARE SEND", "Connected to $endpointId")
                 when (result.status.statusCode) {
                     ConnectionsStatusCodes.STATUS_OK -> {
-                        val bytesPayload = Payload.fromBytes(convertQuestToJson(quest).toByteArray())
+                        // Send the quest
+                        val bytesPayload = Payload.fromBytes(convertQuestToJson(quest, context).toByteArray())
                         Nearby.getConnectionsClient(context).sendPayload(endpointId, bytesPayload)
                     }
-                    ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {}
-                    ConnectionsStatusCodes.STATUS_ERROR -> {}
+                    ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
+                        Log.e("SHARE SEND", "Connection rejected")
+                    }
+                    ConnectionsStatusCodes.STATUS_ERROR -> {
+                        Log.e("SHARE SEND", "Connection error")
+                    }
                     else -> {}
                 }
             }
@@ -571,10 +636,28 @@ private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel) {
                 Log.i("SHARE RCV", "Received data")
 
                 if (receivedBytes != null) {
-                    val quest = convertJsonToQuest(String(receivedBytes))
+                    val quest = convertJsonToQuestPayload(String(receivedBytes))
                     Log.i("SHARE RCV", "QUEST: $quest")
                     CoroutineScope(Dispatchers.Main).launch {
-                        viewModel.createQuest(quest)
+
+                        // Save the image bytes
+                        val bitmap = base64ToBitmap(quest.questImage)
+                        val uri = saveBitmapToFile(context, bitmap)
+
+                        // Save the quest
+                        viewModel.createQuest(
+                            Quest(
+                                questTitle = quest.questTitle,
+                                questDescription = quest.questDescription,
+                                questDifficulty = quest.questDifficulty,
+                                questImageUri = uri.toString(),
+                                latitude = quest.latitude,
+                                longitude = quest.longitude,
+                                author = quest.author
+                            )
+                        )
+
+                        Log.i("SHARE RCV", "Disconnecting....")
                         // Disconnect after saving the quest
                         Nearby.getConnectionsClient(context).disconnectFromEndpoint(endpointId)
                     }
@@ -599,18 +682,22 @@ private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel) {
             override fun onConnectionInitiated(endpointId: String, connectionInfo: ConnectionInfo) {
                 // Automatically accept the connection on both sides.
                 Nearby.getConnectionsClient(context).acceptConnection(endpointId, ReceiveBytesPayloadListener())
-                Log.i("SHARE RCV", "Connection initiated")
+                Log.i("SHARE RCV", "Connection initiated with $endpointId")
             }
 
             override fun onConnectionResult(endpointId: String, result: ConnectionResolution) {
                 when (result.status.statusCode) {
-                    ConnectionsStatusCodes.STATUS_OK -> {}
-                    ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {}
-                    ConnectionsStatusCodes.STATUS_ERROR -> {}
+                    ConnectionsStatusCodes.STATUS_OK -> {
+                        Log.i("SHARE RCV", "Connected to $endpointId")
+                    }
+                    ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
+                        Log.e("SHARE RCV", "Connection rejected")
+                    }
+                    ConnectionsStatusCodes.STATUS_ERROR -> {
+                        Log.e("SHARE RCV", "Connection error")
+                    }
                     else -> {}
                 }
-
-                Log.i("SHARE RCV", "Connection result")
             }
 
             override fun onDisconnected(endpointId: String) {
