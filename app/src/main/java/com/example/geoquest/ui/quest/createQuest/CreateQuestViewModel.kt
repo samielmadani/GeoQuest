@@ -64,7 +64,7 @@ class CreateQuestViewModel(private val sharedPreferences: SharedPreferences, pri
             questTitle = quest.questTitle,
             questDescription = quest.questDescription,
             questDifficulty = quest.questDifficulty,
-            questImageUri = null,
+            questImageUri = quest.questImageUri,
             latitude = quest.latitude,
             longitude = quest.longitude,
             author = quest.author

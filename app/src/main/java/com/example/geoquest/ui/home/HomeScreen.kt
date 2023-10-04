@@ -379,6 +379,7 @@ fun QuestCard(
 ) {
     val context = LocalContext.current
 
+    Log.i("SHARE INFO", quest.questImageUri.toString())
 
     val (isLoading, setIsLoading) = remember { mutableStateOf(false) }
 
