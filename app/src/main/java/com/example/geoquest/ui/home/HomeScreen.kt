@@ -604,10 +604,12 @@ private fun startAdvertising(quest: Quest, context: Context) {
                             .addOnSuccessListener {
                                 Log.i("SHARE SEND", "Successfully sent, disconnecting...")
                                 Nearby.getConnectionsClient(context).stopAllEndpoints()
+                                Nearby.getConnectionsClient(context).stopAdvertising()
                             }
                             .addOnFailureListener {
                                 Log.i("SHARE SEND", "Successfully sent, disconnecting...")
                                 Nearby.getConnectionsClient(context).stopAllEndpoints()
+                                Nearby.getConnectionsClient(context).stopAdvertising()
                             }
                     }
                     ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
