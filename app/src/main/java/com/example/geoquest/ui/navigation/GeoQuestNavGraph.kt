@@ -72,6 +72,7 @@ fun GeoQuestNavGraph(
                         navigateToViewQuest = { navController.navigate("${ViewQuestDestination.route}/${it}") },
                         navigateToSettings = { navController.navigate(SettingsDestination.route) },
                         createViewModel = createQuestViewModel,
+                        refresh = {navController.navigate(HomeDestination.route)}
                     )
                 }
                 composable(route = CreateQuestDestination.route) {
