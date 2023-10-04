@@ -5,6 +5,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.SystemClock
@@ -159,6 +161,7 @@ fun HomeScreen(
     navigateToCreateQuest: () -> Unit,
     navigateToViewQuest: (Int) -> Unit,
     navigateToSettings: () -> Unit,
+    refresh: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
     createViewModel: CreateQuestViewModel,
@@ -261,6 +264,7 @@ fun HomeScreen(
                 HomeBody(
                     questList = homeUiState.questList,
                     navigateToViewQuest,
+                    refresh,
                     selectedQuestId,
                     context,
                     createViewModel,
@@ -305,13 +309,14 @@ fun PermissionsDenied(modifier: Modifier, scrollBehavior: TopAppBarScrollBehavio
 fun HomeBody(
     questList: List<Quest>,
     navigateToViewQuest: (Int) -> Unit,
+    refresh: () -> Unit,
     selectedQuestId: MutableIntState,
     context: Context,
     createViewModel: CreateQuestViewModel,
     modifier: Modifier = Modifier
 ) {
     // Listen for quests (test)
-    discoverQuest(context, createViewModel)
+    discoverQuest(context, createViewModel, refresh)
 
     Column(
         modifier = modifier,
@@ -537,7 +542,13 @@ fun convertImageBytesToBase64(imageBytes: ByteArray): String {
 fun base64ToBitmap(base64String: String): Bitmap {
     val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
     Log.i("SHARE SEND", "Decoding base64 string to bytes, size: ${decodedBytes.size}")
-    return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+
+    val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size);
+
+    val matrix = Matrix()
+    matrix.postRotate(90f)
+
+    return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 }
 
 fun saveBitmapToFile(context: Context, bitmap: Bitmap): Uri {
@@ -585,8 +596,8 @@ fun convertJsonToQuestPayload(json: String): QuestPayload {
     return gson.fromJson(json, QuestPayload::class.java)
 }
 
-fun discoverQuest(context: Context, viewModel: CreateQuestViewModel) {
-    startDiscovery(context, viewModel)
+fun discoverQuest(context: Context, viewModel: CreateQuestViewModel, refresh: () -> Unit) {
+    startDiscovery(context, viewModel, refresh)
 }
 
 private fun startAdvertising(quest: Quest, context: Context, onDismiss: () -> Unit) {
@@ -700,7 +711,7 @@ private fun startAdvertising(quest: Quest, context: Context, onDismiss: () -> Un
         }
 }
 
-private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel) {
+private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel, refresh: () -> Unit) {
     val discoveryOptions = DiscoveryOptions.Builder().setStrategy(Strategy.P2P_STAR).build()
     val id = Build.ID
 
@@ -716,6 +727,7 @@ private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel) {
                 if (inputStream == null) {
                     Log.e("SHARE RCV", "Failed to get InputStream from Payload.")
                     Nearby.getConnectionsClient(context).stopAllEndpoints()
+                    refresh()
                     return
                 }
 
@@ -770,6 +782,7 @@ private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel) {
                         Log.i("SHARE RCV", "Disconnecting from $endpointId....")
                         // Disconnect after saving the quest
                         Nearby.getConnectionsClient(context).stopAllEndpoints()
+                        refresh()
                     }
                 }.start()
             }
@@ -786,6 +799,7 @@ private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel) {
                 update.status == PayloadTransferUpdate.Status.CANCELED
                 ) {
                 Nearby.getConnectionsClient(context).stopAllEndpoints()
+                refresh()
             }
         }
     }
