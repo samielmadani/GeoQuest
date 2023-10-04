@@ -524,6 +524,9 @@ fun getImageBytesFromUri(context: Context, uri: String?): ByteArray {
     while (inputStream?.read(buffer).also { length = it ?: 0 } != -1) {
         outputStream.write(buffer, 0, length)
     }
+
+    Log.i("SHARE SEND", "Converted image to byte stream: ${outputStream.size()}")
+    inputStream?.close()
     return outputStream.toByteArray()
 }
 
@@ -565,6 +568,7 @@ fun convertQuestToJson(quest: Quest, context: Context): String {
         quest.author,
         convertImageBytesToBase64(getImageBytesFromUri(context, quest.questImageUri))
     )
+    Log.i("SHARE SEND", "Converted to QuestPayload: $payload")
     val gson = Gson()
     return gson.toJson(payload, QuestPayload::class.java)
 }
@@ -681,8 +685,15 @@ private fun startAdvertising(quest: Quest, context: Context, onDismiss: () -> Un
         .startAdvertising(
             Build.ID, "com.example.geoquest", connectionLifecycleCallback, advertisingOptions
         )
-        .addOnSuccessListener { Log.i("SHARE SEND", "startAdvertising OnSuccessListener") }
-        .addOnFailureListener { error -> Log.e("SHARE SEND", "startAdvertising Error: $error"); onDismiss() }
+        .addOnSuccessListener {
+            Log.i("SHARE SEND", "startAdvertising OnSuccessListener")
+        }
+        .addOnFailureListener { error ->
+            Log.e("SHARE SEND", "startAdvertising Error: $error");
+            Nearby.getConnectionsClient(context).stopAllEndpoints()
+            Nearby.getConnectionsClient(context).stopAdvertising()
+            onDismiss()
+        }
 }
 
 private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel) {
@@ -826,11 +837,9 @@ private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel) {
         .addOnFailureListener { error -> Log.e("SHARE RCV", "startDiscovery Error: $error") }
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
 fun shareQuest(quest: Quest, context: Context, onDismiss: () -> Unit) {
     startAdvertising(quest, context, onDismiss)
 }
-
 
 @Composable
 fun LoadingDialog(
