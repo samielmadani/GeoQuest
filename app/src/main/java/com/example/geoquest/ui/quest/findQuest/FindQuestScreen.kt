@@ -1,6 +1,7 @@
 package com.example.geoquest.ui.quest.findQuest
 
 import android.Manifest
+import android.content.Context
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -78,7 +80,6 @@ fun FindQuestScreen(
     navigateToFailedScreen: () -> Unit,
     createViewModel: CreateQuestViewModel,
 
-
     ) {
     val lastCapturedPhoto: Bitmap? by lastCapturedPhotoViewModel.lastCapturedPhoto.observeAsState(null)
 
@@ -89,6 +90,10 @@ fun FindQuestScreen(
     val onRequestPermission = cameraPermissionState::launchPermissionRequest
 
     val quest = viewModel.questUiState.questDetails.toQuest()
+    val context = LocalContext.current
+
+    var geoText = "";
+    var myImage = "";
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -145,6 +150,24 @@ fun FindQuestScreen(
                         painterResource(id = R.drawable.default_image)
                     }
 
+
+
+
+                    if (quest.questImageUri != null) {
+
+                        viewModel.extractTextFromImage(context, quest.questImageUri!!, object :
+                            FindQuestViewModel.TextExtractionCallback {
+                            override fun onTextExtracted(text: String) {
+                                geoText = text;
+                            }
+
+                            override fun onExtractionFailed(errorMessage: String) {
+
+                            }
+                        })
+
+                    }
+
                     Image(
                         painter = painter,
                         contentDescription = stringResource(id = R.string.default_image),
@@ -164,6 +187,21 @@ fun FindQuestScreen(
                         painterResource(id = R.drawable.default_image)
                     }
 
+                    if (createViewModel.questUiState.questDetails.image != null) {
+
+                        viewModel.extractTextFromImage(context, createViewModel.questUiState.questDetails.image!!, object :
+                            FindQuestViewModel.TextExtractionCallback {
+                            override fun onTextExtracted(text: String) {
+                                myImage = text;
+                            }
+
+                            override fun onExtractionFailed(errorMessage: String) {
+
+                            }
+                        })
+
+                    }
+
                     Image(
                         painter = painter2,
                         contentDescription = stringResource(id = R.string.default_image),
@@ -180,7 +218,7 @@ fun FindQuestScreen(
             if (createViewModel.questUiState.questDetails.image != null) {
                 Button(
                     onClick = {
-                        if (viewModel.randomBoolean()) { // Replace this with ML Kit comparison
+                        if (geoText == myImage) {
                             navigateToSuccessScreen()
                         } else {
                             navigateToFailedScreen()
