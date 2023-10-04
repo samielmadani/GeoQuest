@@ -525,7 +525,7 @@ fun getImageBytesFromUri(context: Context, uri: String?): ByteArray {
         outputStream.write(buffer, 0, length)
     }
 
-    Log.i("SHARE SEND", "Converted image to byte stream: ${outputStream.size()}")
+    Log.i("SHARE SEND", "Converted image to byte stream, size:${outputStream.size()}")
     inputStream?.close()
     return outputStream.toByteArray()
 }
@@ -536,15 +536,20 @@ fun convertImageBytesToBase64(imageBytes: ByteArray): String {
 
 fun base64ToBitmap(base64String: String): Bitmap {
     val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
+    Log.i("SHARE SEND", "Decoding base64 string to bytes, size: ${decodedBytes.size}")
     return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
 }
 
 fun saveBitmapToFile(context: Context, bitmap: Bitmap): Uri {
     val filename = "${System.currentTimeMillis()}.jpg"
+    Log.i("SHARE RCV", "Converted image to jpg: $filename")
+
     val file = File(context.filesDir, filename)
     val fos = FileOutputStream(file)
     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
     fos.close()
+
+    Log.i("SHARE RCV", "Converted image: ${Uri.fromFile(file)}")
     return Uri.fromFile(file)
 }
 
@@ -568,7 +573,6 @@ fun convertQuestToJson(quest: Quest, context: Context): String {
         quest.author,
         convertImageBytesToBase64(getImageBytesFromUri(context, quest.questImageUri))
     )
-    Log.i("SHARE SEND", "Converted to QuestPayload: $payload")
     val gson = Gson()
     return gson.toJson(payload, QuestPayload::class.java)
 }
@@ -744,8 +748,11 @@ private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel) {
                         if (quest.questImage.length > 30) {
                             // Save the image bytes
                             val bitmap = base64ToBitmap(quest.questImage)
+                            Log.i("SHARE SEND", "Saving bitmap to file, bytes: ${bitmap.byteCount}")
                             uri = saveBitmapToFile(context, bitmap).toString()
                         }
+
+                        Log.i("SHARE SEND", "Saved image to: ${uri ?: "null"}")
 
                         // Save the quest
                         viewModel.createQuest(
