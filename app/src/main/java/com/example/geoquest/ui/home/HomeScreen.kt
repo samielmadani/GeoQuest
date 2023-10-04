@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
+import android.os.SystemClock
 import android.util.Base64
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -110,7 +111,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.IOException
 
 object HomeDestination: NavigationDestination {
     override val route = "home"
@@ -439,11 +442,8 @@ fun QuestCard(
                             onClick = {
                                 setIsLoading(true) // Show the loading dialog
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    shareQuest(quest, context)
-                                    delay(5000L) // Wait for 5 seconds (simulating some background work)
-                                    setIsLoading(false) // Hide the loading dialog after 5 seconds
-                                }
-                                 },
+                                    shareQuest(quest, context, { setIsLoading(false) })
+                                } },
                             shape = MaterialTheme.shapes.small,
                             colors = ButtonDefaults.buttonColors(Color.Transparent),
                         ) {
@@ -581,7 +581,7 @@ fun discoverQuest(context: Context, viewModel: CreateQuestViewModel) {
     startDiscovery(context, viewModel)
 }
 
-private fun startAdvertising(quest: Quest, context: Context) {
+private fun startAdvertising(quest: Quest, context: Context, onDismiss: () -> Unit) {
     val advertisingOptions = AdvertisingOptions.Builder().setStrategy(Strategy.P2P_STAR).build()
 
     class ReceiveBytesPayloadListener : PayloadCallback() {
@@ -595,12 +595,15 @@ private fun startAdvertising(quest: Quest, context: Context) {
         override fun onPayloadTransferUpdate(endpointId: String, update: PayloadTransferUpdate) {
             // Bytes payloads are sent as a single chunk, so you'll receive a SUCCESS update immediately
             // after the call to onPayloadReceived().
-            Log.i("SHARE SEND", "Update")
             Log.i("SHARE SEND", "Update: $update")
 
-            if (update.status == PayloadTransferUpdate.Status.SUCCESS || update.status == PayloadTransferUpdate.Status.FAILURE) {
+            if (update.status == PayloadTransferUpdate.Status.SUCCESS ||
+                update.status == PayloadTransferUpdate.Status.FAILURE ||
+                update.status == PayloadTransferUpdate.Status.CANCELED
+                ) {
                 Log.i("SHARE SEND", "Disconnecting from $endpointId....")
                 Nearby.getConnectionsClient(context).stopAllEndpoints()
+                onDismiss()
             }
         }
     }
@@ -614,32 +617,53 @@ private fun startAdvertising(quest: Quest, context: Context) {
             }
 
             override fun onConnectionResult(endpointId: String, result: ConnectionResolution) {
-                Log.i("SHARE SEND", "Connected to $endpointId")
-                when (result.status.statusCode) {
-                    ConnectionsStatusCodes.STATUS_OK -> {
-                        // Send the quest
-                        Log.i("SHARE SEND", "Sending data...")
-                        val bytesPayload = Payload.fromBytes(convertQuestToJson(quest, context).toByteArray())
-                        Nearby.getConnectionsClient(context).stopDiscovery()
-                        Nearby.getConnectionsClient(context).sendPayload(endpointId, bytesPayload)
-                            .addOnSuccessListener {
-                                Log.i("SHARE SEND", "Successfully sent, disconnecting...")
-                                Nearby.getConnectionsClient(context).stopAllEndpoints()
-                                Nearby.getConnectionsClient(context).stopAdvertising()
-                            }
-                            .addOnFailureListener {
-                                Log.i("SHARE SEND", "Successfully sent, disconnecting...")
-                                Nearby.getConnectionsClient(context).stopAllEndpoints()
-                                Nearby.getConnectionsClient(context).stopAdvertising()
-                            }
+                try {
+                    Log.i("SHARE SEND", "Connected to $endpointId")
+                    when (result.status.statusCode) {
+                        ConnectionsStatusCodes.STATUS_OK -> {
+                            // Send the quest
+                            Log.i("SHARE SEND", "Sending data...")
+                            val bytesPayload = Payload.fromBytes(convertQuestToJson(quest, context).toByteArray())
+                            Nearby.getConnectionsClient(context).sendPayload(endpointId, bytesPayload)
+
+                            // Convert the quest to JSON and save it to a temporary file
+                            val json = convertQuestToJson(quest, context)
+                            val tempFile = File.createTempFile("share_quest${quest.questId}_to_$endpointId", ".json", context.cacheDir)
+                            tempFile.writeText(json)
+
+                            // Create a Payload from the InputStream of the file
+                            val payload = Payload.fromStream(FileInputStream(tempFile))
+
+                            // Send the Payload
+                            Nearby.getConnectionsClient(context).sendPayload(endpointId, payload)
+                                .addOnSuccessListener {
+                                    Log.i("SHARE SEND", "Successfully sent, disconnecting...")
+                                    Nearby.getConnectionsClient(context).stopAllEndpoints()
+                                    Nearby.getConnectionsClient(context).stopAdvertising()
+                                    tempFile.delete()
+                                    onDismiss()
+                                }
+                                .addOnFailureListener {
+                                    Log.i("SHARE SEND", "Successfully sent, disconnecting...")
+                                    Nearby.getConnectionsClient(context).stopAllEndpoints()
+                                    Nearby.getConnectionsClient(context).stopAdvertising()
+                                    tempFile.delete()
+                                    onDismiss()
+                                }
+                        }
+                        ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
+                            Log.e("SHARE SEND", "Connection rejected")
+                        }
+                        ConnectionsStatusCodes.STATUS_ERROR -> {
+                            Log.e("SHARE SEND", "Connection error")
+                        }
+                        else -> {}
                     }
-                    ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
-                        Log.e("SHARE SEND", "Connection rejected")
-                    }
-                    ConnectionsStatusCodes.STATUS_ERROR -> {
-                        Log.e("SHARE SEND", "Connection error")
-                    }
-                    else -> {}
+                } catch (e: Exception) {
+                    Log.e("SHARE SEND", "Error: $e")
+                    Nearby.getConnectionsClient(context).stopAllEndpoints()
+                    Nearby.getConnectionsClient(context).stopAdvertising()
+                    onDismiss()
                 }
             }
 
@@ -647,6 +671,9 @@ private fun startAdvertising(quest: Quest, context: Context) {
                 // We've been disconnected from this endpoint. No more data can be
                 // sent or received.
                 Log.i("SHARE SEND", "Disconnected")
+                Nearby.getConnectionsClient(context).stopAllEndpoints()
+                Nearby.getConnectionsClient(context).stopAdvertising()
+                onDismiss()
             }
         }
 
@@ -655,24 +682,53 @@ private fun startAdvertising(quest: Quest, context: Context) {
             Build.ID, "com.example.geoquest", connectionLifecycleCallback, advertisingOptions
         )
         .addOnSuccessListener { Log.i("SHARE SEND", "startAdvertising OnSuccessListener") }
-        .addOnFailureListener { error -> Log.e("SHARE SEND", "startAdvertising Error: $error") }
+        .addOnFailureListener { error -> Log.e("SHARE SEND", "startAdvertising Error: $error"); onDismiss() }
 }
 
 private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel) {
     val discoveryOptions = DiscoveryOptions.Builder().setStrategy(Strategy.P2P_STAR).build()
     val id = Build.ID
+
+    val READ_STREAM_IN_BG_TIMEOUT = 5000L
+
     class ReceiveBytesPayloadListener : PayloadCallback() {
         override fun onPayloadReceived(endpointId: String, payload: Payload) {
-            // This always gets the full data of the payload. Is null if it's not a BYTES payload.
-            if (payload.type == Payload.Type.BYTES) {
-                val receivedBytes = payload.asBytes()
-                Log.i("SHARE RCV", "Received data")
+            if (payload.type == Payload.Type.STREAM) {
+                val inputStream = payload.asStream()?.asInputStream()
+                var lastRead = SystemClock.elapsedRealtime()
+                val outputStream = ByteArrayOutputStream()
 
-                if (receivedBytes != null) {
-                    val quest = convertJsonToQuestPayload(String(receivedBytes))
+                if (inputStream == null) {
+                    Log.e("SHARE RCV", "Failed to get InputStream from Payload.")
+                    Nearby.getConnectionsClient(context).stopAllEndpoints()
+                    return
+                }
+
+                Thread {
+                    while (!Thread.currentThread().isInterrupted) {
+                        if (SystemClock.elapsedRealtime() - lastRead >= READ_STREAM_IN_BG_TIMEOUT) {
+                            Log.e("SHARE RCV", "Timed out while reading data from stream")
+                            break
+                        }
+
+                        try {
+                            val availableBytes = inputStream.available()
+                            if (availableBytes > 0) {
+                                val bytes = inputStream.readBytes()
+                                outputStream.write(bytes)
+                                lastRead = SystemClock.elapsedRealtime()
+                            }
+                        } catch (e: IOException) {
+                            Log.e("SHARE RCV", "Failed to read bytes from InputStream.", e)
+                            break
+                        }
+                    }
+
+                    val receivedString = outputStream.toString()
+                    val quest = convertJsonToQuestPayload(receivedString)
                     Log.i("SHARE RCV", "QUEST: $quest")
-                    CoroutineScope(Dispatchers.Main).launch {
 
+                    CoroutineScope(Dispatchers.Main).launch {
                         var uri: String? = null
                         if (quest.questImage.length > 30) {
                             // Save the image bytes
@@ -697,7 +753,7 @@ private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel) {
                         // Disconnect after saving the quest
                         Nearby.getConnectionsClient(context).stopAllEndpoints()
                     }
-                }
+                }.start()
             }
         }
 
@@ -707,8 +763,11 @@ private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel) {
             Log.i("SHARE RCV", "Update")
             Log.i("SHARE SEND", "Update: $update")
 
-            if (update.status == PayloadTransferUpdate.Status.SUCCESS || update.status == PayloadTransferUpdate.Status.FAILURE) {
-                Nearby.getConnectionsClient(context).disconnectFromEndpoint(endpointId)
+            if (update.status == PayloadTransferUpdate.Status.SUCCESS ||
+                update.status == PayloadTransferUpdate.Status.FAILURE ||
+                update.status == PayloadTransferUpdate.Status.CANCELED
+                ) {
+                Nearby.getConnectionsClient(context).stopAllEndpoints()
             }
         }
     }
@@ -768,8 +827,8 @@ private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel) {
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
-fun shareQuest(quest: Quest, context: Context) {
-    startAdvertising(quest, context)
+fun shareQuest(quest: Quest, context: Context, onDismiss: () -> Unit) {
+    startAdvertising(quest, context, onDismiss)
 }
 
 

@@ -80,9 +80,7 @@ fun ViewQuestScreen(
 
             ) { setIsLoading(true) // Show the loading dialog
                 CoroutineScope(Dispatchers.IO).launch {
-                    shareQuest(quest, context)
-                    delay(5000L) // Wait for 5 seconds (simulating some background work)
-                    setIsLoading(false) // Hide the loading dialog after 5 seconds
+                    shareQuest(quest, context) { setIsLoading(false) }
                 } }
         }
     ) { contentPadding ->
