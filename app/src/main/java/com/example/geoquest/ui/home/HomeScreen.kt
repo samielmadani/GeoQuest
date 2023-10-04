@@ -374,6 +374,7 @@ fun QuestCard(
 ) {
     val context = LocalContext.current
 
+    Log.i("SHARE INFO", quest.questImageUri.toString())
 
     val (isLoading, setIsLoading) = remember { mutableStateOf(false) }
 
@@ -770,6 +771,8 @@ private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel) {
                         Log.i("SHARE RCV", "Disconnecting from $endpointId....")
                         // Disconnect after saving the quest
                         Nearby.getConnectionsClient(context).stopAllEndpoints()
+
+
                     }
                 }.start()
             }
