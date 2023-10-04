@@ -1,7 +1,6 @@
 package com.example.geoquest.ui.quest.findQuest
 
 import android.Manifest
-import android.content.Context
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -219,7 +218,13 @@ fun FindQuestScreen(
                 Button(
                     onClick = {
                         if (geoText == myImage) {
-                            navigateToSuccessScreen()
+                            viewModel.calculateDistance(quest.latitude, quest.longitude, context) {
+                                if (it) {
+                                    navigateToSuccessScreen()
+                                } else {
+                                    navigateToFailedScreen()
+                                }
+                            }
                         } else {
                             navigateToFailedScreen()
                         }},

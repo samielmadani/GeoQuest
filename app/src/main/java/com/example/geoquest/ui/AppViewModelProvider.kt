@@ -34,7 +34,7 @@ object AppViewModelProvider {
             ViewQuestViewModel(this.createSavedStateHandle(), geoQuestApplication().container.questRepository)
         }
         initializer {
-            FindQuestViewModel(this.createSavedStateHandle(), geoQuestApplication().container.questRepository)
+            FindQuestViewModel(this.createSavedStateHandle(), geoQuestApplication().container.sharedPreferences, geoQuestApplication().container.questRepository)
         }
         initializer {
             SignUpViewModel(geoQuestApplication().container.sharedPreferences)

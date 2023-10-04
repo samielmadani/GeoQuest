@@ -101,6 +101,8 @@ import com.google.android.gms.nearby.connection.PayloadCallback
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate
 import com.google.android.gms.nearby.connection.Strategy
 import com.google.gson.Gson
+import com.google.gson.JsonParser
+import com.google.gson.JsonSyntaxException
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
@@ -592,13 +594,24 @@ fun convertQuestToJson(quest: Quest, context: Context): String {
 // Assuming you have a method to convert a JSON string to a Quest object
 fun convertJsonToQuestPayload(json: String): QuestPayload {
     // Convert the JSON string to a Quest object
-    // You can use libraries like Gson or Moshi for this
+    // You can use libraries like Gson or Moshi for
+    isValidJson(json)
     val gson = Gson()
     return gson.fromJson(json, QuestPayload::class.java)
 }
 
 fun discoverQuest(context: Context, viewModel: CreateQuestViewModel, refresh: () -> Unit) {
     startDiscovery(context, viewModel, refresh)
+}
+
+fun isValidJson(json: String): Boolean {
+    return try {
+        JsonParser.parseString(json)
+        true
+    } catch (e: JsonSyntaxException) {
+        Log.i("SHARE INFO", e.message.toString())
+        false
+    }
 }
 
 private fun startAdvertising(quest: Quest, context: Context, onDismiss: () -> Unit) {
@@ -627,6 +640,8 @@ private fun startAdvertising(quest: Quest, context: Context, onDismiss: () -> Un
             }
         }
     }
+
+
 
     val connectionLifecycleCallback: ConnectionLifecycleCallback =
         object : ConnectionLifecycleCallback() {
