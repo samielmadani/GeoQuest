@@ -2,6 +2,8 @@ package com.example.geoquest.ui.home
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -69,11 +71,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.geoquest.GeoQuestTopBar
 import com.example.geoquest.R
+import com.example.geoquest.model.CreateNotificationChannel
 import com.example.geoquest.model.Quest
+import com.example.geoquest.model.sendNotification
 import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.navigation.NavigationDestination
 import com.example.geoquest.ui.quest.createQuest.CreateQuestViewModel
@@ -190,6 +195,9 @@ fun HomeScreen(
                     Manifest.permission.BLUETOOTH_CONNECT,
                     Manifest.permission.BLUETOOTH_SCAN,
                     Manifest.permission.NEARBY_WIFI_DEVICES,
+                    Manifest.permission.POST_NOTIFICATIONS,
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.FOREGROUND_SERVICE
                 )
             )
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -205,6 +213,8 @@ fun HomeScreen(
                 Manifest.permission.BLUETOOTH_ADVERTISE,
                 Manifest.permission.BLUETOOTH_CONNECT,
                 Manifest.permission.BLUETOOTH_SCAN,
+                Manifest.permission.CAMERA,
+                Manifest.permission.FOREGROUND_SERVICE
             )
         )
     } else {
@@ -217,9 +227,13 @@ fun HomeScreen(
                 Manifest.permission.CHANGE_WIFI_STATE,
                 Manifest.permission.BLUETOOTH,
                 Manifest.permission.BLUETOOTH_ADMIN,
+                Manifest.permission.CAMERA,
+                Manifest.permission.FOREGROUND_SERVICE
             )
         )
     }
+
+    CreateNotificationChannel()
 
     val permissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
     PermissionRequired(
@@ -782,17 +796,23 @@ private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel, re
 
                         Log.i("SHARE SEND", "Saved image to: ${uri ?: "null"}")
 
+                        val quest = Quest(
+                            questTitle = quest.questTitle,
+                            questDescription = quest.questDescription,
+                            questDifficulty = quest.questDifficulty,
+                            questImageUri = uri,
+                            latitude = quest.latitude,
+                            longitude = quest.longitude,
+                            author = quest.author
+                        )
+
                         // Save the quest
                         viewModel.createQuest(
-                            Quest(
-                                questTitle = quest.questTitle,
-                                questDescription = quest.questDescription,
-                                questDifficulty = quest.questDifficulty,
-                                questImageUri = uri,
-                                latitude = quest.latitude,
-                                longitude = quest.longitude,
-                                author = quest.author
-                            )
+                            quest
+                        )
+
+                        sendNotification(context, "${quest.author}, has shared a quest with you.",
+                            quest.questTitle
                         )
 
                         Log.i("SHARE RCV", "Disconnecting from $endpointId....")

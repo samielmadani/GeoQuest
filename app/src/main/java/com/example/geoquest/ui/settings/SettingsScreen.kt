@@ -1,5 +1,8 @@
 package com.example.geoquest.ui.settings
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -36,10 +39,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.geoquest.GeoQuestTopBar
 import com.example.geoquest.R
 import com.example.geoquest.model.getCurrentLocation
+import com.example.geoquest.model.sendNotification
 import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.home.HomeDestination
 import com.example.geoquest.ui.navigation.NavigationDestination
@@ -150,6 +157,11 @@ fun SettingsScreen(
                     }) {
                         Text(
                             text = stringResource(id = R.string.set_current_loc)
+                        )
+                    }
+                    Button(onClick = { sendNotification(context, "TEST", "TESTING") }) {
+                        Text(
+                            text = "Send notification"
                         )
                     }
                 }
