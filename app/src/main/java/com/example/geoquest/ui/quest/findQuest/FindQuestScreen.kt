@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -80,9 +82,7 @@ fun FindQuestScreen(
     createViewModel: CreateQuestViewModel,
 
     ) {
-    val lastCapturedPhoto: Bitmap? by lastCapturedPhotoViewModel.lastCapturedPhoto.observeAsState(null)
-
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val scrollState = rememberScrollState()
 
     val cameraPermissionState: PermissionState = rememberPermissionState(Manifest.permission.CAMERA)
     val hasPermission = cameraPermissionState.hasPermission
@@ -95,7 +95,6 @@ fun FindQuestScreen(
     var myImage = "";
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             GeoQuestTopBar(
                 title = stringResource(id = R.string.hunting_for) + quest.questTitle,
@@ -107,7 +106,8 @@ fun FindQuestScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(contentPadding),
+                .padding(contentPadding)
+                .verticalScroll(scrollState, enabled = true),
             horizontalAlignment = Alignment.CenterHorizontally // Center-align content horizontally
         ) {
 

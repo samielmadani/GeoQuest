@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -55,11 +57,10 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navigateToHomeScreen: () -> Unit
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val scrollState = rememberScrollState()
     val context = LocalContext.current
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             GeoQuestTopBar(
                 title = stringResource(id = HomeDestination.titleRes),
@@ -72,7 +73,8 @@ fun SettingsScreen(
             Column(
                 modifier = Modifier
                     .padding(contentPadding)
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .verticalScroll(scrollState, enabled = true),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(

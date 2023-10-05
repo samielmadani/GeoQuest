@@ -1,6 +1,7 @@
 package com.example.geoquest.ui.quest.viewQuest
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,6 +9,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
@@ -63,7 +66,7 @@ fun ViewQuestScreen(
     viewModel: ViewQuestViewModel = viewModel(factory = AppViewModelProvider.Factory),
 
     ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val scrollState = rememberScrollState()
     val context = LocalContext.current
     val quest = viewModel.questUiState.questDetails.toQuest()
 
@@ -71,7 +74,6 @@ fun ViewQuestScreen(
 
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             GeoQuestTopBar(
                 title = stringResource(id = ViewQuestDestination.titleRes),
@@ -88,7 +90,8 @@ fun ViewQuestScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(contentPadding)
-                .padding(16.dp), // Add padding to center-align content
+                .padding(16.dp) // Add padding to center-align content
+                .verticalScroll(scrollState, enabled = true),
             horizontalAlignment = Alignment.CenterHorizontally // Center-align content horizontally
         ) {
             val painter: Painter = if (quest.questImageUri != null) {
