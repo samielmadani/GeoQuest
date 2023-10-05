@@ -111,7 +111,7 @@ fun ViewQuestScreen(
 
             )
             Text(
-                text = "By: " + quest.author,
+                text = stringResource(id = R.string.by) + quest.author,
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
@@ -156,7 +156,7 @@ fun DifficultyStars(difficultyLevel: Int) {
         modifier = Modifier.padding(vertical = 4.dp)
     ) {
         Text(
-            text = "Difficulty:",
+            text = stringResource(id = R.string.difficulty),
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(end = 4.dp)

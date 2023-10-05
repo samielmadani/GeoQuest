@@ -9,6 +9,7 @@
     <string name="quest_title">Title</string>
     <string name="quest_description">Description</string>
     <string name="quest_difficulty">Set Difficulty</string>
+    <string name="difficulty">Difficulty: </string>
     <string name="create_quest_button">Create Quest</string>
     <string name="view_button">View</string>
     <string name="begin_hunt">Begin Hunt</string>
@@ -18,6 +19,8 @@
     <string name="default_image">Default Quest Image</string>
     <string name="take_photo">Capture Image</string>
     <string name="camera_permission">PLease grant permission to use the camera functionality of this app.</string>
+    <string name="permissions_required">Location and connectivity permissions are required to use this app.</string>
+    <string name="request_permission">Request Permission</string>
     <string name="permission_button">Grant Permission</string>
     <string name="camera">Camera</string>
     <string name="geo_found">GeoQuest Found</string>
@@ -31,5 +34,23 @@
     <string name="appwidget_text">GeoQuest</string>
     <string name="add_widget">Add widget</string>
     <string name="app_widget_description">Nearest Quest</string>
+    <string name="by">By: </string>
+    <string name="not_it">This is not it!</string>
+    <string name="hunting_for">Hunting for </string>
+    <string name="find_description">Reach the marker on the map to find the quest, and take a photo of the GeoQuest when you find it!</string>
+    <string name="your_image">Your Image:</string>
+    <string name="compare">Compare to quest</string>
+    <string name="i_found">I Found It!</string>
+    <string name="found">You Found It!</string>
+    <string name="test_data_success">Test data inserted successfully.</string>
+    <string name="clear_data_success">Database cleared successfully.</string>
+    <string name="populate">Populate Database</string>
+    <string name="clear">Clear Database</string>
+    <string name="save">Save</string>
+    <string name="set_current_loc">Update to Current Location</string>
+    <string name="user_name_changed">Username Changed Successfully</string>
+    <string name="developer_options">Developer Options</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
 
 </resources>

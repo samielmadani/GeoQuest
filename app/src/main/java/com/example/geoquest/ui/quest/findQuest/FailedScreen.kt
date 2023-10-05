@@ -65,7 +65,7 @@ fun FailedScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "This is not it!",
+                    text = stringResource(id = R.string.not_it),
                     color = if (isSystemInDarkTheme()) Color.White else Color.Black,
                     fontSize = 16.sp
                 )

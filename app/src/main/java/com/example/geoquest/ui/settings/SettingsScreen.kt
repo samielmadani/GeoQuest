@@ -107,24 +107,24 @@ fun SettingsScreen(
                         Button(
                             onClick = {
                                 viewModel.insertTestData()
-                                Toast.makeText(context, " Test data inserted successfully", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.resources.getString(R.string.test_data_success), Toast.LENGTH_SHORT).show()
                                 navigateToHomeScreen()
                                       },
                             colors = ButtonDefaults.buttonColors(if (isSystemInDarkTheme()) Color.White else Color.DarkGray)
                         ) {
                             Text(
-                                text = "Populate Database"
+                                text = stringResource(id = R.string.populate)
                             )
                         }
                         Button(onClick = {
                             viewModel.clearData()
-                            Toast.makeText(context, "Database cleared successfully", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.resources.getString(R.string.clear_data_success), Toast.LENGTH_SHORT).show()
                             navigateToHomeScreen()
                                          },
                             colors = ButtonDefaults.buttonColors(if (isSystemInDarkTheme()) Color.White else Color.DarkGray)
                         ) {
                             Text(
-                                text = "Clear Database"
+                                text = stringResource(id = R.string.clear)
                             )
                         }
                     }
@@ -147,18 +147,18 @@ fun SettingsScreen(
                         })
                     }) {
                         Text(
-                            text = "Set as current location"
+                            text = stringResource(id = R.string.set_current_loc)
                         )
                     }
                 }
 
                 Button(onClick = {
                     viewModel.saveSettings()
-                    Toast.makeText(context, "Username Changed Successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.resources.getString(R.string.user_name_changed), Toast.LENGTH_SHORT).show()
                     navigateToHomeScreen()
                 }) {
                     Text(
-                        text = "Save"
+                        text = stringResource(id = R.string.save)
                     )
                 }
                 if (viewModel.isLoading) {
@@ -182,7 +182,7 @@ fun DeveloperOptionsToggle(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(text = "Developer Options")
+        Text(text = stringResource(id = R.string.developer_options))
         Switch(
             checked = isChecked,
             onCheckedChange = onCheckedChange
@@ -204,7 +204,7 @@ fun LatLongInput(
         OutlinedTextField(
             value = latitude,
             onValueChange = onLatitudeChange,
-            label = { Text("Latitude") },
+            label = { Text(text = stringResource(id = R.string.latitude)) },
             modifier = Modifier.weight(1f),  // This will make the text fields share the available space equally
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
@@ -215,7 +215,7 @@ fun LatLongInput(
         OutlinedTextField(
             value = longitude,
             onValueChange = onLongitudeChange,
-            label = { Text("Longitude") },
+            label = { Text(text = stringResource(id = R.string.longitude)) },
             modifier = Modifier.weight(1f),  // This will make the text fields share the available space equally
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,

@@ -79,7 +79,7 @@ fun SuccessScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "You found it!",
+                    text = stringResource(id = R.string.found),
                     color = if (isSystemInDarkTheme()) Color.White else Color.Black,
                     fontSize = 16.sp
                 )

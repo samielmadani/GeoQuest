@@ -298,10 +298,10 @@ fun PermissionsDenied(modifier: Modifier, scrollBehavior: TopAppBarScrollBehavio
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Location permissions are required to use this app.")
+            Text(stringResource(id = R.string.permissions_required))
             Button(onClick = { multiplePermissionsState.launchMultiplePermissionRequest()
             }) {
-                Text("Request Permission")
+                Text(stringResource(id = R.string.request_permission))
             }
         }
     }
@@ -434,7 +434,7 @@ fun QuestCard(
                         style = MaterialTheme.typography.headlineMedium,
                     )
                     Text(
-                        text = "By: " + quest.author,
+                        text = stringResource(id = R.string.by) + quest.author,
                         style = MaterialTheme.typography.bodySmall,
                     )
                     DifficultyStars(quest.questDifficulty)

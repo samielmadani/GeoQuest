@@ -98,7 +98,7 @@ fun FindQuestScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             GeoQuestTopBar(
-                title = "Hunting for " + quest.questTitle,
+                title = stringResource(id = R.string.hunting_for) + quest.questTitle,
                 canNavigateBack = true,
                 navigateUp = navigateUp
             )
@@ -128,7 +128,7 @@ fun FindQuestScreen(
                 contentAlignment = Alignment.Center // Center-align content within the Box
             ) {
                 Text(
-                    text = "Reach the marker on the map to find the quest, and take a photo of the GeoQuest when you find it!",
+                    text = stringResource(id = R.string.find_description),
                     style = TextStyle(
                         fontSize = 16.sp
                     ),
@@ -141,7 +141,7 @@ fun FindQuestScreen(
                 Column (
                     horizontalAlignment = Alignment.CenterHorizontally
                 ){
-                    Text(text = "GoeQuest:")
+                    Text(text = stringResource(id = R.string.app_name) + ":")
 
                     val painter: Painter = if (quest.questImageUri != null) {
                         rememberAsyncImagePainter(model = quest.questImageUri)
@@ -178,7 +178,7 @@ fun FindQuestScreen(
                 Column (
                     horizontalAlignment = Alignment.CenterHorizontally
                 ){
-                    Text(text = "Your Image:")
+                    Text(text = stringResource(id = R.string.your_image))
 
                     val painter2: Painter = if (createViewModel.questUiState.questDetails.image != null) {
                         rememberAsyncImagePainter(model = createViewModel.questUiState.questDetails.image)
@@ -230,7 +230,7 @@ fun FindQuestScreen(
                         }},
                     shape = MaterialTheme.shapes.small,
                 ) {
-                    Text(text = "Compare to GeoQuest")
+                    Text(text = stringResource(id = R.string.compare))
                     Spacer(modifier = Modifier.width(8.dp))
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_compare_arrows_24), // Replace with your icon resource
@@ -258,7 +258,7 @@ fun FindQuestScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(text = "I Found It!")
+                    Text(text = stringResource(id = R.string.i_found))
                     Spacer(modifier = Modifier.width(8.dp))
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_camera_alt_24), // Replace with your icon resource
