@@ -52,5 +52,7 @@
     <string name="developer_options">Developer Options</string>
     <string name="latitude">Latitude</string>
     <string name="longitude">Longitude</string>
+    <string name="tooltip_text">Recommended that your GeoQuest image contains text!</string>
+
 
 </resources>
