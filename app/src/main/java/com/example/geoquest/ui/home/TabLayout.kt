@@ -31,7 +31,10 @@ fun TabLayout(
             tabs.forEachIndexed { index, title ->
                 Tab(text = { Text(title) },
                     selected = tabIndex == index,
-                    onClick = { tabIndex = index },
+                    onClick = {
+                        selectedQuestId.intValue = -1
+                        tabIndex = index
+                              },
                 )
             }
         }

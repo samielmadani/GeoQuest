@@ -11,7 +11,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.geoquest.model.QuestRepository
 import com.example.geoquest.model.getCurrentLocation
+import com.example.geoquest.ui.quest.createQuest.QuestDetails
 import com.example.geoquest.ui.quest.createQuest.QuestUiState
+import com.example.geoquest.ui.quest.createQuest.toQuest
 import com.example.geoquest.ui.quest.createQuest.toQuestUiState
 import com.example.geoquest.ui.quest.viewQuest.ViewQuestDestination
 import com.google.mlkit.vision.common.InputImage
@@ -33,7 +35,7 @@ import kotlin.random.Random
  */
 class FindQuestViewModel(
     savedStateHandle: SavedStateHandle,
-    val sharedPreferences: SharedPreferences,
+    private val sharedPreferences: SharedPreferences,
     private val questRepository: QuestRepository
 ): ViewModel() {
 
@@ -55,6 +57,22 @@ class FindQuestViewModel(
                 .toQuestUiState(true)
         }
     }
+
+    /**
+     * Updates the quest in the data source
+     */
+    suspend fun updateQuest() {
+        questRepository.updateQuest(questUiState.questDetails.toQuest())
+    }
+
+    /**
+     * Updates the [questUiState] with the value provided in the argument.
+     */
+    fun updateUiState(questDetails: QuestDetails) {
+        questUiState =
+            QuestUiState(questDetails = questDetails, isEntryValid = true)
+    }
+
 
     fun randomBoolean(): Boolean {
         return Random.nextBoolean()

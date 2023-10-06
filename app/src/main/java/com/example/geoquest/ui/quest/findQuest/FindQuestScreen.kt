@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -42,6 +43,7 @@ import com.example.geoquest.ui.navigation.NavigationDestination
 import com.example.geoquest.ui.quest.createQuest.CreateQuestViewModel
 import com.example.geoquest.ui.quest.createQuest.LastCapturedPhotoViewModel
 import com.example.geoquest.ui.quest.createQuest.toQuest
+import com.example.geoquest.ui.quest.createQuest.toQuestDetails
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
@@ -54,6 +56,7 @@ import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import kotlinx.coroutines.launch
 
 object FindQuestDestination: NavigationDestination {
     override val route = "findQuestScreen"
@@ -76,6 +79,7 @@ fun FindQuestScreen(
 
     ) {
     val scrollState = rememberScrollState()
+    val coroutineScope = rememberCoroutineScope()
 
     val cameraPermissionState: PermissionState = rememberPermissionState(Manifest.permission.CAMERA)
     val hasPermission = cameraPermissionState.hasPermission
@@ -213,7 +217,11 @@ fun FindQuestScreen(
                             viewModel.calculateDistance(quest.latitude, quest.longitude, context) {
                                 if (it) {
                                     quest.isCompleted = true
-                                    navigateToSuccessScreen()
+                                    viewModel.updateUiState(quest.toQuestDetails())
+                                    coroutineScope.launch {
+                                        viewModel.updateQuest()
+                                        navigateToSuccessScreen()
+                                    }
                                 } else {
                                     navigateToFailedScreen()
                                 }
