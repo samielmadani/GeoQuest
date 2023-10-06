@@ -1,7 +1,5 @@
 package com.example.geoquest.ui.navigation
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
@@ -9,7 +7,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -19,17 +16,16 @@ import androidx.navigation.navArgument
 import com.example.geoquest.ui.AppViewModelProvider
 import com.example.geoquest.ui.home.HomeDestination
 import com.example.geoquest.ui.home.HomeScreen
-import com.example.geoquest.ui.home.discoverQuest
 import com.example.geoquest.ui.quest.createQuest.CameraScreen
 import com.example.geoquest.ui.quest.createQuest.CameraScreenDestination
 import com.example.geoquest.ui.quest.createQuest.CreateQuest
 import com.example.geoquest.ui.quest.createQuest.CreateQuestDestination
 import com.example.geoquest.ui.quest.createQuest.CreateQuestViewModel
+import com.example.geoquest.ui.quest.createQuest.LastCapturedPhotoViewModel
 import com.example.geoquest.ui.quest.findQuest.FailedScreen
 import com.example.geoquest.ui.quest.findQuest.FailedScreenDestination
 import com.example.geoquest.ui.quest.findQuest.FindQuestDestination
 import com.example.geoquest.ui.quest.findQuest.FindQuestScreen
-import com.example.geoquest.ui.quest.createQuest.LastCapturedPhotoViewModel
 import com.example.geoquest.ui.quest.findQuest.SuccessScreen
 import com.example.geoquest.ui.quest.findQuest.SuccessScreenDestination
 import com.example.geoquest.ui.quest.viewQuest.ViewQuestDestination
