@@ -2,13 +2,10 @@ package com.example.geoquest.ui.home
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.SystemClock
@@ -29,7 +26,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -71,7 +67,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.geoquest.GeoQuestTopBar
@@ -116,7 +111,6 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -345,7 +339,7 @@ fun HomeBody(
                 style = MaterialTheme.typography.titleLarge
             )
         } else {
-            QuestList(
+            TabLayout(
                 questList = questList,
                 navigateToViewQuest,
                 selectedQuestId
@@ -385,7 +379,7 @@ fun QuestList(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuestCard(
     quest: Quest,
@@ -464,7 +458,7 @@ fun QuestCard(
                             onClick = {
                                 setIsLoading(true) // Show the loading dialog
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    shareQuest(quest, context, { setIsLoading(false) })
+                                    shareQuest(quest, context) { setIsLoading(false) }
                                 } },
                             shape = MaterialTheme.shapes.small,
                             colors = ButtonDefaults.buttonColors(Color.Transparent),
@@ -560,7 +554,7 @@ fun base64ToBitmap(base64String: String): Bitmap {
     val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
     Log.i("SHARE SEND", "Decoding base64 string to bytes, size: ${decodedBytes.size}")
 
-    val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size);
+    val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
 
     val matrix = Matrix()
     matrix.postRotate(90f)
@@ -588,6 +582,7 @@ data class QuestPayload (
     val latitude: Double,
     val longitude: Double,
     val author: String,
+    val isCompleted: Boolean,
     val questImage: String
 )
 
@@ -599,6 +594,7 @@ fun convertQuestToJson(quest: Quest, context: Context): String {
         quest.latitude,
         quest.longitude,
         quest.author,
+        quest.isCompleted,
         convertImageBytesToBase64(getImageBytesFromUri(context, quest.questImageUri))
     )
     val gson = Gson()
@@ -734,7 +730,7 @@ private fun startAdvertising(quest: Quest, context: Context, onDismiss: () -> Un
             Log.i("SHARE SEND", "startAdvertising OnSuccessListener")
         }
         .addOnFailureListener { error ->
-            Log.e("SHARE SEND", "startAdvertising Error: $error");
+            Log.e("SHARE SEND", "startAdvertising Error: $error")
             Nearby.getConnectionsClient(context).stopAllEndpoints()
             Nearby.getConnectionsClient(context).stopAdvertising()
             onDismiss()
@@ -803,8 +799,9 @@ private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel, re
                             questImageUri = uri,
                             latitude = quest.latitude,
                             longitude = quest.longitude,
-                            author = quest.author
-                        )
+                            author = quest.author,
+                            isCompleted = quest.isCompleted,
+                            )
 
                         // Save the quest
                         viewModel.createQuest(

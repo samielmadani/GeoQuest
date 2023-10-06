@@ -17,5 +17,6 @@ data class Quest (
     var questImageUri: String?,
     val latitude: Double,
     val longitude: Double,
-    val author: String
+    val author: String,
+    var isCompleted: Boolean
 )

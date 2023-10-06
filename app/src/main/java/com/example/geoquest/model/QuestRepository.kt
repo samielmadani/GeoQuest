@@ -17,6 +17,11 @@ interface QuestRepository {
     fun getQuestStream(questId: Int): Flow<Quest>
 
     /**
+     * Retrieve completed quests from the data source
+     */
+    fun getCompletedQuests(): Flow<List<Quest>>
+
+    /**
      * Add quest from the data source
      */
     suspend fun addQuest(quest: Quest)

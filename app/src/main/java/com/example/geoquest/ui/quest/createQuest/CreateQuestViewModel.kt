@@ -1,13 +1,11 @@
 package com.example.geoquest.ui.quest.createQuest
 
-import android.net.Uri
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.geoquest.model.Quest
 import com.example.geoquest.model.QuestRepository
 
@@ -67,6 +65,7 @@ class CreateQuestViewModel(private val sharedPreferences: SharedPreferences, pri
             questImageUri = quest.questImageUri,
             latitude = quest.latitude,
             longitude = quest.longitude,
+            isCompleted = false,
             author = quest.author
         )
         questRepository.addQuest(newQuest)
@@ -85,7 +84,7 @@ class CreateQuestViewModel(private val sharedPreferences: SharedPreferences, pri
     }
 
     fun isValidDescription(text: String): Boolean {
-        return text.isEmpty() || text.matches(Regex("^(?=.*[a-zA-Z])[a-zA-Z0-9 '.!']+\$"))
+        return text.isEmpty() || text.matches(Regex("^(?=.*[a-zA-Z])[a-zA-Z0-9 '.!]+\$"))
     }
 
 }
@@ -104,6 +103,7 @@ data class QuestDetails(
     var latitude: Double = 0.0,
     var longitude: Double = 0.0,
     var author: String = "GeoQuest",
+    var isCompleted: Boolean = false,
     var image: String? = null
 )
 
@@ -126,6 +126,7 @@ fun QuestDetails.toQuest(): Quest = Quest(
     questImageUri = image,
     latitude = latitude,
     longitude = longitude,
+    isCompleted = false,
     author = author
 )
 
@@ -140,5 +141,6 @@ fun Quest.toQuestDetails(): QuestDetails = QuestDetails(
     image = questImageUri,
     latitude = latitude,
     longitude = longitude,
+    isCompleted = false,
     author = author
 )

@@ -20,6 +20,9 @@ interface QuestDao {
     @Query("SELECT * from quest WHERE questId = :questId")
     fun getQuest(questId: Int): Flow<Quest>
 
+    @Query("SELECT * from quest WHERE isCompleted = 1")
+    fun getCompletedQuests(): Flow<List<Quest>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(quest: Quest)
 

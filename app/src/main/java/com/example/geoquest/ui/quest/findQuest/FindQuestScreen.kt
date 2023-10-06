@@ -1,7 +1,6 @@
 package com.example.geoquest.ui.quest.findQuest
 
 import android.Manifest
-import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,14 +21,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -43,7 +38,6 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.geoquest.GeoQuestTopBar
 import com.example.geoquest.R
 import com.example.geoquest.ui.AppViewModelProvider
-import com.example.geoquest.ui.home.HomeViewModel
 import com.example.geoquest.ui.navigation.NavigationDestination
 import com.example.geoquest.ui.quest.createQuest.CreateQuestViewModel
 import com.example.geoquest.ui.quest.createQuest.LastCapturedPhotoViewModel
@@ -74,7 +68,6 @@ object FindQuestDestination: NavigationDestination {
 fun FindQuestScreen(
     navigateUp: () -> Unit,
     viewModel: FindQuestViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    viewModel2: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navigateToCamera: () -> Unit,
     lastCapturedPhotoViewModel: LastCapturedPhotoViewModel,
     navigateToSuccessScreen: () -> Unit,
@@ -91,8 +84,8 @@ fun FindQuestScreen(
     val quest = viewModel.questUiState.questDetails.toQuest()
     val context = LocalContext.current
 
-    var geoText = "";
-    var myImage = "";
+    var geoText = ""
+    var myImage = ""
 
     Scaffold(
         topBar = {
@@ -115,8 +108,7 @@ fun FindQuestScreen(
                 modifier = Modifier.fillMaxHeight(0.4f) // Takes half of the screen height
             ) {
                 MapTarget(
-                    viewModel = viewModel,
-                    viewModel2 = viewModel2
+                    viewModel = viewModel
                 )
             }
 
@@ -157,7 +149,7 @@ fun FindQuestScreen(
                         viewModel.extractTextFromImage(context, quest.questImageUri!!, object :
                             FindQuestViewModel.TextExtractionCallback {
                             override fun onTextExtracted(text: String) {
-                                geoText = text;
+                                geoText = text
                             }
 
                             override fun onExtractionFailed(errorMessage: String) {
@@ -191,7 +183,7 @@ fun FindQuestScreen(
                         viewModel.extractTextFromImage(context, createViewModel.questUiState.questDetails.image!!, object :
                             FindQuestViewModel.TextExtractionCallback {
                             override fun onTextExtracted(text: String) {
-                                myImage = text;
+                                myImage = text
                             }
 
                             override fun onExtractionFailed(errorMessage: String) {
@@ -220,6 +212,7 @@ fun FindQuestScreen(
                         if (geoText == myImage) {
                             viewModel.calculateDistance(quest.latitude, quest.longitude, context) {
                                 if (it) {
+                                    quest.isCompleted = true
                                     navigateToSuccessScreen()
                                 } else {
                                     navigateToFailedScreen()
@@ -276,8 +269,7 @@ fun FindQuestScreen(
 
 @Composable
 fun MapTarget(
-    viewModel: FindQuestViewModel,
-    viewModel2: HomeViewModel
+    viewModel: FindQuestViewModel
 ){
     // Extract the position from the state
     val lat_long = LatLng(viewModel.questUiState.questDetails.latitude, viewModel.questUiState.questDetails.longitude)

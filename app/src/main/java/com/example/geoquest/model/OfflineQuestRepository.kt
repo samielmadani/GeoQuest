@@ -10,6 +10,8 @@ class OfflineQuestRepository(private val questDao: QuestDao): QuestRepository {
 
     override fun getQuestStream(questId: Int): Flow<Quest> = questDao.getQuest(questId)
 
+    override fun getCompletedQuests(): Flow<List<Quest>> = questDao.getCompletedQuests()
+
     override suspend fun addQuest(quest: Quest) = questDao.insert(quest)
 
     override suspend fun deleteQuest(quest: Quest) = questDao.delete(quest)

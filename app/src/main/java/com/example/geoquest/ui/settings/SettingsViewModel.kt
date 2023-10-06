@@ -84,6 +84,7 @@ fun getTestData(): List<Quest> {
             questImageUri = null,
             latitude = -45.0312,
             longitude = 168.6626,
+            isCompleted = false,
             author = "GeoQuest"
         ),
         Quest(
@@ -93,6 +94,7 @@ fun getTestData(): List<Quest> {
             questImageUri = null,
             latitude = -39.2900,
             longitude = 175.5672,
+            isCompleted = false,
             author = "GeoQuest"
         ),
         Quest(
@@ -102,6 +104,7 @@ fun getTestData(): List<Quest> {
             questImageUri = null,
             latitude = -40.9324,
             longitude = 173.0089,
+            isCompleted = false,
             author = "GeoQuest"
         ),
         Quest(
@@ -111,6 +114,7 @@ fun getTestData(): List<Quest> {
             questImageUri = null,
             latitude = -38.1499,
             longitude = 176.2498,
+            isCompleted = false,
             author = "GeoQuest"
         ),
         Quest(
@@ -120,6 +124,7 @@ fun getTestData(): List<Quest> {
             questImageUri = null,
             latitude = -45.4145,
             longitude = 167.7180,
+            isCompleted = true,
             author = "GeoQuest"
         ),
         Quest(
@@ -129,6 +134,7 @@ fun getTestData(): List<Quest> {
             questImageUri = null,
             latitude = -38.6857,
             longitude = 176.0702,
+            isCompleted = false,
             author = "GeoQuest"
         ),
         Quest(
@@ -138,6 +144,7 @@ fun getTestData(): List<Quest> {
             questImageUri = null,
             latitude = -43.7342,
             longitude = 170.0977,
+            isCompleted = false,
             author = "GeoQuest"
         )
 
