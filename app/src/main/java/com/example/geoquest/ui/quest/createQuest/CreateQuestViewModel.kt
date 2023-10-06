@@ -65,7 +65,7 @@ class CreateQuestViewModel(private val sharedPreferences: SharedPreferences, pri
             questImageUri = quest.questImageUri,
             latitude = quest.latitude,
             longitude = quest.longitude,
-            isCompleted = false,
+            isCompleted = quest.isCompleted,
             author = quest.author
         )
         questRepository.addQuest(newQuest)
@@ -126,7 +126,7 @@ fun QuestDetails.toQuest(): Quest = Quest(
     questImageUri = image,
     latitude = latitude,
     longitude = longitude,
-    isCompleted = false,
+    isCompleted = isCompleted,
     author = author
 )
 
@@ -141,6 +141,6 @@ fun Quest.toQuestDetails(): QuestDetails = QuestDetails(
     image = questImageUri,
     latitude = latitude,
     longitude = longitude,
-    isCompleted = false,
+    isCompleted = isCompleted,
     author = author
 )
