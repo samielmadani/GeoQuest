@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -130,17 +129,19 @@ fun CreateQuestBody(
             modifier = Modifier.size(dimensionResource(id = R.dimen.image_size))
         )
 
-        Button(onClick = {
-            if (hasPermission) {
-                navigateToCamera()
-            } else {
-                onRequestPermission()
+        Row {
+            Button(onClick = {
+                if (hasPermission) {
+                    navigateToCamera()
+                } else {
+                    onRequestPermission()
+                }
+            }) {
+                Text(text = stringResource(id = R.string.take_photo))
             }
-        }) {
-            Text(text = stringResource(id = R.string.take_photo))
-        }
 
-        PlainToolTipDemo()
+            ImageToolTip()
+        }
 
         QuestInputForm(
             questDetails = questUiState.questDetails,
@@ -313,24 +314,10 @@ fun Star(
     )
 }
 
-@Preview(showBackground = true)
-@Composable
-fun CreateScreenPreview() {
-    GeoQuestTheme {
-        CreateQuest(
-            rememberCoroutineScope(),
-            navigateBack = {},
-            navigateToCamera = {},
-            viewModel = viewModel(factory = AppViewModelProvider.Factory),
-        )
-    }
-}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PlainToolTipDemo() {
-
+private fun ImageToolTip() {
     Box(
-        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
         PlainTooltipBox(tooltip = {
@@ -347,6 +334,17 @@ private fun PlainToolTipDemo() {
             }
         }
     }
+}
 
-
+@Preview(showBackground = true)
+@Composable
+fun CreateScreenPreview() {
+    GeoQuestTheme {
+        CreateQuest(
+            rememberCoroutineScope(),
+            navigateBack = {},
+            navigateToCamera = {},
+            viewModel = viewModel(factory = AppViewModelProvider.Factory),
+        )
+    }
 }

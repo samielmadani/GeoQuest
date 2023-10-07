@@ -52,7 +52,7 @@
     <string name="developer_options">Developer Options</string>
     <string name="latitude">Latitude</string>
     <string name="longitude">Longitude</string>
-    <string name="tooltip_text">Recommended that your GeoQuest image contains text!</string>
+    <string name="tooltip_text">It is recommended that your GeoQuest image contain text!</string>
     <string name="attention">Attention</string>
     <string name="delete_question">Are you sure you want to delete?</string>
     <string name="no">No</string>
