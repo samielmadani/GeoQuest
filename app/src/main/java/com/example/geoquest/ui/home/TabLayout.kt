@@ -19,6 +19,7 @@ fun TabLayout(
     questList: List<Quest>,
     navigateToViewQuest: (Int) -> Unit,
     selectedQuestId: MutableIntState,
+    onDelete: (Quest) -> Unit
 ) {
     var tabIndex by remember { mutableIntStateOf(0) }
 
@@ -42,12 +43,13 @@ fun TabLayout(
             0 -> QuestList(
                 questList = questList.filter { !it.isCompleted },
                 navigateToViewQuest,
-                selectedQuestId
+                selectedQuestId, onDelete
             )
             1 -> QuestList(
                 questList = questList.filter { it.isCompleted },
                 navigateToViewQuest,
-                selectedQuestId
+                selectedQuestId,
+                onDelete
             )
         }
     }

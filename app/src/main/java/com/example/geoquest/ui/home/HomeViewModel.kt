@@ -34,6 +34,10 @@ class HomeViewModel(private val sharedPreferences: SharedPreferences, private va
     fun getLocation(): LatLng {
         return LatLng((sharedPreferences.getString("latitude", "0.0") ?: "0.0").toDouble(), (sharedPreferences.getString("longitude", "0.0") ?: "0.0").toDouble())
     }
+
+    suspend fun deleteQuest(quest: Quest) {
+        questRepository.deleteQuest(quest)
+    }
 }
 
 data class HomeUiState(

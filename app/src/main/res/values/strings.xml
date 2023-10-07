@@ -53,6 +53,10 @@
     <string name="latitude">Latitude</string>
     <string name="longitude">Longitude</string>
     <string name="tooltip_text">Recommended that your GeoQuest image contains text!</string>
-
-
+    <string name="attention">Attention</string>
+    <string name="delete_question">Are you sure you want to delete?</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="close">Close</string>
+    <string name="deleted_quest">Quest Deleted Successfully</string>
 </resources>

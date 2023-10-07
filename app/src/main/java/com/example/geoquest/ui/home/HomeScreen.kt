@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.SystemClock
 import android.util.Base64
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -32,7 +33,9 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -41,9 +44,11 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
@@ -54,6 +59,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -171,6 +179,7 @@ fun HomeScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val selectedQuestId = remember { mutableIntStateOf(-1) }
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     BackPressHandler(onBackPressed = {})
 
@@ -278,6 +287,7 @@ fun HomeScreen(
                     selectedQuestId,
                     context,
                     createViewModel,
+                    onDelete = { quest -> coroutineScope.launch { viewModel.deleteQuest(quest) } },
                     modifier = modifier
                         .fillMaxSize()
                 )
@@ -323,6 +333,7 @@ fun HomeBody(
     selectedQuestId: MutableIntState,
     context: Context,
     createViewModel: CreateQuestViewModel,
+    onDelete: (Quest) -> Unit,
     modifier: Modifier = Modifier
 ) {
     // Listen for quests (test)
@@ -342,7 +353,8 @@ fun HomeBody(
             TabLayout(
                 questList = questList,
                 navigateToViewQuest,
-                selectedQuestId
+                selectedQuestId,
+                onDelete
             )
         }
     }
@@ -353,6 +365,7 @@ fun QuestList(
     questList: List<Quest>,
     navigateToViewQuest: (Int) -> Unit,
     selectedQuestId: MutableIntState,
+    onDelete: (Quest) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
@@ -373,7 +386,8 @@ fun QuestList(
                 quest = quest,
                 navigateToViewQuest,
                 isSelected = quest.questId == selectedQuestId.intValue,
-                selectedQuestId
+                selectedQuestId,
+                onDelete
             )
         }
     }
@@ -385,9 +399,12 @@ fun QuestCard(
     quest: Quest,
     navigateToViewQuest: (Int) -> Unit,
     isSelected: Boolean = false,
-    selectedQuestId: MutableIntState
+    selectedQuestId: MutableIntState,
+    onDelete: (Quest) -> Unit
 ) {
     val context = LocalContext.current
+    var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
+    val message = stringResource(id = R.string.deleted_quest)
 
     Log.i("SHARE INFO", quest.questImageUri.toString())
 
@@ -473,10 +490,49 @@ fun QuestCard(
                     }
 
                 }
+                Box(contentAlignment = Alignment.TopEnd) {
+                    IconButton(onClick = { deleteConfirmationRequired = true }) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "delete"
+                        )
+                    }
+                }
+                if (deleteConfirmationRequired) {
+                    DeleteConfirmationDialog(
+                        onDeleteConfirm = {
+                            deleteConfirmationRequired = false
+                            onDelete(quest)
+                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                        },
+                        onDeleteCancel = { deleteConfirmationRequired = false },
+                        modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
+                    )
+                }
 
             }
         }
     }
+}
+
+@Composable
+fun DeleteConfirmationDialog(
+    onDeleteConfirm: () -> Unit, onDeleteCancel: () -> Unit, modifier: Modifier = Modifier
+) {
+    AlertDialog(onDismissRequest = { /* Do nothing */ },
+        title = { Text(stringResource(R.string.attention)) },
+        text = { Text(stringResource(R.string.delete_question)) },
+        modifier = modifier,
+        dismissButton = {
+            TextButton(onClick = onDeleteCancel) {
+                Text(text = stringResource(R.string.no))
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDeleteConfirm) {
+                Text(text = stringResource(R.string.yes))
+            }
+        })
 }
 
 
