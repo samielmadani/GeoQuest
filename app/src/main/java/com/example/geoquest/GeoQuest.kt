@@ -1,8 +1,10 @@
 package com.example.geoquest
 
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
+import android.content.Intent
 import android.widget.RemoteViews
 
 /**
@@ -37,6 +39,13 @@ internal fun updateAppWidget(
     val widgetText = context.getString(R.string.appwidget_text)
     // Construct the RemoteViews object
     val views = RemoteViews(context.packageName, R.layout.geo_quest)
+
+    // Create an Intent to launch your app when the widget is clicked
+    val intent = Intent(context, MainActivity::class.java) // Use your MainActivity class
+    val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
+    // Set the PendingIntent to the FrameLayout
+    views.setOnClickPendingIntent(R.id.widget_container, pendingIntent)
 
     // Instruct the widget manager to update the widget
     appWidgetManager.updateAppWidget(appWidgetId, views)
