@@ -371,7 +371,7 @@ fun QuestList(
     val listState = rememberLazyListState()
 
     LaunchedEffect(selectedQuestId.intValue) {
-        if (selectedQuestId.intValue != -1) {
+        if (selectedQuestId.intValue > 0) {
             val index = questList.indexOfFirst { quest -> quest.questId == selectedQuestId.intValue }
             listState.animateScrollToItem(index)
         }
@@ -848,7 +848,7 @@ private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel, re
 
                         Log.i("SHARE SEND", "Saved image to: ${uri ?: "null"}")
 
-                        val quest = Quest(
+                        val quest_model = Quest(
                             questTitle = quest.questTitle,
                             questDescription = quest.questDescription,
                             questDifficulty = quest.questDifficulty,
@@ -861,11 +861,11 @@ private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel, re
 
                         // Save the quest
                         viewModel.createQuest(
-                            quest
+                            quest_model
                         )
 
-                        sendNotification(context, "${quest.author}, has shared a quest with you.",
-                            quest.questTitle
+                        sendNotification(context, "${quest_model.author}, has shared a quest with you.",
+                            quest_model.questTitle
                         )
 
                         Log.i("SHARE RCV", "Disconnecting from $endpointId....")
