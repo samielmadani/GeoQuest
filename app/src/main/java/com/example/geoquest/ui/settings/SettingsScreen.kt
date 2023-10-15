@@ -153,7 +153,7 @@ fun SettingsScreen(
                     ) {
                         Button(
                             onClick = {
-                                viewModel.insertTestData()
+                                viewModel.insertTestData(context)
                                 Toast.makeText(context, context.resources.getString(R.string.test_data_success), Toast.LENGTH_SHORT).show()
                                 navigateToHomeScreen()
                                       },

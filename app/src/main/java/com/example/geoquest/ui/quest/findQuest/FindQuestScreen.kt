@@ -1,13 +1,13 @@
 package com.example.geoquest.ui.quest.findQuest
 
 import android.Manifest
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -90,7 +90,7 @@ fun FindQuestScreen(
     val context = LocalContext.current
 
     var geoText = ""
-    var myImage = ""
+    var capturedText = ""
 
     Scaffold(
         topBar = {
@@ -142,32 +142,21 @@ fun FindQuestScreen(
                     Text(text = stringResource(id = R.string.app_name) + ":")
 
                     val painter: Painter = if (quest.questImageUri != null) {
-                        val prefix = "TEST_IMAGE:"
-                        if (quest.questImageUri!!.startsWith(prefix)) {
-                            when (quest.questImageUri) {
-                                prefix + "ducks" -> painterResource(id = R.drawable.ducks)
-                                prefix + "dunedin" -> painterResource(id = R.drawable.dunedin)
-                                prefix + "kiwi" -> painterResource(id = R.drawable.kiwi)
-                                prefix + "sky_tower" -> painterResource(id = R.drawable.sky_tower)
-                                else -> painterResource(id = R.drawable.default_image)
-                            }
-                        } else {
-                            rememberAsyncImagePainter(model = quest.questImageUri)
-                        }
+                        rememberAsyncImagePainter(model = quest.questImageUri)
                     } else {
                         painterResource(id = R.drawable.default_image)
                     }
 
                     if (quest.questImageUri != null) {
-
                         viewModel.extractTextFromImage(context, quest.questImageUri!!, object :
                             FindQuestViewModel.TextExtractionCallback {
                             override fun onTextExtracted(text: String) {
                                 geoText = text
+                                Log.w("MY_TEXT", "My text: $text")
                             }
 
                             override fun onExtractionFailed(errorMessage: String) {
-
+                                Log.e("MY_TEXT", "Failed to extract")
                             }
                         })
 
@@ -193,15 +182,15 @@ fun FindQuestScreen(
                     }
 
                     if (createViewModel.questUiState.questDetails.image != null) {
-
                         viewModel.extractTextFromImage(context, createViewModel.questUiState.questDetails.image!!, object :
                             FindQuestViewModel.TextExtractionCallback {
                             override fun onTextExtracted(text: String) {
-                                myImage = text
+                                capturedText = text
+                                Log.w("BASE_TEXT", "Base text: $text")
                             }
 
                             override fun onExtractionFailed(errorMessage: String) {
-
+                                Log.e("BASE_TEXT", "Failed to extract")
                             }
                         })
 
@@ -223,7 +212,7 @@ fun FindQuestScreen(
             if (createViewModel.questUiState.questDetails.image != null) {
                 Button(
                     onClick = {
-                        if (geoText == myImage) {
+                        if (viewModel.textIsSimilar(capturedText, geoText, 40.0)) {
                             viewModel.calculateDistance(quest.latitude, quest.longitude, context) {
                                 if (it) {
                                     quest.isCompleted = true

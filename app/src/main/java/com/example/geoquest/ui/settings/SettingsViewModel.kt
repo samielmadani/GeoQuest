@@ -1,18 +1,30 @@
 package com.example.geoquest.ui.settings
 
+import android.content.ContentResolver
+import android.content.Context
 import android.content.SharedPreferences
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.geoquest.R
 import com.example.geoquest.model.Quest
 import com.example.geoquest.model.QuestRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-fun getTestData(): List<Quest> {
+fun getUri(image: Int, context: Context): String {
+    val uri = Uri.Builder()
+        .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+        .authority(context.packageName)
+        .appendPath(image.toString())
+        .build()
+    return uri.toString()
+}
+fun getTestData(context: Context): List<Quest> {
     return listOf(
 //        Quest(
 //            questTitle = "Eiffel Tower",
@@ -151,7 +163,7 @@ fun getTestData(): List<Quest> {
             questTitle = "The Last Kiwi Stand",
             questDescription = "Find the last remaining kiwi bird statue, a reminder of the world before. Hint: It's not made of chocolate anymore.",
             questDifficulty = 3,
-            questImageUri = "TEST_IMAGE:kiwi",
+            questImageUri = getUri(R.drawable.kiwi, context),
             latitude = -40.9006,
             longitude = 174.8860,
             author = "PostApocExplorer",
@@ -162,7 +174,7 @@ fun getTestData(): List<Quest> {
             questTitle = "Wellington's Wasteland Watchtower",
             questDescription = "Climb the remains of the once-majestic Wellington Sky Tower to find a humorous sign about the end of WiFi.",
             questDifficulty = 4,
-            questImageUri = "TEST_IMAGE:sky_tower",
+            questImageUri = getUri(R.drawable.sky_tower, context),
             latitude = -41.2865,
             longitude = 174.7762,
             author = "EndOfDaysTraveler",
@@ -173,7 +185,7 @@ fun getTestData(): List<Quest> {
             questTitle = "Rotorua's Radiant Springs",
             questDescription = "Discover Rotorua's hot springs, now glowing a bit more than usual. Beware of two-headed ducks!",
             questDifficulty = 2,
-            questImageUri = "TEST_IMAGE:ducks",
+            questImageUri = getUri(R.drawable.ducks, context),
             latitude = -38.1368,
             longitude = 176.2497,
             author = "NuclearNomad",
@@ -183,7 +195,7 @@ fun getTestData(): List<Quest> {
             questTitle = "Dunedin's Dystopian Drive",
             questDescription = "Drive through the streets of Dunedin, but watch out for the road signs that have taken on a humorous twist!",
             questDifficulty = 1,
-            questImageUri = "TEST_IMAGE:dunedin",
+            questImageUri = getUri(R.drawable.dunedin, context),
             latitude = -45.8788,
             longitude = 170.5020,
             author = "ApocalypseAdventurer",
@@ -239,10 +251,10 @@ class SettingsViewModel(
         saveLocation(settingsState.latitude, settingsState.longitude)
     }
 
-    fun insertTestData() {
+    fun insertTestData(context: Context) {
         viewModelScope.launch {
             isLoading = true
-            val testData = getTestData()
+            val testData = getTestData(context)
             for (quest in testData) {
                 questRepository.addQuest(quest)
             }

@@ -442,18 +442,7 @@ fun QuestCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 val painter: Painter = if (quest.questImageUri != null) {
-                    val prefix = "TEST_IMAGE:"
-                    if (quest.questImageUri!!.startsWith(prefix)) {
-                        when (quest.questImageUri) {
-                            prefix + "ducks" -> painterResource(id = R.drawable.ducks)
-                            prefix + "dunedin" -> painterResource(id = R.drawable.dunedin)
-                            prefix + "kiwi" -> painterResource(id = R.drawable.kiwi)
-                            prefix + "sky_tower" -> painterResource(id = R.drawable.sky_tower)
-                            else -> painterResource(id = R.drawable.default_image)
-                        }
-                    } else {
-                        rememberAsyncImagePainter(model = quest.questImageUri)
-                    }
+                    rememberAsyncImagePainter(model = quest.questImageUri)
                 } else {
                     painterResource(id = R.drawable.default_image)
                 }
