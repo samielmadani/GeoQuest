@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -94,7 +95,7 @@ fun FindQuestScreen(
     Scaffold(
         topBar = {
             GeoQuestTopBar(
-                title = stringResource(id = R.string.hunting_for) + quest.questTitle,
+                title = stringResource(id = R.string.hunting_for) + " " + quest.questTitle,
                 canNavigateBack = true,
                 navigateUp = navigateUp
             )
@@ -109,7 +110,8 @@ fun FindQuestScreen(
         ) {
 
             Box(
-                modifier = Modifier.fillMaxHeight(0.4f) // Takes half of the screen height
+                modifier = Modifier
+                    .height(300.dp)
             ) {
                 MapTarget(
                     viewModel = viewModel
