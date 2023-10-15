@@ -178,6 +178,7 @@ fun HomeScreen(
     val homeUiState by viewModel.homeUiState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val selectedQuestId = remember { mutableIntStateOf(-1) }
+    val tabIndex = remember { mutableIntStateOf(0) }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -278,7 +279,10 @@ fun HomeScreen(
                         .fillMaxHeight(0.4f)
                         .padding(contentPadding)// Takes half of the screen height
                 ) {
-                    MapTarget(homeUiState.questList, viewModel, selectedQuestId)
+                    when (tabIndex.intValue) {
+                        0 -> MapTarget(questList = homeUiState.questList.filter { !it.isCompleted }, viewModel, selectedQuestId)
+                        1 -> MapTarget(questList = homeUiState.questList.filter { it.isCompleted }, viewModel, selectedQuestId)
+                    }
                 }
                 HomeBody(
                     questList = homeUiState.questList,
@@ -287,6 +291,7 @@ fun HomeScreen(
                     selectedQuestId,
                     context,
                     createViewModel,
+                    tabIndex,
                     onDelete = { quest -> coroutineScope.launch { viewModel.deleteQuest(quest) } },
                     modifier = modifier
                         .fillMaxSize()
@@ -333,6 +338,7 @@ fun HomeBody(
     selectedQuestId: MutableIntState,
     context: Context,
     createViewModel: CreateQuestViewModel,
+    tabIndex: MutableIntState,
     onDelete: (Quest) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -354,6 +360,7 @@ fun HomeBody(
                 questList = questList,
                 navigateToViewQuest,
                 selectedQuestId,
+                tabIndex,
                 onDelete
             )
         }
@@ -371,9 +378,9 @@ fun QuestList(
     val listState = rememberLazyListState()
 
     LaunchedEffect(selectedQuestId.intValue) {
-        if (selectedQuestId.intValue > 0) {
+        if (selectedQuestId.intValue >= 0) {
             val index = questList.indexOfFirst { quest -> quest.questId == selectedQuestId.intValue }
-            listState.animateScrollToItem(index)
+            if (index >= 0) listState.animateScrollToItem(index)
         }
     }
 
@@ -486,16 +493,14 @@ fun QuestCard(
                             )
                         }
 
-                        LoadingDialog(isOpen = isLoading, onDismiss = { setIsLoading(false) })
-                    }
+                        IconButton(onClick = { deleteConfirmationRequired = true }) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "delete"
+                            )
+                        }
 
-                }
-                Box(contentAlignment = Alignment.TopEnd) {
-                    IconButton(onClick = { deleteConfirmationRequired = true }) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "delete"
-                        )
+                        LoadingDialog(isOpen = isLoading, onDismiss = { setIsLoading(false) })
                     }
                 }
                 if (deleteConfirmationRequired) {
@@ -888,7 +893,6 @@ private fun startDiscovery(context: Context, viewModel: CreateQuestViewModel, re
                 update.status == PayloadTransferUpdate.Status.CANCELED
                 ) {
                 Nearby.getConnectionsClient(context).stopAllEndpoints()
-                refresh()
             }
         }
     }

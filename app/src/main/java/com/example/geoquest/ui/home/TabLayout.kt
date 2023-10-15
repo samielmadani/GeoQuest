@@ -19,27 +19,27 @@ fun TabLayout(
     questList: List<Quest>,
     navigateToViewQuest: (Int) -> Unit,
     selectedQuestId: MutableIntState,
+    tabIndex: MutableIntState,
     onDelete: (Quest) -> Unit
 ) {
-    var tabIndex by remember { mutableIntStateOf(0) }
 
     val tabs = listOf("Active", "Completed")
 
     Column(modifier = Modifier.fillMaxWidth()) {
         TabRow(
-            selectedTabIndex = tabIndex
+            selectedTabIndex = tabIndex.intValue
         ) {
             tabs.forEachIndexed { index, title ->
                 Tab(text = { Text(title) },
-                    selected = tabIndex == index,
+                    selected = tabIndex.intValue == index,
                     onClick = {
                         selectedQuestId.intValue = -1
-                        tabIndex = index
+                        tabIndex.intValue = index
                               },
                 )
             }
         }
-        when (tabIndex) {
+        when (tabIndex.intValue) {
             0 -> QuestList(
                 questList = questList.filter { !it.isCompleted },
                 navigateToViewQuest,
