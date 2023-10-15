@@ -142,13 +142,21 @@ fun FindQuestScreen(
                     Text(text = stringResource(id = R.string.app_name) + ":")
 
                     val painter: Painter = if (quest.questImageUri != null) {
-                        rememberAsyncImagePainter(model = quest.questImageUri)
+                        val prefix = "TEST_IMAGE:"
+                        if (quest.questImageUri!!.startsWith(prefix)) {
+                            when (quest.questImageUri) {
+                                prefix + "ducks" -> painterResource(id = R.drawable.ducks)
+                                prefix + "dunedin" -> painterResource(id = R.drawable.dunedin)
+                                prefix + "kiwi" -> painterResource(id = R.drawable.kiwi)
+                                prefix + "sky_tower" -> painterResource(id = R.drawable.sky_tower)
+                                else -> painterResource(id = R.drawable.default_image)
+                            }
+                        } else {
+                            rememberAsyncImagePainter(model = quest.questImageUri)
+                        }
                     } else {
                         painterResource(id = R.drawable.default_image)
                     }
-
-
-
 
                     if (quest.questImageUri != null) {
 

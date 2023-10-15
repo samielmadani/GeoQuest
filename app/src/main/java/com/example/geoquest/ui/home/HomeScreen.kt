@@ -434,7 +434,7 @@ fun QuestCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(8.dp),
             verticalArrangement = Arrangement.Center
         ) {
             Row(
@@ -442,13 +442,24 @@ fun QuestCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 val painter: Painter = if (quest.questImageUri != null) {
-                    rememberAsyncImagePainter(model = quest.questImageUri)
+                    val prefix = "TEST_IMAGE:"
+                    if (quest.questImageUri!!.startsWith(prefix)) {
+                        when (quest.questImageUri) {
+                            prefix + "ducks" -> painterResource(id = R.drawable.ducks)
+                            prefix + "dunedin" -> painterResource(id = R.drawable.dunedin)
+                            prefix + "kiwi" -> painterResource(id = R.drawable.kiwi)
+                            prefix + "sky_tower" -> painterResource(id = R.drawable.sky_tower)
+                            else -> painterResource(id = R.drawable.default_image)
+                        }
+                    } else {
+                        rememberAsyncImagePainter(model = quest.questImageUri)
+                    }
                 } else {
                     painterResource(id = R.drawable.default_image)
                 }
 
                 Box(modifier = Modifier
-                    .fillMaxHeight(0.7F)
+                    .fillMaxHeight(0.8F)
                 ) {
                     Image(
                         painter = painter,
@@ -459,7 +470,8 @@ fun QuestCard(
                 Column(
                     modifier = Modifier
                         .weight(1f)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(start = 5.dp)
                 ) {
                     Text(
                         text = quest.questTitle,

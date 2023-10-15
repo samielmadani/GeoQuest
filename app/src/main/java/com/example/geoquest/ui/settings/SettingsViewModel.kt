@@ -77,77 +77,118 @@ fun getTestData(): List<Quest> {
 //            longitude = 151.2153,
 //            author = "GeoQuest"
 //        )
+//        Quest(
+//            questTitle = "Queenstown",
+//            questDescription = "Explore the adventure capital of the world, Queenstown! Start your quest in the heart of this picturesque town on Lake Wakatipu's shores. Experience thrilling activities like bungee jumping, jet boating, and hiking in the surrounding Remarkables mountain range.",
+//            questDifficulty = 3,
+//            questImageUri = null,
+//            latitude = -45.0312,
+//            longitude = 168.6626,
+//            isCompleted = false,
+//            author = "GeoQuest"
+//        ),
+//        Quest(
+//            questTitle = "Tongariro National Park",
+//            questDescription = "Embark on a volcanic adventure in Tongariro National Park. Your quest begins at Whakapapa Village, where you can explore the otherworldly landscapes of this UNESCO World Heritage Site. Hike the Tongariro Alpine Crossing for stunning views of the park's active volcanoes.",
+//            questDifficulty = 2,
+//            questImageUri = null,
+//            latitude = -39.2900,
+//            longitude = 175.5672,
+//            isCompleted = false,
+//            author = "GeoQuest"
+//        ),
+//        Quest(
+//            questTitle = "Abel Tasman National Park",
+//            questDescription = "Discover the pristine beaches and lush forests of Abel Tasman National Park. Start your quest at the park's visitor center in Marahau. Explore the coastal tracks, kayak in the clear waters, and spot native wildlife in this natural paradise.",
+//            questDifficulty = 2,
+//            questImageUri = null,
+//            latitude = -40.9324,
+//            longitude = 173.0089,
+//            isCompleted = false,
+//            author = "GeoQuest"
+//        ),
+//        Quest(
+//            questTitle = "Rotorua's Geothermal Wonders",
+//            questDescription = "Experience the geothermal wonders of Rotorua. Your quest takes you to Te Puia, where you can witness geysers, mud pools, and cultural performances. Explore the unique geothermal landscape and learn about Māori culture in this captivating destination.",
+//            questDifficulty = 2,
+//            questImageUri = null,
+//            latitude = -38.1499,
+//            longitude = 176.2498,
+//            isCompleted = false,
+//            author = "GeoQuest"
+//        ),
+//        Quest(
+//            questTitle = "Fiordland National Park",
+//            questDescription = "Embark on an awe-inspiring journey to Fiordland National Park. Begin your quest in the town of Te Anau and explore the rugged wilderness of this World Heritage Area. Discover the enchanting fjords, dense rainforests, and serene lakes that define this natural wonder.",
+//            questDifficulty = 3,
+//            questImageUri = null,
+//            latitude = -45.4145,
+//            longitude = 167.7180,
+//            isCompleted = true,
+//            author = "GeoQuest"
+//        ),
+//        Quest(
+//            questTitle = "Lake Taupo",
+//            questDescription = "Discover the beauty of Lake Taupo, New Zealand's largest lake. Your quest starts in the town of Taupo, where you can take part in water sports, fishing, or simply relax by the lake's tranquil shores. Don't miss the powerful Huka Falls nearby.",
+//            questDifficulty = 2,
+//            questImageUri = null,
+//            latitude = -38.6857,
+//            longitude = 176.0702,
+//            isCompleted = false,
+//            author = "GeoQuest"
+//        ),
+//        Quest(
+//            questTitle = "Aoraki / Mount Cook National Park",
+//            questDescription = "Embark on a high-altitude adventure in Aoraki / Mount Cook National Park. Your quest begins at the village of Mount Cook, where you can hike in the shadow of New Zealand's highest peak, Aoraki (Mount Cook). Explore alpine landscapes, glaciers, and stargaze in this pristine wilderness.",
+//            questDifficulty = 3,
+//            questImageUri = null,
+//            latitude = -43.7342,
+//            longitude = 170.0977,
+//            isCompleted = false,
+//            author = "GeoQuest"
+//        )
         Quest(
-            questTitle = "Queenstown",
-            questDescription = "Explore the adventure capital of the world, Queenstown! Start your quest in the heart of this picturesque town on Lake Wakatipu's shores. Experience thrilling activities like bungee jumping, jet boating, and hiking in the surrounding Remarkables mountain range.",
+            questTitle = "The Last Kiwi Stand",
+            questDescription = "Find the last remaining kiwi bird statue, a reminder of the world before. Hint: It's not made of chocolate anymore.",
             questDifficulty = 3,
-            questImageUri = null,
-            latitude = -45.0312,
-            longitude = 168.6626,
-            isCompleted = false,
-            author = "GeoQuest"
+            questImageUri = "TEST_IMAGE:kiwi",
+            latitude = -40.9006,
+            longitude = 174.8860,
+            author = "PostApocExplorer",
+            isCompleted = false
         ),
-        Quest(
-            questTitle = "Tongariro National Park",
-            questDescription = "Embark on a volcanic adventure in Tongariro National Park. Your quest begins at Whakapapa Village, where you can explore the otherworldly landscapes of this UNESCO World Heritage Site. Hike the Tongariro Alpine Crossing for stunning views of the park's active volcanoes.",
-            questDifficulty = 2,
-            questImageUri = null,
-            latitude = -39.2900,
-            longitude = 175.5672,
-            isCompleted = false,
-            author = "GeoQuest"
-        ),
-        Quest(
-            questTitle = "Abel Tasman National Park",
-            questDescription = "Discover the pristine beaches and lush forests of Abel Tasman National Park. Start your quest at the park's visitor center in Marahau. Explore the coastal tracks, kayak in the clear waters, and spot native wildlife in this natural paradise.",
-            questDifficulty = 2,
-            questImageUri = null,
-            latitude = -40.9324,
-            longitude = 173.0089,
-            isCompleted = false,
-            author = "GeoQuest"
-        ),
-        Quest(
-            questTitle = "Rotorua's Geothermal Wonders",
-            questDescription = "Experience the geothermal wonders of Rotorua. Your quest takes you to Te Puia, where you can witness geysers, mud pools, and cultural performances. Explore the unique geothermal landscape and learn about Māori culture in this captivating destination.",
-            questDifficulty = 2,
-            questImageUri = null,
-            latitude = -38.1499,
-            longitude = 176.2498,
-            isCompleted = false,
-            author = "GeoQuest"
-        ),
-        Quest(
-            questTitle = "Fiordland National Park",
-            questDescription = "Embark on an awe-inspiring journey to Fiordland National Park. Begin your quest in the town of Te Anau and explore the rugged wilderness of this World Heritage Area. Discover the enchanting fjords, dense rainforests, and serene lakes that define this natural wonder.",
-            questDifficulty = 3,
-            questImageUri = null,
-            latitude = -45.4145,
-            longitude = 167.7180,
-            isCompleted = true,
-            author = "GeoQuest"
-        ),
-        Quest(
-            questTitle = "Lake Taupo",
-            questDescription = "Discover the beauty of Lake Taupo, New Zealand's largest lake. Your quest starts in the town of Taupo, where you can take part in water sports, fishing, or simply relax by the lake's tranquil shores. Don't miss the powerful Huka Falls nearby.",
-            questDifficulty = 2,
-            questImageUri = null,
-            latitude = -38.6857,
-            longitude = 176.0702,
-            isCompleted = false,
-            author = "GeoQuest"
-        ),
-        Quest(
-            questTitle = "Aoraki / Mount Cook National Park",
-            questDescription = "Embark on a high-altitude adventure in Aoraki / Mount Cook National Park. Your quest begins at the village of Mount Cook, where you can hike in the shadow of New Zealand's highest peak, Aoraki (Mount Cook). Explore alpine landscapes, glaciers, and stargaze in this pristine wilderness.",
-            questDifficulty = 3,
-            questImageUri = null,
-            latitude = -43.7342,
-            longitude = 170.0977,
-            isCompleted = false,
-            author = "GeoQuest"
-        )
 
+        Quest(
+            questTitle = "Wellington's Wasteland Watchtower",
+            questDescription = "Climb the remains of the once-majestic Wellington Sky Tower to find a humorous sign about the end of WiFi.",
+            questDifficulty = 4,
+            questImageUri = "TEST_IMAGE:sky_tower",
+            latitude = -41.2865,
+            longitude = 174.7762,
+            author = "EndOfDaysTraveler",
+            isCompleted = false
+        ),
+
+        Quest(
+            questTitle = "Rotorua's Radiant Springs",
+            questDescription = "Discover Rotorua's hot springs, now glowing a bit more than usual. Beware of two-headed ducks!",
+            questDifficulty = 2,
+            questImageUri = "TEST_IMAGE:ducks",
+            latitude = -38.1368,
+            longitude = 176.2497,
+            author = "NuclearNomad",
+            isCompleted = false
+        ),
+        Quest(
+            questTitle = "Dunedin's Dystopian Drive",
+            questDescription = "Drive through the streets of Dunedin, but watch out for the road signs that have taken on a humorous twist!",
+            questDifficulty = 1,
+            questImageUri = "TEST_IMAGE:dunedin",
+            latitude = -45.8788,
+            longitude = 170.5020,
+            author = "ApocalypseAdventurer",
+            isCompleted = true
+        )
     )
 }
 
